@@ -6,6 +6,12 @@
 <title>RankRebels — Websites that rank. Built to win.</title>
 <meta name="description" content="RankRebels builds high-converting, search-optimized websites for local businesses that refuse to blend in. Found on Google and AI search, built fast, managed for growth." />
 <meta name="theme-color" content="#0a0a0f" />
+<link rel="canonical" href="https://rankrebels.ai/" />
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+<meta name="author" content="RankRebels" />
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+<link rel="preconnect" href="https://eejmocneacfleltspedl.supabase.co" crossorigin />
+<link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
 
 <!-- Open Graph -->
 <meta property="og:type" content="website" />
@@ -23,6 +29,63 @@
 <meta name="twitter:description" content="Custom websites engineered to rank and convert. We build, we optimize, we manage." />
 <meta name="twitter:image" content="https://rankrebels.ai/og-image.png" />
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
+
+<!-- Structured data: helps Google rich results and AI search engines understand the business -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://rankrebels.ai/#organization",
+      "name": "RankRebels",
+      "url": "https://rankrebels.ai/",
+      "logo": "https://rankrebels.ai/og-image.png",
+      "description": "RankRebels builds high-converting, search-optimized websites for local businesses — engineered to rank on Google and AI search."
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://rankrebels.ai/#website",
+      "url": "https://rankrebels.ai/",
+      "name": "RankRebels",
+      "inLanguage": "en-US",
+      "publisher": { "@id": "https://rankrebels.ai/#organization" }
+    },
+    {
+      "@type": "ProfessionalService",
+      "@id": "https://rankrebels.ai/#service",
+      "name": "RankRebels",
+      "url": "https://rankrebels.ai/",
+      "image": "https://rankrebels.ai/og-image.png",
+      "description": "Custom, fast websites for local businesses — built to show up first on Google and AI search, and turn visitors into customers. We build, optimize, and manage.",
+      "areaServed": "United States",
+      "priceRange": "$$",
+      "parentOrganization": { "@id": "https://rankrebels.ai/#organization" },
+      "knowsAbout": ["Web design", "Search engine optimization", "AI search optimization", "Website hosting", "Conversion optimization"],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Website services",
+        "itemListElement": [
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Custom Builds", "description": "Hand-crafted, lightning-fast, mobile-first websites that match your brand and launch in days." } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "SEO & AI Search", "description": "Engineered to climb Google and show up when customers ask ChatGPT and AI search for a recommendation." } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Ongoing Management", "description": "Hosting, updates, and monthly tuning to keep the site fast and rankings climbing." } }
+        ]
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://rankrebels.ai/#faq",
+      "mainEntity": [
+        { "@type": "Question", "name": "How fast can you build my website?", "acceptedAnswer": { "@type": "Answer", "text": "Days, not months. Once we have your content and goals, we design, build, and optimize a custom site fast — most launches happen within days." } },
+        { "@type": "Question", "name": "Do you optimize for Google and AI search?", "acceptedAnswer": { "@type": "Answer", "text": "Yes — SEO is built in from day one. Every site is engineered to rank on Google and to surface when customers ask ChatGPT and other AI search tools for a recommendation." } },
+        { "@type": "Question", "name": "Are there long-term contracts?", "acceptedAnswer": { "@type": "Answer", "text": "No long-term contracts. We earn your business every month with ongoing management, tuning, and reporting." } },
+        { "@type": "Question", "name": "Who do you work with?", "acceptedAnswer": { "@type": "Answer", "text": "Local businesses that refuse to blend in — service providers, shops, and growing brands that want a custom site that ranks and converts." } },
+        { "@type": "Question", "name": "What does it cost?", "acceptedAnswer": { "@type": "Answer", "text": "A one-time build/onboarding fee plus a simple monthly management plan. Start with a free, no-pressure audit and we'll scope it to your business." } }
+      ]
+    }
+  ]
+}
+</script>
 
 <style>
   :root{
@@ -248,6 +311,7 @@
       <a href="#services">Services</a>
       <a href="#process">Process</a>
       <a href="#why">Why us</a>
+      <a href="#faq">FAQ</a>
     </nav>
     <div class="nav-cta">
       <a class="btn btn-ghost" href="/dashboard">Team login</a>
@@ -328,6 +392,22 @@
           <tr><td>Long-term contract</td><td class="us"><span class="yes">None</span></td><td>Usually required</td><td>—</td></tr>
         </tbody>
       </table>
+    </div>
+  </div>
+</section>
+
+<section id="faq" style="background:var(--bg-soft)">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">FAQ</span>
+      <h2>Questions, answered</h2>
+    </div>
+    <div class="grid" style="grid-template-columns:1fr;max-width:820px;margin:0 auto">
+      <div class="card"><h3>How fast can you build my website?</h3><p>Days, not months. Once we have your content and goals, we design, build, and optimize a custom site fast — most launches happen within days.</p></div>
+      <div class="card"><h3>Do you optimize for Google and AI search?</h3><p>Yes — SEO is built in from day one. Every site is engineered to rank on Google and to surface when customers ask ChatGPT and other AI search tools for a recommendation.</p></div>
+      <div class="card"><h3>Are there long-term contracts?</h3><p>No long-term contracts. We earn your business every month with ongoing management, tuning, and reporting.</p></div>
+      <div class="card"><h3>Who do you work with?</h3><p>Local businesses that refuse to blend in — service providers, shops, and growing brands that want a custom site that ranks and converts.</p></div>
+      <div class="card"><h3>What does it cost?</h3><p>A one-time build/onboarding fee plus a simple monthly management plan. Start with a free, no-pressure audit and we'll scope it to your business.</p></div>
     </div>
   </div>
 </section>
