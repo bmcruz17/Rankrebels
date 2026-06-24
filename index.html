@@ -362,6 +362,48 @@
 </footer>
 </div><!-- /.site -->
 
-<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  /* Public lead capture — drops form submissions straight into the pipeline as Leads.
+     Uses the anon key + an INSERT-only RLS policy (rr_clients_public_lead_insert),
+     so the public can create leads but can never read any customer data. */
+  var SB_URL = 'https://eejmocneacfleltspedl.supabase.co';
+  var SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVlam1vY25lYWNmbGVsdHNwZWRsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyNDQ3MTMsImV4cCI6MjA5NzgyMDcxM30.dXJTMFp_d9JRlXkesVPCUj6tBi3qphxxOu3v-Cuw7_Y';
+  var sb = window.supabase.createClient(SB_URL, SB_KEY);
+
+  async function submitLead(e){
+    e.preventDefault();
+    var f = e.target;
+    var get = function(n){ var el = f.elements[n]; return el && el.value ? el.value.trim() : ''; };
+    var msg = document.getElementById('form-msg');
+    var btn = f.querySelector('button[type="submit"]');
+
+    var rec = {
+      business_name: get('business') || get('name') || 'Website lead',
+      contact_name: get('name'),
+      email: get('email'),
+      phone: get('phone'),
+      stage: 'lead',
+      notes: (get('message') ? get('message') + ' — ' : '') + 'New lead from website contact form'
+    };
+
+    if(btn){ btn.disabled = true; }
+    var resp = await sb.from('rr_clients').insert(rec);
+    if(resp.error){
+      msg.style.display = 'block';
+      msg.style.color = 'var(--accent)';
+      msg.textContent = 'Hmm, that didn’t go through. Email us at hello@rankrebels.ai and we’ll jump on it.';
+      if(btn){ btn.disabled = false; }
+    } else {
+      f.querySelectorAll('input, textarea').forEach(function(x){ x.value = ''; });
+      msg.style.display = 'block';
+      msg.style.color = 'var(--won)';
+      msg.textContent = '✓ Got it — we’ll be in touch within 24 hours with your free audit.';
+    }
+    return false;
+  }
+</script>
 </body>
 </html>
