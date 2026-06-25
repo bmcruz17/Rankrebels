@@ -290,18 +290,18 @@
         <span style="font-weight:500;font-size:12.5px;color:var(--muted)">money the company owes a partner for costs they fronted</span>
       </div>
       <div id="reimb-balance" style="padding:16px 18px"></div>
-      <div style="padding:0 18px 12px;display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;border-top:1px solid var(--line)">
-        <div class="field" style="margin:12px 0 0"><label>Who paid whom</label>
-          <select id="rb-dir" style="padding:8px">
+      <div style="padding:14px 18px;display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;border-top:1px solid var(--line)">
+        <div class="field" style="margin:0;flex:1 1 180px;min-width:160px"><label>Who paid whom</label>
+          <select id="rb-dir" style="height:42px">
             <option value="company|brandon">Company → Brandon</option>
             <option value="company|eric">Company → Eric</option>
             <option value="eric|brandon">Eric → Brandon</option>
             <option value="brandon|eric">Brandon → Eric</option>
           </select></div>
-        <div class="field" style="margin:0;width:110px"><label>Amount ($)</label><input id="rb-amount" type="number" min="0" placeholder="58.85"></div>
-        <div class="field" style="margin:0;width:140px"><label>Method</label><input id="rb-method" placeholder="Venmo / transfer"></div>
-        <div class="field" style="margin:0;width:150px"><label>Date</label><input id="rb-date" type="date"></div>
-        <button class="btn btn-primary btn-sm" onclick="logReimbursement()" style="margin-bottom:2px">Log reimbursement</button>
+        <div class="field" style="margin:0;width:100px"><label>Amount ($)</label><input id="rb-amount" type="number" min="0" placeholder="58.85" style="height:42px"></div>
+        <div class="field" style="margin:0;width:130px"><label>Method</label><input id="rb-method" placeholder="Venmo / transfer" style="height:42px"></div>
+        <div class="field" style="margin:0;width:150px"><label>Date</label><input id="rb-date" type="date" style="height:42px"></div>
+        <button class="btn btn-primary btn-sm" onclick="logReimbursement()" style="height:42px;margin:0">Log reimbursement</button>
       </div>
       <table id="reimb-tbl"></table>
     </div>
