@@ -975,14 +975,32 @@ function rrAskAdd(role, text){
   d.className='rrc-msg '+(role==='user'?'rrc-user':'rrc-bot'); d.textContent=text;
   b.appendChild(d); b.scrollTop=b.scrollHeight; return d;
 }
+// Cloudflare Turnstile — paste your SITE key below to turn on bot/abuse protection.
+var TURNSTILE_SITE_KEY = '';
+var rrTsId=null, rrTsWaiters=[];
+function rrTsRender(){
+  if(!TURNSTILE_SITE_KEY || typeof turnstile==='undefined') return;
+  try{ rrTsId=turnstile.render('#rrTsBox', { sitekey:TURNSTILE_SITE_KEY, size:'invisible',
+    callback:function(t){ rrTsWaiters.forEach(function(f){f(t);}); rrTsWaiters=[]; },
+    'error-callback':function(){ rrTsWaiters.forEach(function(f){f('');}); rrTsWaiters=[]; } }); }catch(e){}
+}
+function rrTsToken(){
+  return new Promise(function(res){
+    if(!TURNSTILE_SITE_KEY || typeof turnstile==='undefined' || rrTsId===null){ res(null); return; }
+    rrTsWaiters.push(res);
+    try{ turnstile.execute(rrTsId); }catch(e){ res(null); }
+  });
+}
+window.addEventListener('load', rrTsRender);
 async function rrAskSend(){
   var input=el('rrAskInput'), btn=el('rrAskSendBtn');
   var text=input.value.trim(); if(!text) return;
   input.value=''; rrAskAdd('user', text); rrAskHistory.push({role:'user', content:text});
   btn.disabled=true; var typing=rrAskAdd('bot','…');
   try{
+    var tsTok=await rrTsToken();
     var r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({mode:'team', messages:rrAskHistory, context:rrTeamContext()})});
+      body:JSON.stringify({mode:'team', messages:rrAskHistory, context:rrTeamContext(), turnstileToken:tsTok})});
     var data=await r.json();
     typing.textContent=data.reply||data.error||"Something went wrong.";
     if(data.reply) rrAskHistory.push({role:'assistant', content:data.reply});
@@ -992,6 +1010,7 @@ async function rrAskSend(){
 </script>
 
 <!-- ===== COMMAND CENTER AI WIDGET ===== -->
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <style>
   #rrAskBtn{border:none;cursor:pointer;height:34px;padding:0 14px;border-radius:999px;
     background:linear-gradient(135deg,var(--brand-2),var(--brand) 55%,var(--accent));color:#fff;
@@ -1022,6 +1041,7 @@ async function rrAskSend(){
     <input id="rrAskInput" placeholder="Ask about your numbers…" onkeydown="if(event.key==='Enter')rrAskSend()">
     <button class="rrc-send" id="rrAskSendBtn" onclick="rrAskSend()">Send</button>
   </div>
+  <div id="rrTsBox" style="display:none"></div>
 </div>
 </body>
 </html>

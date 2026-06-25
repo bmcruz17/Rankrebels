@@ -528,6 +528,7 @@
 </script>
 
 <!-- ===== AI CHAT WIDGET (public) ===== -->
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <style>
   #rrChatBtn{position:fixed;right:20px;bottom:20px;z-index:9998;border:none;cursor:pointer;
     width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--brand-2),var(--brand) 55%,var(--accent));
@@ -559,8 +560,27 @@
     <input id="rrcInput" placeholder="Type your question…" onkeydown="if(event.key==='Enter')rrChatSend()">
     <button class="rrc-send" id="rrcSend" onclick="rrChatSend()">Send</button>
   </div>
+  <div id="rrTsBox" style="display:none"></div>
 </div>
 <script>
+  // Cloudflare Turnstile — paste your SITE key below to turn on bot/abuse protection.
+  // Leave blank and the chat still works (no challenge) until you're ready.
+  var TURNSTILE_SITE_KEY = '';
+  var rrTsId = null, rrTsWaiters = [];
+  function rrTsRender(){
+    if(!TURNSTILE_SITE_KEY || typeof turnstile === 'undefined') return;
+    try{ rrTsId = turnstile.render('#rrTsBox', { sitekey: TURNSTILE_SITE_KEY, size: 'invisible',
+      callback: function(t){ rrTsWaiters.forEach(function(f){ f(t); }); rrTsWaiters = []; },
+      'error-callback': function(){ rrTsWaiters.forEach(function(f){ f(''); }); rrTsWaiters = []; } }); }catch(e){}
+  }
+  function rrTsToken(){
+    return new Promise(function(res){
+      if(!TURNSTILE_SITE_KEY || typeof turnstile === 'undefined' || rrTsId === null){ res(null); return; }
+      rrTsWaiters.push(res);
+      try{ turnstile.execute(rrTsId); }catch(e){ res(null); }
+    });
+  }
+  window.addEventListener('load', rrTsRender);
   var rrcHistory = [];
   var rrcGreeted = false;
   function rrChatToggle(){
@@ -584,8 +604,9 @@
     btn.disabled=true;
     var typing=rrcAdd('bot','…');
     try{
+      var tsTok=await rrTsToken();
       var r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({mode:'public', messages:rrcHistory})});
+        body:JSON.stringify({mode:'public', messages:rrcHistory, turnstileToken:tsTok})});
       var data=await r.json();
       var reply=data.reply||data.error||"Sorry, something went wrong. Email sales@rankrebels.ai and we'll help right away.";
       typing.textContent=reply;
