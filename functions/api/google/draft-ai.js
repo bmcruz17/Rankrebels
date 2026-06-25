@@ -24,22 +24,32 @@ export async function onRequestPost({ request, env }) {
   const to = (b.to || '').trim();
   if (!to) return json({ error: 'Recipient email is required.' }, 400);
   const lead = b.lead || {};
+  const kind = b.kind === 'onboarding' ? 'onboarding' : 'outreach';
 
-  const sys = [
+  const sysOutreach = [
     "You write short, warm, professional emails for Rank Rebels — a digital agency offering custom websites, SEO, and Google Business Profile management.",
     "Write a concise email (4-7 sentences) to the lead described below. If it's an early-stage lead, make it a friendly first-touch intro; if they're further along, make it a natural follow-up. Reference what they're interested in, sound human (not salesy), and invite a quick reply or a free consultation. Do NOT mention pricing or make guarantees. Sign off as 'The Rank Rebels Team'.",
     "IMPORTANT: Carefully read the 'notes' field — it holds the team's notes about prior conversations, what this customer needs, and context. Use it to personalize the email and reference specifics they've discussed.",
     'Return ONLY valid JSON, no markdown: {"subject": "...", "body": "..."}. The body is plain text with real line breaks, ready to send.'
   ].join('\n');
 
+  const sysOnboarding = [
+    "You write warm, clear ONBOARDING emails for Rank Rebels — a digital agency offering custom websites, SEO, and Google Business Profile management. The customer below has just SIGNED their service agreement, so this is a welcome + next-steps email.",
+    "Write a friendly welcome (6-10 sentences or a short intro + a few bullet/numbered next steps). Thank them for signing on, express genuine excitement to get started, and clearly lay out NEXT STEPS, which typically include: (1) the one-time setup fee invoice is on its way and work begins once it's paid, (2) what we need FROM them to start — content, photos/logo, business hours, and any website logins, (3) what to expect on timeline and that they'll get monthly reports, (4) that they can submit any change requests anytime through their customer portal. Reference the specific services they signed up for (the 'interested_in' field) and use the 'notes' for personal context.",
+    "Tone: human, reassuring, organized. Don't restate full legal terms. Don't invent specific dates. Sign off as 'The Rank Rebels Team'.",
+    'Return ONLY valid JSON, no markdown: {"subject": "...", "body": "..."}. The body is plain text with real line breaks, ready to send.'
+  ].join('\n');
+
+  const sys = kind === 'onboarding' ? sysOnboarding : sysOutreach;
+
   const r = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: { 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
     body: JSON.stringify({
       model: 'claude-opus-4-8',
-      max_tokens: 700,
+      max_tokens: 800,
       system: sys,
-      messages: [{ role: 'user', content: 'Lead details:\n' + JSON.stringify(lead, null, 2) }]
+      messages: [{ role: 'user', content: (kind === 'onboarding' ? 'New signed customer:\n' : 'Lead details:\n') + JSON.stringify(lead, null, 2) }]
     })
   });
   if (!r.ok) { const d = await r.text(); return json({ error: 'AI service error.', detail: d.slice(0, 300) }, 502); }

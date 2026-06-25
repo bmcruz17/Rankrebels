@@ -448,6 +448,7 @@
       <div id="agreement-status" style="font-size:13px;margin-bottom:8px"></div>
       <button type="button" class="btn btn-primary btn-sm" onclick="sendAgreement()">📄 Send agreement to sign</button>
       <button type="button" class="btn btn-ghost btn-sm" onclick="copyAgreementLink()">🔗 Copy link</button>
+      <button type="button" class="btn btn-ghost btn-sm" onclick="aiDraft(editingId,'onboarding')">🎉 Draft onboarding email</button>
     </div>
     <div class="field" id="charges-section" style="display:none">
       <label>Charges &amp; invoicing <span style="color:var(--muted-2)">(costs you fronted for this customer to bill back)</span></label>
@@ -623,19 +624,19 @@ async function emailLead(id){
   logActivity(id,'email','');
   window.location.href='mailto:'+encodeURIComponent(c.email);
 }
-// Have Claude write a tailored first email, then create it as a Gmail draft
-async function aiDraft(id){
+// Have Claude write a tailored email (kind: 'outreach' default, or 'onboarding'), then create it as a Gmail draft
+async function aiDraft(id, kind){
   var c=clients.find(function(x){return x.id===id;}); if(!c){ alert('Save the customer first.'); return; }
   if(!c.email){ alert('No email on file for this lead — add one first.'); return; }
   var t=await authToken(); if(!t){ alert('Connect Google first.'); return; }
   var noteText=clientNotes(c).map(function(n){return n.note;}).filter(Boolean).join(' | ');
   var lead={ business_name:c.business_name, contact_name:c.contact_name, stage:stageName(c.stage),
-    interested_in:(Array.isArray(c.services)?c.services.join(', '):''), monthly_charge:c.monthly_charge, notes:noteText };
+    interested_in:(Array.isArray(c.services)?c.services.join(', '):''), setup_fee:c.onboarding_fee, monthly_charge:c.monthly_charge, notes:noteText };
   var btn=el('gbtn'); if(btn) btn.textContent='✍️ Drafting…';
   try{
-    var r=await fetch('/api/google/draft-ai',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t},body:JSON.stringify({to:c.email,lead:lead})});
+    var r=await fetch('/api/google/draft-ai',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t},body:JSON.stringify({to:c.email,lead:lead,kind:kind||'outreach'})});
     var d=await r.json().catch(function(){return {};});
-    if(d.ok){ logActivity(id,'email','AI-drafted: '+(d.subject||'')); if(confirm('AI draft created in Gmail'+(d.subject?(': “'+d.subject+'”'):'')+'.\n\nOpen Gmail to review and send?')) window.open(d.link,'_blank'); }
+    if(d.ok){ logActivity(id,'email',(kind==='onboarding'?'Onboarding email drafted: ':'AI-drafted: ')+(d.subject||'')); if(confirm((kind==='onboarding'?'Onboarding email':'AI draft')+' created in Gmail'+(d.subject?(': “'+d.subject+'”'):'')+'.\n\nOpen Gmail to review and send?')) window.open(d.link,'_blank'); }
     else { alert(d.error||'Could not create AI draft.'); }
   }catch(e){ alert('Could not reach the AI drafting service.'); }
   finally{ checkGoogle(); }
