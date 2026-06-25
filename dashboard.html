@@ -116,6 +116,7 @@
   .badge{font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:999px;text-transform:uppercase;letter-spacing:.03em}
   .badge.brandon{background:rgba(21,128,61,.16);color:#15803d}
   .badge.eric{background:rgba(201,154,30,.18);color:#a8791a}
+  .badge.website{background:rgba(80,99,90,.16);color:#50635a}
   .add-card{width:100%;background:transparent;border:1px dashed var(--line);color:var(--muted);border-radius:9px;padding:8px;cursor:pointer;font-size:13px;font-weight:600}
   .add-card:hover{border-color:var(--brand);color:var(--text)}
 
@@ -370,7 +371,7 @@
     <div class="field"><label>Address</label><input id="c-address" placeholder="123 Main St, City ST"></div>
     <div class="grid2">
       <div class="field"><label>Stage</label><select id="c-stage"></select></div>
-      <div class="field"><label>Acquired by</label><select id="c-acq"><option value="brandon">Brandon</option><option value="eric">Eric</option></select></div>
+      <div class="field"><label>Acquired by</label><select id="c-acq"><option value="brandon">Brandon</option><option value="eric">Eric</option><option value="website">Website / Inbound (65/35)</option></select></div>
     </div>
     <div class="field"><label>Services &amp; add-ons <span style="color:var(--muted-2)">(check what they're buying — auto-fills the fees below)</span></label>
       <div id="svc-list" class="svc-list"></div>
@@ -923,19 +924,26 @@ function payout(){
   var booked = clients.filter(function(c){return ['accepted','in_build','finalized','published'].indexOf(c.stage)>=0;});
   function mrr(who){ return live.filter(function(c){return c.acquired_by===who;}).reduce(function(a,c){return a+Number(c.monthly_charge||0);},0); }
   function onb(who){ return booked.filter(function(c){return c.acquired_by===who;}).reduce(function(a,c){return a+Number(c.onboarding_fee||0);},0); }
-  var mrrBrandon=mrr('brandon'), mrrEric=mrr('eric');
-  var onbBrandon=onb('brandon'), onbEric=onb('eric');
-  var revBrandon=mrrBrandon+onbBrandon, revEric=mrrEric+onbEric;
-  var total=revBrandon+revEric;
+  var mrrBrandon=mrr('brandon'), mrrEric=mrr('eric'), mrrWeb=mrr('website');
+  var onbBrandon=onb('brandon'), onbEric=onb('eric'), onbWeb=onb('website');
+  var revBrandon=mrrBrandon+onbBrandon, revEric=mrrEric+onbEric, revWeb=mrrWeb+onbWeb;
+  var total=revBrandon+revEric+revWeb;
   var floor=Number(settings.brandon_floor)||0, pct=Number(settings.eric_pct)||0;
-  var above=Math.max(0, total-floor);
-  var ericShare=total>0 ? revEric/total : 0;
+  var webPct=(settings.web_eric_pct!=null)?Number(settings.web_eric_pct):0.35; // Eric's flat share of website/inbound revenue
+  // Personal deals: Brandon's floor applies here; Eric earns `pct` of HIS deals above the floor
+  var personal=revBrandon+revEric;
+  var above=Math.max(0, personal-floor);
+  var ericShare=personal>0 ? revEric/personal : 0;
   var ericAbove=above*ericShare;
-  var ericPay=pct*ericAbove;
+  var ericPayPersonal=pct*ericAbove;
+  // Website / inbound: flat split — Eric gets webPct (35%), Brandon the rest (65%)
+  var ericPayWeb=webPct*revWeb;
+  var ericPay=ericPayPersonal+ericPayWeb;
   var brandonPay=total-ericPay;
-  return {mrrBrandon:mrrBrandon,mrrEric:mrrEric,onbBrandon:onbBrandon,onbEric:onbEric,
-    revBrandon:revBrandon,revEric:revEric,mrr:mrrBrandon+mrrEric,onb:onbBrandon+onbEric,
-    total:total,floor:floor,pct:pct,above:above,ericAbove:ericAbove,ericPay:ericPay,brandonPay:brandonPay};
+  return {mrrBrandon:mrrBrandon,mrrEric:mrrEric,mrrWeb:mrrWeb,onbBrandon:onbBrandon,onbEric:onbEric,onbWeb:onbWeb,
+    revBrandon:revBrandon,revEric:revEric,revWeb:revWeb,mrr:mrrBrandon+mrrEric+mrrWeb,onb:onbBrandon+onbEric+onbWeb,
+    total:total,floor:floor,pct:pct,webPct:webPct,above:above,ericAbove:ericAbove,
+    ericPayPersonal:ericPayPersonal,ericPayWeb:ericPayWeb,ericPay:ericPay,brandonPay:brandonPay};
 }
 function expFreq(e){ return e.frequency || (e.recurring?'monthly':'once'); }
 function freqLabel(f){ return f==='monthly'?'Monthly':f==='yearly'?'Yearly':'One-time'; }
@@ -957,17 +965,20 @@ function renderMoney(){
     wf('Revenue this period (onboarding + MRR)', money(p.total), '')+
     '<tr><td>&nbsp;&nbsp;from <span class="badge brandon">brandon</span> deals</td><td class="num">'+money(p.revBrandon)+'</td></tr>'+
     '<tr><td>&nbsp;&nbsp;from <span class="badge eric">eric</span> deals</td><td class="num">'+money(p.revEric)+'</td></tr>'+
-    wf('Floor to Brandon (first '+money(p.floor)+')', money(Math.min(p.floor,p.total)), '')+
-    wf('Revenue above floor', money(p.above), '')+
+    '<tr><td>&nbsp;&nbsp;from <span class="badge website">website</span> (inbound)</td><td class="num">'+money(p.revWeb)+'</td></tr>'+
+    wf('Floor to Brandon (first '+money(p.floor)+', personal deals)', money(Math.min(p.floor,p.revBrandon+p.revEric)), '')+
     wf('Eric\'s deals above floor', money(p.ericAbove), '')+
-    '<tr class="tot"><td>Eric gets ('+Math.round(p.pct*100)+'% of his above-floor revenue)</td><td class="num">'+money(p.ericPay)+'</td></tr>'+
-    '<tr class="tot"><td>Brandon gets (floor + everything else)</td><td class="num">'+money(p.brandonPay)+'</td></tr>'+
+    '<tr><td>Eric from personal deals ('+Math.round(p.pct*100)+'% above floor)</td><td class="num">'+money(p.ericPayPersonal)+'</td></tr>'+
+    '<tr><td>Eric from website ('+Math.round(p.webPct*100)+'% of '+money(p.revWeb)+')</td><td class="num">'+money(p.ericPayWeb)+'</td></tr>'+
+    '<tr class="tot"><td>Eric gets (total take-home)</td><td class="num">'+money(p.ericPay)+'</td></tr>'+
+    '<tr class="tot"><td>Brandon gets (floor + 65% website + remainder)</td><td class="num">'+money(p.brandonPay)+'</td></tr>'+
     '</tbody>';
 
   // revenue by source (feeds the waterfall above)
   el('onboarding-tbl').innerHTML='<thead><tr><th>Source</th><th class="num">Onboarding</th><th class="num">MRR</th><th class="num">Total revenue</th></tr></thead><tbody>'+
     '<tr><td><span class="badge brandon">brandon</span> deals</td><td class="num">'+money(p.onbBrandon)+'</td><td class="num">'+money(p.mrrBrandon)+'</td><td class="num">'+money(p.revBrandon)+'</td></tr>'+
     '<tr><td><span class="badge eric">eric</span> deals</td><td class="num">'+money(p.onbEric)+'</td><td class="num">'+money(p.mrrEric)+'</td><td class="num">'+money(p.revEric)+'</td></tr>'+
+    '<tr><td><span class="badge website">website</span> inbound</td><td class="num">'+money(p.onbWeb)+'</td><td class="num">'+money(p.mrrWeb)+'</td><td class="num">'+money(p.revWeb)+'</td></tr>'+
     '</tbody>';
 
   // expenses

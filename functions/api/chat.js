@@ -45,6 +45,7 @@ async function saveLead(input) {
     email: input.email || null,
     phone: input.phone || null,
     stage: 'lead',
+    acquired_by: 'website',
     notes: (input.interest ? 'Interested in: ' + input.interest + '\n' : '') + (input.notes || '') + '\n— Captured by website AI chat'
   };
   const r = await fetch(SUPABASE_URL + '/rest/v1/rr_clients', {
