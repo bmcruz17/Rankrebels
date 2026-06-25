@@ -445,6 +445,12 @@
         <button type="button" class="btn btn-ghost btn-sm" onclick="calendarFollowUp()">📅 Add follow-up to Calendar</button>
       </div>
     </div>
+    <div class="field" id="agreement-section" style="display:none">
+      <label>Service agreement</label>
+      <div id="agreement-status" style="font-size:13px;margin-bottom:8px"></div>
+      <button type="button" class="btn btn-primary btn-sm" onclick="sendAgreement()">📄 Send agreement to sign</button>
+      <button type="button" class="btn btn-ghost btn-sm" onclick="copyAgreementLink()">🔗 Copy link</button>
+    </div>
     <div class="field" id="charges-section" style="display:none">
       <label>Charges &amp; invoicing <span style="color:var(--muted-2)">(costs you fronted for this customer to bill back)</span></label>
       <div id="charge-list"></div>
@@ -523,7 +529,7 @@ var EMAIL_TO_ACQ = {'brandonmcruz@mac.com':'brandon','eric.paul.ellsworth@gmail.
 var EXPENSE_CATEGORIES = ['AI','Hosting','Marketing','Legal','Insurance','Rent','Phone Bill','Emails','Internet','Utilities','Equipment','Software','Travel/Conferences','Miscellaneous','Other'];
 var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-var clients = [], expenses = [], requests = [], reimbursements = [], charges = [], settings = {brandon_floor:6000, eric_pct:0.35};
+var clients = [], expenses = [], requests = [], reimbursements = [], charges = [], agreements = [], settings = {brandon_floor:6000, eric_pct:0.35};
 var custSort = 'name', editingId = null, projRows = [], me = null;
 
 /* ===== helpers ===== */
@@ -688,6 +694,8 @@ async function loadAll(){
   reimbursements = (rb && !rb.error && rb.data) ? rb.data : [];
   var ch = await sb.from('rr_charges').select('*').order('charge_date',{ascending:false});
   charges = (ch && !ch.error && ch.data) ? ch.data : [];
+  var ag = await sb.from('rr_agreements').select('*').order('signed_at',{ascending:false});
+  agreements = (ag && !ag.error && ag.data) ? ag.data : [];
   renderAll();
 }
 function renderAll(){ fillCatList(); renderBoard(); renderCustomers(); renderMoney(); renderBudget(); renderGoals(); renderRequests(); }
@@ -928,7 +936,47 @@ function openClient(id, presetStage){
   el('gintegrations').style.display = c ? 'block' : 'none';
   el('charges-section').style.display = c ? 'block' : 'none';
   renderCharges();
+  var atAccepted = c && ['accepted','in_build','finalized','published'].indexOf(c.stage)>=0;
+  el('agreement-section').style.display = atAccepted ? 'block' : 'none';
+  renderAgreementStatus(c);
   el('m-client').classList.add('open');
+}
+/* ===== service agreement ===== */
+function agreementFor(c){
+  if(!c) return null;
+  return agreements.find(function(a){ return (a.client_id && a.client_id===c.id) || (a.client_email && c.email && a.client_email.toLowerCase()===c.email.toLowerCase()); }) || null;
+}
+function agreementLink(c){
+  var p=new URLSearchParams({ cid:c.id||'', b:c.business_name||'', c:c.contact_name||'', e:c.email||'',
+    setup:String(c.onboarding_fee||''), monthly:String(c.monthly_charge||'') });
+  return 'https://rankrebels.ai/agreement.html?'+p.toString();
+}
+function renderAgreementStatus(c){
+  var box=el('agreement-status'); if(!box) return;
+  var a=agreementFor(c);
+  if(a){ box.innerHTML='<span style="color:var(--brand);font-weight:700">✅ Signed by '+esc(a.signer_name||'')+'</span> on '+(a.signed_at?new Date(a.signed_at).toLocaleDateString():'')+(a.monthly_fee?(' · '+money(a.monthly_fee)+'/mo'):''); }
+  else { box.innerHTML='<span style="color:var(--muted)">Not signed yet. Send the 24-month MSA for e-signature.</span>'; }
+}
+async function sendAgreement(){
+  var c=clients.find(function(x){return x.id===editingId;}); if(!c){ alert('Save the customer first.'); return; }
+  if(!c.email){ alert("Add the customer's email first — that's where the agreement goes."); return; }
+  var link=agreementLink(c);
+  var t=await authToken();
+  if(t){
+    var body='Hi '+(c.contact_name||'there')+',\n\nWe’re excited to work with '+(c.business_name||'you')+'! Please review and sign our service agreement here:\n\n'+link+'\n\nIt covers the scope, the 24-month term, and pricing'+(c.onboarding_fee?(' ('+money(c.onboarding_fee)+' setup + '+money(c.monthly_charge||0)+'/mo)'):'')+'. Reply with any questions.\n\n— The Rank Rebels Team';
+    var r=await fetch('/api/google/draft',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t},body:JSON.stringify({to:c.email,subject:'Your Rank Rebels service agreement',body:body})});
+    var d=await r.json().catch(function(){return {};});
+    if(d.ok){ logActivity(editingId,'email','Sent service agreement'); if(confirm('Agreement email drafted in Gmail. Open Gmail to send?')) window.open(d.link,'_blank'); return; }
+    if(d.error && !/not connected/i.test(d.error)){ alert(d.error); return; }
+  }
+  // fallback: copy link
+  copyAgreementLink();
+}
+function copyAgreementLink(){
+  var c=clients.find(function(x){return x.id===editingId;}); if(!c) return;
+  var link=agreementLink(c);
+  if(navigator.clipboard){ navigator.clipboard.writeText(link).then(function(){ alert('Agreement link copied — paste it to the customer:\n\n'+link); }, function(){ prompt('Copy the agreement link:', link); }); }
+  else { prompt('Copy the agreement link:', link); }
 }
 /* ===== customer charges + invoicing ===== */
 function clientCharges(id){ return charges.filter(function(x){return x.client_id===id;}); }
