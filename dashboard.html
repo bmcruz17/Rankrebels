@@ -49,7 +49,7 @@
   .who{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:10px}
   .tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin:0;padding:0 20px;position:sticky;top:60px;background:rgba(10,10,15,.8);backdrop-filter:blur(14px);z-index:30;overflow-x:auto}
   .tab{padding:14px 16px;font-weight:600;font-size:14.5px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}
-  .tab.on{color:var(--text);border-bottom-color:var(--brand)}
+  .tab.on{color:var(--text);border-bottom-color:var(--brand);border-bottom-width:3px;background:rgba(124,92,255,.08)}
   .view{padding:24px 0 80px}
   .view.hidden{display:none}
   .row-between{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px}
@@ -193,7 +193,8 @@
 
   <!-- MONEY -->
   <div class="view wrap hidden" id="view-money">
-    <div class="row-between"><div><h2>Money</h2><p class="sub">Revenue, MRR, expenses, and how the pay splits out each month.</p></div></div>
+    <div class="row-between"><div><h2>Money</h2><p class="sub">Revenue, MRR, expenses, and how the pay splits out each month.</p></div>
+      <button class="btn btn-ghost btn-sm" onclick="exportExcel()">⬇ Export to Excel</button></div>
     <div class="stats" id="money-stats"></div>
 
     <div class="panel">
@@ -290,14 +291,14 @@
 <!-- expense modal -->
 <div class="modal-bg" id="m-exp" onclick="if(event.target===this)closeModal('m-exp')">
   <div class="modal" style="max-width:420px">
-    <h3>Add expense</h3>
+    <h3 id="exp-title">Add expense</h3>
     <div class="field"><label>Label</label><input id="e-label" placeholder="Figma subscription"></div>
     <div class="grid2">
       <div class="field"><label>Amount ($)</label><input id="e-amount" type="number" min="0" placeholder="15"></div>
       <div class="field"><label>Category</label><input id="e-cat" placeholder="Tools"></div>
     </div>
     <div class="field"><label>Type</label><select id="e-recurring"><option value="true">Monthly recurring</option><option value="false">One-time</option></select></div>
-    <div class="modal-actions"><span></span><div style="display:flex;gap:10px">
+    <div class="modal-actions"><button class="btn btn-ghost btn-sm" id="exp-delete" onclick="deleteExpense()" style="display:none">Delete</button><div style="display:flex;gap:10px">
       <button class="btn btn-ghost" onclick="closeModal('m-exp')">Cancel</button>
       <button class="btn btn-primary" onclick="saveExpense()">Save</button>
     </div></div>
@@ -305,6 +306,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <script>
 /* ===== config ===== */
 var SB_URL = 'https://eejmocneacfleltspedl.supabase.co';
@@ -368,7 +370,7 @@ function renderAll(){ renderBoard(); renderCustomers(); renderMoney(); renderGoa
 
 /* ===== tabs ===== */
 function setTab(t){
-  ['pipeline','customers','money','warroom'].forEach(function(v){
+  ['pipeline','customers','money','goals'].forEach(function(v){
     el('view-'+v).classList.toggle('hidden', v!==t);
   });
   document.querySelectorAll('.tab').forEach(function(x){ x.classList.toggle('on', x.dataset.tab===t); });
@@ -560,7 +562,7 @@ function renderMoney(){
   var et='';
   expenses.forEach(function(e){
     et+='<tr><td>'+esc(e.label)+'</td><td>'+esc(e.category||'')+'</td><td>'+(e.recurring?'Monthly':'One-time')+'</td><td class="num">'+money(e.amount)+'</td>'+
-      '<td class="num"><span class="reveal" onclick="delExpense(\''+e.id+'\')">delete</span></td></tr>';
+      '<td class="num" style="white-space:nowrap"><span class="reveal" onclick="openExpense(\''+e.id+'\')">edit</span> · <span class="reveal" onclick="delExpense(\''+e.id+'\')">delete</span></td></tr>';
   });
   if(!expenses.length) et='<tr><td colspan="5" class="empty">No expenses yet.</td></tr>';
   el('expense-tbl').innerHTML='<thead><tr><th>Label</th><th>Category</th><th>Type</th><th class="num">Amount</th><th></th></tr></thead><tbody>'+et+'</tbody>';
@@ -577,13 +579,81 @@ async function saveSettings(){
 }
 
 /* expenses */
-function openExpense(){ el('e-label').value=''; el('e-amount').value=''; el('e-cat').value=''; el('e-recurring').value='true'; el('m-exp').classList.add('open'); }
+var editingExpense = null;
+function openExpense(id){
+  editingExpense = id || null;
+  var e = id ? expenses.find(function(x){return x.id===id;}) : null;
+  el('exp-title').textContent = e ? 'Edit expense' : 'Add expense';
+  el('e-label').value = e ? (e.label||'') : '';
+  el('e-amount').value = e ? (e.amount||'') : '';
+  el('e-cat').value = e ? (e.category||'') : '';
+  el('e-recurring').value = e ? String(!!e.recurring) : 'true';
+  el('exp-delete').style.display = e ? 'inline-flex' : 'none';
+  el('m-exp').classList.add('open');
+}
 async function saveExpense(){
   var label=el('e-label').value.trim(); if(!label){ alert('Label required.'); return; }
-  await sb.from('rr_expenses').insert({label:label, amount:Number(el('e-amount').value)||0, category:el('e-cat').value.trim(), recurring:el('e-recurring').value==='true'});
+  var rec={label:label, amount:Number(el('e-amount').value)||0, category:el('e-cat').value.trim(), recurring:el('e-recurring').value==='true'};
+  if(editingExpense){
+    var r=await sb.from('rr_expenses').update(rec).eq('id',editingExpense);
+    if(r.error){ alert(r.error.message); return; }
+  } else {
+    var r2=await sb.from('rr_expenses').insert(rec);
+    if(r2.error){ alert(r2.error.message); return; }
+  }
   closeModal('m-exp'); await loadAll();
 }
+function deleteExpense(){ if(editingExpense){ var id=editingExpense; closeModal('m-exp'); delExpense(id); } }
 async function delExpense(id){ if(confirm('Delete expense?')){ await sb.from('rr_expenses').delete().eq('id',id); await loadAll(); } }
+
+/* ===== EXPORT TO EXCEL ===== */
+function exportExcel(){
+  if(typeof XLSX==='undefined'){ alert('Spreadsheet library still loading — try again in a second.'); return; }
+  var wb = XLSX.utils.book_new();
+
+  // Pipeline — every deal in the system
+  var pipe=[['Business','Stage','Acquired by','Onboarding fee','Monthly charge','Contact','Email','Phone','Domain','Hosting','Published']];
+  clients.forEach(function(c){
+    pipe.push([c.business_name||'', stageName(c.stage), c.acquired_by||'', Number(c.onboarding_fee||0),
+      Number(c.monthly_charge||0), c.contact_name||'', c.email||'', c.phone||'', c.domain||'', c.hosting||'', c.published_at||'']);
+  });
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(pipe), 'Pipeline');
+
+  // Customers — live (published) only, with account details
+  var cust=[['Business','Acquired by','Monthly charge','Contact','Email','Phone','Address','Domain','Hosting','Live since']];
+  clients.filter(function(c){return c.stage==='published';}).forEach(function(c){
+    cust.push([c.business_name||'', c.acquired_by||'', Number(c.monthly_charge||0), c.contact_name||'',
+      c.email||'', c.phone||'', c.address||'', c.domain||'', c.hosting||'', c.published_at||'']);
+  });
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(cust), 'Customers');
+
+  // Expenses
+  var exp=[['Label','Category','Type','Amount']];
+  expenses.forEach(function(e){ exp.push([e.label||'', e.category||'', e.recurring?'Monthly':'One-time', Number(e.amount||0)]); });
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(exp), 'Expenses');
+
+  // Money summary — current split
+  var p=payout(), mexp=monthlyExpenses();
+  var money=[
+    ['Metric','Value'],
+    ['MRR', p.mrr],
+    ['ARR (run-rate)', p.mrr*12],
+    ['Onboarding booked', p.onb],
+    ['Recurring expenses (monthly)', mexp],
+    ['Net monthly (MRR - expenses)', p.mrr-mexp],
+    [],
+    ['Revenue this period (onboarding + MRR)', p.total],
+    ['  from Brandon deals', p.revBrandon],
+    ['  from Eric deals', p.revEric],
+    ['Floor to Brandon', p.floor],
+    ['Eric % above floor', Math.round(p.pct*100)+'%'],
+    ['Eric take-home', p.ericPay],
+    ['Brandon take-home', p.brandonPay]
+  ];
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(money), 'Money');
+
+  XLSX.writeFile(wb, 'RankRebels-export-'+new Date().toISOString().slice(0,10)+'.xlsx');
+}
 
 /* ===== GOALS / PROJECTIONS (CFO board) ===== */
 var GOAL_DEFAULTS = {targetMrr:25000, newPerMonth:3, avgOnboard:2500, avgMonthly:300, churnPct:2, months:12, ericSharePct:50};
