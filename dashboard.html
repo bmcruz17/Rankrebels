@@ -313,7 +313,7 @@
     <div class="field"><label>Label</label><input id="e-label" placeholder="Figma subscription"></div>
     <div class="grid2">
       <div class="field"><label>Amount ($)</label><input id="e-amount" type="number" min="0" placeholder="15"></div>
-      <div class="field"><label>Category</label><input id="e-cat" list="cat-list" placeholder="Hosting"><datalist id="cat-list"></datalist></div>
+      <div class="field"><label>Category</label><select id="e-cat"></select></div>
     </div>
     <div class="grid2">
       <div class="field"><label>Type</label><select id="e-recurring"><option value="true">Monthly recurring</option><option value="false">One-time</option></select></div>
@@ -390,7 +390,7 @@ async function loadAll(){
   renderAll();
 }
 function renderAll(){ fillCatList(); renderBoard(); renderCustomers(); renderMoney(); renderBudget(); renderGoals(); }
-function fillCatList(){ var d=el('cat-list'); if(d) d.innerHTML=EXPENSE_CATEGORIES.map(function(c){return '<option value="'+c+'">';}).join(''); }
+function fillCatList(){ var d=el('e-cat'); if(!d) return; var cats=EXPENSE_CATEGORIES.slice(); expenses.forEach(function(e){ if(e.category && cats.indexOf(e.category)<0) cats.push(e.category); }); var cur=d.value; d.innerHTML='<option value="">— select —</option>'+cats.map(function(c){return '<option value="'+c.replace(/"/g,'&quot;')+'">'+c+'</option>';}).join(''); if(cur) d.value=cur; }
 
 /* ===== tabs ===== */
 function setTab(t){
