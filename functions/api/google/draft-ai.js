@@ -22,6 +22,7 @@ export async function onRequestPost({ request, env }) {
   const sys = [
     "You write short, warm, professional emails for Rank Rebels — a digital agency offering custom websites, SEO, and Google Business Profile management.",
     "Write a concise email (4-7 sentences) to the lead described below. If it's an early-stage lead, make it a friendly first-touch intro; if they're further along, make it a natural follow-up. Reference what they're interested in, sound human (not salesy), and invite a quick reply or a free consultation. Do NOT mention pricing or make guarantees. Sign off as 'The Rank Rebels Team'.",
+    "IMPORTANT: Carefully read the 'notes' field — it holds the team's notes about prior conversations, what this customer needs, and context. Use it to personalize the email and reference specifics they've discussed.",
     'Return ONLY valid JSON, no markdown: {"subject": "...", "body": "..."}. The body is plain text with real line breaks, ready to send.'
   ].join('\n');
 

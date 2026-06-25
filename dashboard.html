@@ -418,9 +418,14 @@
       <div class="field"><label>Domain</label><input id="c-domain" placeholder="acme.com"></div>
       <div class="field"><label>Hosting</label><input id="c-hosting" placeholder="Cloudflare Pages"></div>
     </div>
-    <div class="grid2">
-      <div class="field"><label>Notes</label><textarea id="c-notes" rows="2"></textarea></div>
-      <div class="field"><label>Next follow-up date</label><input id="c-followup" type="date"></div>
+    <div class="field"><label>Next follow-up date</label><input id="c-followup" type="date"></div>
+    <div class="field" id="notes-section">
+      <label>Notes <span style="color:var(--muted-2)">(each saved note is timestamped &amp; kept)</span></label>
+      <div style="display:flex;gap:8px;align-items:flex-start">
+        <textarea id="c-note-new" rows="2" placeholder="Write a note…" style="flex:1"></textarea>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="saveNote()" style="white-space:nowrap">Save note</button>
+      </div>
+      <div id="notes-log" class="act-log" style="margin-top:10px"></div>
     </div>
     <div class="field" id="act-section">
       <label>Activity log</label>
@@ -618,8 +623,9 @@ async function aiDraft(id){
   var c=clients.find(function(x){return x.id===id;}); if(!c){ alert('Save the customer first.'); return; }
   if(!c.email){ alert('No email on file for this lead — add one first.'); return; }
   var t=await authToken(); if(!t){ alert('Connect Google first.'); return; }
+  var noteText=clientNotes(c).map(function(n){return n.note;}).filter(Boolean).join(' | ');
   var lead={ business_name:c.business_name, contact_name:c.contact_name, stage:stageName(c.stage),
-    interested_in:(Array.isArray(c.services)?c.services.join(', '):''), monthly_charge:c.monthly_charge, notes:c.notes };
+    interested_in:(Array.isArray(c.services)?c.services.join(', '):''), monthly_charge:c.monthly_charge, notes:noteText };
   var btn=el('gbtn'); if(btn) btn.textContent='✍️ Drafting…';
   try{
     var r=await fetch('/api/google/draft-ai',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t},body:JSON.stringify({to:c.email,lead:lead})});
@@ -801,7 +807,7 @@ async function logActivity(id, type, note){
   var entry={type:type, note:(note||''), at:new Date().toISOString(), by:(me||'')};
   var list=Array.isArray(c.activities)?c.activities.slice():[];
   list.unshift(entry); c.activities=list;
-  renderAll(); if(editingId===id) renderActivityLog(c);
+  renderAll(); if(editingId===id){ renderActivityLog(c); renderNotesLog(c); }
   var r=await sb.from('rr_clients').update({activities:list}).eq('id',id);
   if(r.error && /activities|column|schema cache/i.test(r.error.message||'')){
     if(!window._actWarned){ window._actWarned=true; alert('Heads up: activity logging needs one quick setup step (add an "activities" column — see the SQL I sent). It’s saved locally for now but won’t persist until that runs.'); }
@@ -911,9 +917,9 @@ function openClient(id, presetStage){
   el('c-onboard').value=c?(c.onboarding_fee||''):''; el('c-monthly').value=c?(c.monthly_charge||''):'';
   renderServices(c&&Array.isArray(c.services)?c.services:[]);
   el('c-domain').value=c?(c.domain||''):''; el('c-hosting').value=c?(c.hosting||''):'';
-  el('c-notes').value=c?(c.notes||''):'';
+  el('c-note-new').value='';
   el('c-followup').value=c?(c.follow_up||''):'';
-  renderActivityLog(c);
+  renderActivityLog(c); renderNotesLog(c);
   el('cred-list').innerHTML='';
   var creds=(c&&Array.isArray(c.credentials))?c.credentials:[];
   if(creds.length){ creds.forEach(function(r){ addCredRow(r.label,r.value); }); } else { addCredRow(); }
@@ -1033,8 +1039,35 @@ function modalLog(type){
 async function delActivity(i){
   var c=clients.find(function(x){return x.id===editingId;}); if(!c||!Array.isArray(c.activities)) return;
   c.activities.splice(i,1);
-  renderActivityLog(c); renderAll();
+  renderActivityLog(c); renderNotesLog(c); renderAll();
   await sb.from('rr_clients').update({activities:c.activities}).eq('id',editingId);
+}
+// Notes log — only the 'note' entries, with the legacy single Notes field shown as an older entry
+function clientNotes(c){
+  var items=[];
+  if(c && Array.isArray(c.activities)) c.activities.forEach(function(a){ if(a.type==='note') items.push(a); });
+  if(c && c.notes && String(c.notes).trim()) items.push({type:'note', note:c.notes, at:null, by:null, legacy:true});
+  return items;
+}
+function renderNotesLog(c){
+  var box=el('notes-log'); if(!box) return;
+  if(!editingId){ box.innerHTML='<div class="act-empty">Save the customer first to start logging notes.</div>'; return; }
+  var items=clientNotes(c);
+  if(!items.length){ box.innerHTML='<div class="act-empty">No notes yet. Write one above and tap Save note.</div>'; return; }
+  box.innerHTML=items.map(function(a){
+    var del = a.legacy ? '' : '<button type="button" class="act-del" title="Delete" onclick="delActivity('+c.activities.indexOf(a)+')">×</button>';
+    return '<div class="act-item"><span class="act-ic">📝</span>'+
+      '<div class="act-body"><div class="act-top"><b>Note</b><span class="act-time">'+(a.legacy?'earlier':relTime(a.at))+'</span></div>'+
+      '<div class="act-note">'+esc(a.note||'')+'</div>'+
+      (a.by?'<div class="act-by">'+esc(a.by)+'</div>':'')+'</div>'+del+'</div>';
+  }).join('');
+}
+function saveNote(){
+  if(!editingId){ alert('Save the customer first, then you can log notes.'); return; }
+  var txt=el('c-note-new').value.trim(); if(!txt){ return; }
+  el('c-note-new').value='';
+  logActivity(editingId, 'note', txt);
+  var c=clients.find(function(x){return x.id===editingId;}); renderNotesLog(c);
 }
 function collectCreds(){
   var out=[]; el('cred-list').querySelectorAll('.cred-row').forEach(function(r){
@@ -1052,7 +1085,7 @@ async function saveClient(){
     onboarding_fee:Number(el('c-onboard').value)||null, deal_value:Number(el('c-onboard').value)||null,
     monthly_charge:Number(el('c-monthly').value)||null,
     domain:el('c-domain').value.trim(), hosting:el('c-hosting').value.trim(),
-    notes:el('c-notes').value.trim(), credentials:collectCreds(), services:selectedServices(),
+    credentials:collectCreds(), services:selectedServices(),
     follow_up: el('c-followup').value || null
   };
   if(rec.stage==='published'){ var ex=editingId&&clients.find(function(x){return x.id===editingId;}); if(!ex||!ex.published_at) rec.published_at=new Date().toISOString().slice(0,10); }
