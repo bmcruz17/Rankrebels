@@ -720,11 +720,12 @@ async function findLeads(){
   try{
     var r=await fetch('/api/places',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t},
       body:JSON.stringify({textQuery:q, minRating:Number(el('lf-rating').value)||0, minReviews:Number(el('lf-reviews').value)||0, onlyNoWebsite:el('lf-nosite').checked})});
-    var d=await r.json().catch(function(){return {};});
-    if(d.error){ box.innerHTML='<div class="panel"><div class="empty" style="padding:18px">'+esc(d.error)+'</div></div>'; return; }
+    if(r.status===404){ box.innerHTML='<div class="panel"><div class="empty" style="padding:18px">Lead finder not deployed yet — redeploy the site in Cloudflare, then try again.</div></div>'; return; }
+    var d=await r.json().catch(function(){return {error:'Unexpected response (HTTP '+r.status+').'};});
+    if(d.error){ box.innerHTML='<div class="panel"><div class="empty" style="padding:18px;white-space:pre-wrap">'+esc(d.error)+'</div></div>'; return; }
     lastLeads=d.places||[];
     renderLeads();
-  }catch(e){ box.innerHTML='<div class="panel"><div class="empty" style="padding:18px">Could not reach the lead finder.</div></div>'; }
+  }catch(e){ box.innerHTML='<div class="panel"><div class="empty" style="padding:18px">Could not reach the lead finder ('+esc(e.message||'network error')+').</div></div>'; }
 }
 function leadExists(name, phone){ return clients.some(function(c){ return (phone&&c.phone&&telDigits(c.phone)===telDigits(phone)) || (c.business_name||'').toLowerCase()===(name||'').toLowerCase(); }); }
 function renderLeads(){

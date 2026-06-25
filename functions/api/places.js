@@ -24,9 +24,9 @@ export async function onRequestPost({ request, env }) {
       'X-Goog-Api-Key': env.GOOGLE_PLACES_API_KEY,
       'X-Goog-FieldMask': 'places.id,places.displayName,places.formattedAddress,places.rating,places.userRatingCount,places.websiteUri,places.nationalPhoneNumber,places.googleMapsUri,places.businessStatus'
     },
-    body: JSON.stringify({ textQuery: textQuery, maxResultCount: 20 })
+    body: JSON.stringify({ textQuery: textQuery, pageSize: 20 })
   });
-  if (!r.ok) { const d = await r.text(); return json({ error: 'Places API error.', detail: d.slice(0, 400) }, 502); }
+  if (!r.ok) { const d = await r.text(); return json({ error: 'Google Places error — ' + (d || ('HTTP ' + r.status)).slice(0, 400) }, 502); }
   const data = await r.json();
 
   let places = (data.places || []).map(p => ({
