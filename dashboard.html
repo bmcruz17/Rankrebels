@@ -1374,14 +1374,16 @@ function partnerName(w){ return w==='company'?'Company':(w||'').charAt(0).toUppe
 function renderReimbursements(){
   var bx=el('reimb-balance'); if(!bx) return;
   var ob=owedTo('brandon'), oe=owedTo('eric');
-  function line(name,owed,fronted){
+  function line(who,name,owed,fronted){
     if(Math.abs(owed)<=0.005) return '<div class="gs-row"><span>'+name+' — settled'+(fronted>0?' ('+money(fronted)+' fronted)':'')+'</span><b style="color:var(--brand)">$0</b></div>';
     if(owed<0) return '<div class="gs-row"><span>'+name+' owes the company</span><b style="color:var(--muted)">'+money(-owed)+'</b></div>';
-    return '<div class="gs-row"><span><b>Company owes '+name+'</b> <span style="color:var(--muted-2)">('+money(fronted)+' fronted)</span></span><b style="color:var(--accent);font-size:16px">'+money(owed)+'</b></div>';
+    return '<div class="gs-row"><span><b>Company owes '+name+'</b> <span style="color:var(--muted-2)">('+money(fronted)+' fronted)</span></span>'+
+      '<span style="display:flex;align-items:center;gap:10px"><b style="color:var(--accent);font-size:16px">'+money(owed)+'</b>'+
+      '<button type="button" class="btn btn-ghost btn-sm" onclick="settleUp(\''+who+'\')">Settle up</button></span></div>';
   }
   var allSquare=(Math.abs(ob)<=0.005 && Math.abs(oe)<=0.005);
   bx.innerHTML=(allSquare?'<div style="font-size:16px;color:var(--brand);margin-bottom:6px">All square — the company doesn’t owe either partner right now. 🎉</div>':'')+
-    line('Brandon', ob, frontedBy('brandon'))+ line('Eric', oe, frontedBy('eric'));
+    line('brandon','Brandon', ob, frontedBy('brandon'))+ line('eric','Eric', oe, frontedBy('eric'));
   var t=el('reimb-tbl'); if(!t) return;
   if(!reimbursements.length){ t.innerHTML='<tbody><tr><td class="empty">No reimbursements logged yet. Record one above (company → partner, or partner → partner).</td></tr></tbody>'; return; }
   var rows=reimbursements.map(function(p){
@@ -1389,6 +1391,15 @@ function renderReimbursements(){
       '<td class="num"><span class="reveal" onclick="delReimbursement(\''+p.id+'\')">delete</span></td></tr>';
   }).join('');
   t.innerHTML='<thead><tr><th>Reimbursement</th><th class="num">Amount</th><th>Method</th><th>Date</th><th></th></tr></thead><tbody>'+rows+'</tbody>';
+}
+function settleUp(who){
+  var owed=owedTo(who); if(owed<=0.005) return;
+  el('rb-dir').value='company|'+who;
+  el('rb-amount').value=owed.toFixed(2);
+  if(!el('rb-method').value.trim()) el('rb-method').value='Transfer';
+  if(!el('rb-date').value) el('rb-date').value=new Date().toISOString().slice(0,10);
+  el('rb-amount').focus();
+  try{ el('rb-amount').scrollIntoView({behavior:'smooth',block:'center'}); }catch(e){}
 }
 async function logReimbursement(){
   var parts=(el('rb-dir').value||'company|brandon').split('|');
