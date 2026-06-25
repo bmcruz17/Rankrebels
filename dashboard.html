@@ -424,6 +424,23 @@
         <button type="button" class="btn btn-ghost btn-sm" onclick="calendarFollowUp()">📅 Add follow-up to Calendar</button>
       </div>
     </div>
+    <div class="field" id="charges-section" style="display:none">
+      <label>Charges &amp; invoicing <span style="color:var(--muted-2)">(costs you fronted for this customer to bill back)</span></label>
+      <div id="charge-list"></div>
+      <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;margin-top:8px">
+        <div class="field" style="margin:0;flex:1;min-width:150px"><label>Description</label><input id="ch-desc" placeholder="Covered Google past-due balance"></div>
+        <div class="field" style="margin:0;width:100px"><label>Amount ($)</label><input id="ch-amount" type="number" step="0.01" placeholder="58.85"></div>
+        <div class="field" style="margin:0;width:140px"><label>Date</label><input id="ch-date" type="date"></div>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="addCharge()">+ Add charge</button>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)">
+        <span style="font-size:14px">Unpaid balance: <b id="charge-balance" style="color:var(--accent)">$0</b></span>
+        <span style="display:flex;gap:8px">
+          <button type="button" class="btn btn-ghost btn-sm" onclick="generateInvoice()">🧾 Generate invoice</button>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="emailInvoice()">✉️ Email invoice</button>
+        </span>
+      </div>
+    </div>
     <div class="field">
       <label>Credentials &amp; web-dev info</label>
       <p style="margin:0 0 10px;font-size:12.5px;color:var(--muted);line-height:1.5">The client's website logins so any teammate can manage their site — e.g. WordPress/CMS admin username &amp; password, domain registrar login, hosting/cPanel login, GoDaddy/Cloudflare account, FTP, or API keys. Stored private to the team only. Add one row per login.</p>
@@ -484,7 +501,7 @@ var EMAIL_TO_ACQ = {'brandonmcruz@mac.com':'brandon','eric.paul.ellsworth@gmail.
 var EXPENSE_CATEGORIES = ['AI','Hosting','Marketing','Legal','Insurance','Rent','Phone Bill','Emails','Internet','Utilities','Equipment','Software','Travel/Conferences','Miscellaneous','Other'];
 var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-var clients = [], expenses = [], requests = [], reimbursements = [], settings = {brandon_floor:6000, eric_pct:0.35};
+var clients = [], expenses = [], requests = [], reimbursements = [], charges = [], settings = {brandon_floor:6000, eric_pct:0.35};
 var custSort = 'name', editingId = null, projRows = [], me = null;
 
 /* ===== helpers ===== */
@@ -646,6 +663,8 @@ async function loadAll(){
   requests = (rq && !rq.error && rq.data) ? rq.data : [];
   var rb = await sb.from('rr_reimbursements').select('*').order('paid_on',{ascending:false});
   reimbursements = (rb && !rb.error && rb.data) ? rb.data : [];
+  var ch = await sb.from('rr_charges').select('*').order('charge_date',{ascending:false});
+  charges = (ch && !ch.error && ch.data) ? ch.data : [];
   renderAll();
 }
 function renderAll(){ fillCatList(); renderBoard(); renderCustomers(); renderMoney(); renderBudget(); renderGoals(); renderRequests(); }
@@ -770,6 +789,7 @@ function leadCard(c){
       (c.phone?'<span>'+esc(c.phone)+'</span>':'')+'</div>'+
     '<div class="card-actions">'+contactIcons(c)+stageArrows(c)+'</div>'+
     (la?'<div class="last-act">'+(ACT_ICON[la.type]||'•')+' '+actLabel(la.type)+' · '+relTime(la.at)+(la.note?' — '+esc(la.note):'')+'</div>':'')+
+    (chargeBalance(c.id)>0?'<div class="fu fu-over">💲 Owes '+money(chargeBalance(c.id))+'</div>':'')+
     followUpBadge(c);
   d.addEventListener('dragstart', function(ev){ ev.dataTransfer.setData('text/plain', c.id); d.classList.add('dragging'); });
   d.addEventListener('dragend', function(){ d.classList.remove('dragging'); });
@@ -842,7 +862,97 @@ function openClient(id, presetStage){
   if(creds.length){ creds.forEach(function(r){ addCredRow(r.label,r.value); }); } else { addCredRow(); }
   el('c-delete').style.visibility = c?'visible':'hidden';
   el('gintegrations').style.display = c ? 'block' : 'none';
+  el('charges-section').style.display = c ? 'block' : 'none';
+  renderCharges();
   el('m-client').classList.add('open');
+}
+/* ===== customer charges + invoicing ===== */
+function clientCharges(id){ return charges.filter(function(x){return x.client_id===id;}); }
+function chargeBalance(id){ return clientCharges(id).filter(function(x){return x.status!=='paid';}).reduce(function(a,x){return a+Number(x.amount||0);},0); }
+function chStatusLabel(s){ return {unbilled:'Unbilled',invoiced:'Invoiced',paid:'Paid'}[s]||s; }
+function renderCharges(){
+  var box=el('charge-list'); if(!box) return;
+  if(!editingId){ box.innerHTML=''; el('charge-balance').textContent='$0'; return; }
+  var list=clientCharges(editingId);
+  el('charge-balance').textContent=money(chargeBalance(editingId));
+  if(!list.length){ box.innerHTML='<div class="act-empty">No charges yet. Add one below (e.g. a balance you covered for them).</div>'; return; }
+  box.innerHTML=list.map(function(x){
+    var opts=['unbilled','invoiced','paid'].map(function(s){return '<option value="'+s+'"'+((x.status||'unbilled')===s?' selected':'')+'>'+chStatusLabel(s)+'</option>';}).join('');
+    return '<div class="act-item"><div class="act-body"><div class="act-top"><b>'+esc(x.description||'Charge')+'</b><span>'+money(x.amount)+'</span></div>'+
+      '<div class="act-by">'+(x.charge_date||'')+'</div></div>'+
+      '<select class="mini" style="padding:4px 6px" onchange="setChargeStatus(\''+x.id+'\',this.value)">'+opts+'</select>'+
+      '<button type="button" class="act-del" title="Delete" onclick="delCharge(\''+x.id+'\')">×</button></div>';
+  }).join('');
+}
+async function addCharge(){
+  if(!editingId){ alert('Save the customer first.'); return; }
+  var desc=el('ch-desc').value.trim(), amt=Number(el('ch-amount').value)||0;
+  if(!desc||!amt){ alert('Enter a description and amount.'); return; }
+  var c=clients.find(function(x){return x.id===editingId;});
+  var rec={ client_id:editingId, client_email:(c&&c.email)||null, description:desc, amount:amt,
+    charge_date: el('ch-date').value||new Date().toISOString().slice(0,10), status:'unbilled' };
+  var r=await sb.from('rr_charges').insert(rec).select().single();
+  if(r.error){ alert(r.error.message); return; }
+  if(r.data) charges.unshift(r.data);
+  el('ch-desc').value=''; el('ch-amount').value=''; el('ch-date').value='';
+  renderCharges(); renderBoard();
+  logActivity(editingId,'note','Charge added: '+desc+' — '+money(amt));
+}
+async function setChargeStatus(id, status){
+  var x=charges.find(function(c){return c.id===id;}); if(x) x.status=status;
+  renderCharges(); renderBoard();
+  await sb.from('rr_charges').update({status:status}).eq('id',id);
+}
+async function delCharge(id){
+  if(!confirm('Delete this charge?')) return;
+  charges=charges.filter(function(c){return c.id!==id;});
+  renderCharges(); renderBoard();
+  await sb.from('rr_charges').delete().eq('id',id);
+}
+function invoiceHTML(c, list){
+  var num='RR-'+new Date().toISOString().slice(0,10).replace(/-/g,'')+'-'+String(editingId||'').slice(0,4);
+  var rows=list.map(function(x){ return '<tr><td>'+esc(x.description||'')+'</td><td style="text-align:right">'+money(x.amount)+'</td></tr>'; }).join('');
+  var total=list.reduce(function(a,x){return a+Number(x.amount||0);},0);
+  return '<html><head><meta charset="utf-8"><title>Invoice '+num+'</title><style>'+
+    'body{font-family:-apple-system,Segoe UI,Arial,sans-serif;color:#11241a;max-width:680px;margin:30px auto;padding:0 24px}'+
+    '.hd{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #15803d;padding-bottom:16px}'+
+    '.logo{font-size:24px;font-weight:800}.logo span{color:#15803d}'+
+    'table{width:100%;border-collapse:collapse;margin:24px 0}td,th{padding:10px;border-bottom:1px solid #d7e2d8;text-align:left}'+
+    '.tot{font-size:18px;font-weight:800;text-align:right;padding-top:10px}'+
+    '.muted{color:#50635a;font-size:13px}.pay{background:#f1f6f1;border:1px solid #d7e2d8;border-radius:10px;padding:14px;margin-top:20px;font-size:13.5px}'+
+    '@media print{button{display:none}}</style></head><body>'+
+    '<div class="hd"><div><div class="logo">Rank<span>Rebels</span></div><div class="muted">RankRebels.AI LLC · rankrebels.ai</div></div>'+
+    '<div style="text-align:right"><div style="font-size:20px;font-weight:800">INVOICE</div><div class="muted">'+num+'</div><div class="muted">'+new Date().toLocaleDateString()+'</div></div></div>'+
+    '<div style="margin-top:18px"><div class="muted">Bill to</div><b>'+esc(c.business_name||'')+'</b>'+(c.contact_name?'<br>'+esc(c.contact_name):'')+(c.email?'<br>'+esc(c.email):'')+'</div>'+
+    '<table><thead><tr><th>Description</th><th style="text-align:right">Amount</th></tr></thead><tbody>'+rows+'</tbody></table>'+
+    '<div class="tot">Total due: '+money(total)+'</div>'+
+    '<div class="pay"><b>Payment</b><br>Pay to <b>RankRebels.AI LLC</b> via Venmo, Zelle, or check. Questions? sales@rankrebels.ai.<br>Thank you for your business!</div>'+
+    '<button onclick="window.print()" style="margin-top:20px;background:#15803d;color:#fff;border:none;padding:10px 18px;border-radius:8px;font-weight:700;cursor:pointer">Print / Save as PDF</button>'+
+    '</body></html>';
+}
+function unpaidCharges(){ return clientCharges(editingId).filter(function(x){return x.status!=='paid';}); }
+function generateInvoice(){
+  if(!editingId){ alert('Save the customer first.'); return; }
+  var c=clients.find(function(x){return x.id===editingId;});
+  var list=unpaidCharges();
+  if(!list.length){ alert('No unpaid charges to invoice.'); return; }
+  var w=window.open('','_blank'); if(!w){ alert('Allow pop-ups to view the invoice.'); return; }
+  w.document.write(invoiceHTML(c, list)); w.document.close();
+  if(confirm('Mark these '+list.length+' charge(s) as Invoiced?')){ list.forEach(function(x){ setChargeStatus(x.id,'invoiced'); }); }
+}
+async function emailInvoice(){
+  if(!editingId){ alert('Save the customer first.'); return; }
+  var c=clients.find(function(x){return x.id===editingId;});
+  if(!c.email){ alert('No email on file for this customer.'); return; }
+  var list=unpaidCharges(); if(!list.length){ alert('No unpaid charges to invoice.'); return; }
+  var t=await authToken(); if(!t){ alert('Connect Google first to email the invoice.'); return; }
+  var total=list.reduce(function(a,x){return a+Number(x.amount||0);},0);
+  var lines=list.map(function(x){ return '• '+(x.description||'Charge')+' — '+money(x.amount); }).join('\n');
+  var body='Hi '+(c.contact_name||'there')+',\n\nHere is an invoice for costs we covered on your behalf:\n\n'+lines+'\n\nTotal due: '+money(total)+'\n\nYou can pay RankRebels.AI LLC via Venmo, Zelle, or check. Thanks!\n\n— The Rank Rebels Team';
+  var r=await fetch('/api/google/draft',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t},body:JSON.stringify({to:c.email,subject:'Invoice from Rank Rebels — '+money(total),body:body})});
+  var d=await r.json().catch(function(){return {};});
+  if(d.ok){ logActivity(editingId,'email','Invoice drafted — '+money(total)); if(confirm('Invoice draft created in Gmail. Mark charges Invoiced and open Gmail?')){ list.forEach(function(x){ setChargeStatus(x.id,'invoiced'); }); window.open(d.link,'_blank'); } }
+  else { alert(d.error||'Could not create invoice draft.'); }
 }
 function renderActivityLog(c){
   var box=el('act-log'); if(!box) return;
