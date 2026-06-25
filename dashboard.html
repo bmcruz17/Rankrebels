@@ -5,8 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>RankRebels — Command Center</title>
 <meta name="robots" content="noindex" />
-<meta name="theme-color" content="#ffffff" />
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
+<meta name="theme-color" content="#15803d" />
+<link rel="icon" type="image/png" sizes="32x32" href="/brand/icon-32.png" />
+<link rel="apple-touch-icon" href="/brand/app-icon-180.png" />
+<link rel="manifest" href="/dashboard.webmanifest" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Rank Rebels" />
 <style>
   :root{
     --bg:#ffffff;--bg-soft:#f1f6f1;--panel:#ffffff;--panel-2:#eef3ee;--line:#d7e2d8;
@@ -152,10 +157,14 @@
   <div class="login-card">
     <div class="mark">⚡</div>
     <h1>Rank<span class="grad-text">Rebels</span> Command Center</h1>
-    <p>Team access only. Enter your email and we'll send a one-tap login link.</p>
-    <div class="field"><input id="login-email" type="email" placeholder="you@email.com" autocomplete="email" /></div>
-    <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="sendMagicLink()">Send login link</button>
+    <p>Team access only. Sign in with your email and password.</p>
+    <div class="field"><input id="login-email" type="email" placeholder="you@email.com" autocomplete="email" onkeydown="if(event.key==='Enter')document.getElementById('login-pass').focus()" /></div>
+    <div class="field"><input id="login-pass" type="password" placeholder="Password" autocomplete="current-password" onkeydown="if(event.key==='Enter')signIn()" /></div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="signIn()">Sign in</button>
     <div id="login-msg" class="msg"></div>
+    <div style="margin-top:14px;text-align:center;font-size:13px">
+      <a href="#" onclick="sendReset();return false" style="color:var(--muted);text-decoration:none">Set or reset password</a>
+    </div>
   </div>
 </div>
 
@@ -371,13 +380,26 @@ function el(id){ return document.getElementById(id); }
 function stageName(id){ var s=STAGES.find(function(x){return x.id===id;}); return s?s.name:id; }
 
 /* ===== auth ===== */
-async function sendMagicLink(){
-  var email = el('login-email').value.trim();
-  var msg = el('login-msg');
-  if(!email){ msg.className='msg err'; msg.textContent='Enter your email.'; return; }
-  var {error} = await sb.auth.signInWithOtp({ email: email, options:{ emailRedirectTo: window.location.href.split('#')[0] }});
+async function signIn(){
+  var email=el('login-email').value.trim(), pw=el('login-pass').value, msg=el('login-msg');
+  if(!email||!pw){ msg.className='msg err'; msg.textContent='Enter your email and password.'; return; }
+  msg.className='msg'; msg.textContent='Signing in…';
+  var {error}=await sb.auth.signInWithPassword({ email: email, password: pw });
   if(error){ msg.className='msg err'; msg.textContent=error.message; }
-  else { msg.className='msg ok'; msg.textContent='Check your email — tap the link to log in.'; }
+  // on success, onAuthStateChange fires boot()
+}
+async function sendReset(){
+  var email=el('login-email').value.trim(), msg=el('login-msg');
+  if(!email){ msg.className='msg err'; msg.textContent='Enter your email first, then tap “Set or reset password.”'; return; }
+  var {error}=await sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.href.split('#')[0] });
+  if(error){ msg.className='msg err'; msg.textContent=error.message; }
+  else { msg.className='msg ok'; msg.textContent='Check your email for a link to set your password.'; }
+}
+async function setNewPassword(){
+  var pw=prompt('Set a new password (at least 6 characters):');
+  if(!pw) return;
+  var {error}=await sb.auth.updateUser({ password: pw });
+  alert(error ? ('Could not set password: '+error.message) : 'Password set — you can now sign in with it.');
 }
 async function signOut(){ await sb.auth.signOut(); location.reload(); }
 
@@ -389,7 +411,10 @@ async function boot(){
   el('who-email').textContent = me;
   await loadAll();
 }
-sb.auth.onAuthStateChange(function(_e, session){ if(session){ boot(); } });
+sb.auth.onAuthStateChange(function(e, session){
+  if(e==='PASSWORD_RECOVERY'){ setNewPassword(); return; }
+  if(session){ boot(); }
+});
 
 /* ===== data ===== */
 async function loadAll(){
