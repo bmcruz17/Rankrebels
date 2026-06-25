@@ -321,7 +321,7 @@
       <div class="field"><label>Category</label><select id="e-cat"></select></div>
     </div>
     <div class="grid2">
-      <div class="field"><label>Type</label><select id="e-recurring"><option value="true">Monthly recurring</option><option value="false">One-time</option></select></div>
+      <div class="field"><label>Type</label><select id="e-recurring"><option value="monthly">Monthly recurring</option><option value="yearly">Yearly recurring</option><option value="once">One-time</option></select></div>
       <div class="field"><label>Date withdrawn</label><input id="e-date" type="date"></div>
     </div>
     <div class="modal-actions"><button class="btn btn-ghost btn-sm" id="exp-delete" onclick="deleteExpense()" style="display:none">Delete</button><div style="display:flex;gap:10px">
@@ -558,7 +558,10 @@ function payout(){
     revBrandon:revBrandon,revEric:revEric,mrr:mrrBrandon+mrrEric,onb:onbBrandon+onbEric,
     total:total,floor:floor,pct:pct,above:above,ericAbove:ericAbove,ericPay:ericPay,brandonPay:brandonPay};
 }
-function monthlyExpenses(){ return expenses.filter(function(e){return e.active&&e.recurring;}).reduce(function(a,e){return a+Number(e.amount||0);},0); }
+function expFreq(e){ return e.frequency || (e.recurring?'monthly':'once'); }
+function freqLabel(f){ return f==='monthly'?'Monthly':f==='yearly'?'Yearly':'One-time'; }
+// Monthly run-rate: monthly counts in full, yearly amortizes to /12, one-time excluded
+function monthlyExpenses(){ return expenses.filter(function(e){return e.active!==false;}).reduce(function(a,e){ var f=expFreq(e), amt=Number(e.amount||0); return a+(f==='monthly'?amt:f==='yearly'?amt/12:0); },0); }
 function renderMoney(){
   var p=payout();
   var arr=p.mrr*12;
@@ -591,7 +594,7 @@ function renderMoney(){
   // expenses
   var et='';
   expenses.forEach(function(e){
-    et+='<tr><td>'+esc(e.label)+'</td><td>'+esc(e.category||'')+'</td><td>'+(e.recurring?'Monthly':'One-time')+(e.bill_date?' · '+esc(billLabel(e)):'')+'</td><td class="num">'+money(e.amount)+'</td>'+
+    et+='<tr><td>'+esc(e.label)+'</td><td>'+esc(e.category||'')+'</td><td>'+freqLabel(expFreq(e))+(e.bill_date?' · '+esc(billLabel(e)):'')+'</td><td class="num">'+money(e.amount)+'</td>'+
       '<td class="num" style="white-space:nowrap"><span class="reveal" onclick="openExpense(\''+e.id+'\')">edit</span> · <span class="reveal" onclick="delExpense(\''+e.id+'\')">delete</span></td></tr>';
   });
   if(!expenses.length) et='<tr><td colspan="5" class="empty">No expenses yet.</td></tr>';
@@ -636,8 +639,9 @@ function computeBudget(){
   expenses.forEach(function(e){
     if(e.active===false) return; var amt=Number(e.amount||0); if(!amt) return;
     var cat=EXPENSE_CATEGORIES.indexOf(e.category)>=0?e.category:'Other';
-    if(e.recurring){ var bm=monthIndexInYear(e.bill_date, year); var start=bm>=0?bm:0; for(var m=start;m<12;m++) expByCat[cat][m]+=amt; }
-    else { var idx=monthIndexInYear(e.bill_date, year); if(idx<0) idx=monthIndexInYear(e.created_at, year); expByCat[cat][idx>=0?idx:new Date().getMonth()]+=amt; }
+    var f=expFreq(e);
+    if(f==='monthly'){ var bm=monthIndexInYear(e.bill_date, year); var start=bm>=0?bm:0; for(var m=start;m<12;m++) expByCat[cat][m]+=amt; }
+    else { /* yearly or one-time: a single hit in its bill month within this year */ var idx=monthIndexInYear(e.bill_date, year); if(idx<0) idx=monthIndexInYear(e.created_at, year); expByCat[cat][idx>=0?idx:new Date().getMonth()]+=amt; }
   });
   var expTotal=z(); EXPENSE_CATEGORIES.forEach(function(c){ for(var m=0;m<12;m++) expTotal[m]+=expByCat[c][m]; });
   var net=z(); for(var m=0;m<12;m++) net[m]=incomeTotal[m]-expTotal[m];
@@ -691,19 +695,25 @@ function openExpense(id){
   el('e-label').value = e ? (e.label||'') : '';
   el('e-amount').value = e ? (e.amount||'') : '';
   el('e-cat').value = e ? (e.category||'') : '';
-  el('e-recurring').value = e ? String(!!e.recurring) : 'true';
+  el('e-recurring').value = e ? expFreq(e) : 'monthly';
   el('e-date').value = e ? (e.bill_date||'') : '';
   el('exp-delete').style.display = e ? 'inline-flex' : 'none';
   el('m-exp').classList.add('open');
 }
 async function saveExpense(){
   var label=el('e-label').value.trim(); if(!label){ alert('Label required.'); return; }
+  var freq=el('e-recurring').value;
   var rec={label:label, amount:Number(el('e-amount').value)||0, category:el('e-cat').value.trim(),
-    recurring:el('e-recurring').value==='true', bill_date: el('e-date').value||null};
+    recurring:freq==='monthly', frequency:freq, bill_date: el('e-date').value||null};
   async function run(p){ return editingExpense ? sb.from('rr_expenses').update(p).eq('id',editingExpense) : sb.from('rr_expenses').insert(p); }
   var r=await run(rec);
-  // Degrade gracefully if the bill_date column hasn't been added to the table yet
-  if(r.error && /bill_date|column|schema cache/i.test(r.error.message||'')){ var rec2=Object.assign({},rec); delete rec2.bill_date; r=await run(rec2); }
+  // Degrade gracefully if an optional column (frequency / bill_date) hasn't been added to the table yet
+  for(var i=0;i<2 && r.error && /frequency|bill_date|column|schema cache/i.test(r.error.message||'');i++){
+    if(/frequency/i.test(r.error.message)) delete rec.frequency;
+    if(/bill_date/i.test(r.error.message)) delete rec.bill_date;
+    else if(!/frequency/i.test(r.error.message)){ delete rec.frequency; delete rec.bill_date; }
+    r=await run(rec);
+  }
   if(r.error){ alert(r.error.message); return; }
   closeModal('m-exp'); await loadAll();
 }
@@ -733,7 +743,7 @@ function exportExcel(){
 
   // Expenses
   var exp=[['Label','Category','Type','Amount','Withdrawn']];
-  expenses.forEach(function(e){ exp.push([e.label||'', e.category||'', e.recurring?'Monthly':'One-time', Number(e.amount||0), e.bill_date||'']); });
+  expenses.forEach(function(e){ exp.push([e.label||'', e.category||'', freqLabel(expFreq(e)), Number(e.amount||0), e.bill_date||'']); });
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(exp), 'Expenses');
 
   // Money summary — current split
@@ -783,11 +793,12 @@ function downloadExpenseTemplate(){
   var wb=XLSX.utils.book_new();
   var sheet=[['Label','Amount','Category','Type','Date withdrawn'],
     ['Example: Figma subscription', 15, 'Software', 'Monthly', '2026-01-05'],
+    ['Example: Domain renewal', 168, 'Domain', 'Yearly', '2026-03-01'],
     ['Example: LLC filing fee', 59, 'Legal', 'One-time', '2026-01-12']];
   XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(sheet), 'Expenses');
   var ref=[['How to use this sheet'],
     ['1. Fill in one expense per row under the Expenses tab (delete the example rows).'],
-    ['2. Type must be "Monthly" (recurring) or "One-time".'],
+    ['2. Type must be "Monthly", "Yearly", or "One-time".'],
     ['3. Date withdrawn = the day it leaves the account (YYYY-MM-DD). Optional.'],
     ['4. Save, then click "Import sheet" in the dashboard.'],
     [''],
@@ -811,19 +822,21 @@ async function importExpenses(input){
       var amount=Number(r[1])||0;
       var category=(r[2]==null?'':String(r[2])).trim()||'Other';
       var type=(r[3]==null?'':String(r[3])).trim().toLowerCase();
-      var recurring=!/one.?time|once|single/.test(type); // default to recurring unless explicitly one-time
+      var freq=/year|annual/.test(type)?'yearly':/one.?time|once|single/.test(type)?'once':'monthly';
       var bd=r[4];
       if(bd instanceof Date){ bd=bd.toISOString().slice(0,10); }
       else { bd=(bd==null?'':String(bd)).trim()||null; }
-      recs.push({label:label, amount:amount, category:category, recurring:recurring, bill_date:bd});
+      recs.push({label:label, amount:amount, category:category, recurring:freq==='monthly', frequency:freq, bill_date:bd});
     });
     input.value='';
     if(!recs.length){ alert('No expense rows found. Make sure data is on a sheet named "Expenses" with the template columns.'); return; }
     if(!confirm('Import '+recs.length+' expense'+(recs.length>1?'s':'')+' into the dashboard?')) return;
     var r=await sb.from('rr_expenses').insert(recs);
-    if(r.error && /bill_date|column|schema cache/i.test(r.error.message||'')){
-      var recs2=recs.map(function(x){ var c=Object.assign({},x); delete c.bill_date; return c; });
-      r=await sb.from('rr_expenses').insert(recs2);
+    for(var k=0;k<2 && r.error && /frequency|bill_date|column|schema cache/i.test(r.error.message||'');k++){
+      var dropF=/frequency/i.test(r.error.message), dropB=/bill_date/i.test(r.error.message);
+      if(!dropF && !dropB){ dropF=true; dropB=true; }
+      recs=recs.map(function(x){ var c=Object.assign({},x); if(dropF) delete c.frequency; if(dropB) delete c.bill_date; return c; });
+      r=await sb.from('rr_expenses').insert(recs);
     }
     if(r.error){ alert('Import failed: '+r.error.message); return; }
     await loadAll();
