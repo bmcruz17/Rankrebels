@@ -283,6 +283,24 @@
       </div>
       <table id="expense-tbl"></table>
     </div>
+
+    <div class="panel">
+      <div class="panel-h">Partner reimbursements
+        <span style="font-weight:500;font-size:12.5px;color:var(--muted)">
+          Eric covers <input class="mini" id="set-expsplit" type="number" step="1" style="display:inline-block;width:56px;padding:5px 8px" onchange="saveSettings()">% of shared expenses
+        </span>
+      </div>
+      <div id="reimb-balance" style="padding:16px 18px"></div>
+      <div style="padding:0 18px 12px;display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;border-top:1px solid var(--line)">
+        <div class="field" style="margin:12px 0 0"><label>Payment</label>
+          <select id="rb-dir" style="padding:8px"><option value="eric_brandon">Eric → Brandon</option><option value="brandon_eric">Brandon → Eric</option></select></div>
+        <div class="field" style="margin:0;width:110px"><label>Amount ($)</label><input id="rb-amount" type="number" min="0" placeholder="50"></div>
+        <div class="field" style="margin:0;width:140px"><label>Method</label><input id="rb-method" placeholder="Venmo"></div>
+        <div class="field" style="margin:0;width:150px"><label>Date</label><input id="rb-date" type="date"></div>
+        <button class="btn btn-primary btn-sm" onclick="logReimbursement()" style="margin-bottom:2px">Log payment</button>
+      </div>
+      <table id="reimb-tbl"></table>
+    </div>
   </div>
 
   <!-- BUDGET -->
@@ -435,6 +453,9 @@
       <div class="field"><label>Type</label><select id="e-recurring"><option value="monthly">Monthly recurring</option><option value="yearly">Yearly recurring</option><option value="once">One-time</option></select></div>
       <div class="field"><label>Date withdrawn</label><input id="e-date" type="date"></div>
     </div>
+    <div class="field"><label>Paid by <span style="color:var(--muted-2)">(who fronted the money — used for reimbursements)</span></label>
+      <select id="e-paidby"><option value="business">Business account</option><option value="brandon">Brandon (personal)</option><option value="eric">Eric (personal)</option></select>
+    </div>
     <div class="modal-actions"><button class="btn btn-ghost btn-sm" id="exp-delete" onclick="deleteExpense()" style="display:none">Delete</button><div style="display:flex;gap:10px">
       <button class="btn btn-ghost" onclick="closeModal('m-exp')">Cancel</button>
       <button class="btn btn-primary" onclick="saveExpense()">Save</button>
@@ -463,7 +484,7 @@ var EMAIL_TO_ACQ = {'brandonmcruz@mac.com':'brandon','eric.paul.ellsworth@gmail.
 var EXPENSE_CATEGORIES = ['AI','Hosting','Marketing','Legal','Insurance','Rent','Phone Bill','Emails','Internet','Utilities','Equipment','Software','Travel/Conferences','Miscellaneous','Other'];
 var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-var clients = [], expenses = [], requests = [], settings = {brandon_floor:6000, eric_pct:0.35};
+var clients = [], expenses = [], requests = [], reimbursements = [], settings = {brandon_floor:6000, eric_pct:0.35};
 var custSort = 'name', editingId = null, projRows = [], me = null;
 
 /* ===== helpers ===== */
@@ -623,6 +644,8 @@ async function loadAll(){
   if(s.data){ settings = s.data; }
   var rq = await sb.from('rr_requests').select('*').order('created_at',{ascending:false});
   requests = (rq && !rq.error && rq.data) ? rq.data : [];
+  var rb = await sb.from('rr_reimbursements').select('*').order('paid_on',{ascending:false});
+  reimbursements = (rb && !rb.error && rb.data) ? rb.data : [];
   renderAll();
 }
 function renderAll(){ fillCatList(); renderBoard(); renderCustomers(); renderMoney(); renderBudget(); renderGoals(); renderRequests(); }
@@ -977,11 +1000,13 @@ function renderMoney(){
   // expenses
   var et='';
   expenses.forEach(function(e){
-    et+='<tr><td>'+esc(e.label)+'</td><td>'+esc(e.category||'')+'</td><td>'+freqLabel(expFreq(e))+(e.bill_date?' · '+esc(billLabel(e)):'')+'</td><td class="num">'+money(e.amount)+'</td>'+
+    var paidTag=(e.paid_by==='brandon'||e.paid_by==='eric')?' · 💳 '+e.paid_by.charAt(0).toUpperCase()+e.paid_by.slice(1):'';
+    et+='<tr><td>'+esc(e.label)+'</td><td>'+esc(e.category||'')+'</td><td>'+freqLabel(expFreq(e))+(e.bill_date?' · '+esc(billLabel(e)):'')+paidTag+'</td><td class="num">'+money(e.amount)+'</td>'+
       '<td class="num" style="white-space:nowrap"><span class="reveal" onclick="openExpense(\''+e.id+'\')">edit</span> · <span class="reveal" onclick="delExpense(\''+e.id+'\')">delete</span></td></tr>';
   });
   if(!expenses.length) et='<tr><td colspan="5" class="empty">No expenses yet.</td></tr>';
   el('expense-tbl').innerHTML='<thead><tr><th>Label</th><th>Category</th><th>Type</th><th class="num">Amount</th><th></th></tr></thead><tbody>'+et+'</tbody>';
+  renderReimbursements();
 }
 function live_count(){ return clients.filter(function(c){return c.stage==='published';}).length; }
 
@@ -1065,9 +1090,61 @@ function wf(l,v,cls){ return '<tr><td>'+(cls?'<span class="'+cls+'">'+l.replace(
 async function saveSettings(){
   settings.brandon_floor=Number(el('set-floor').value)||0;
   settings.eric_pct=(Number(el('set-eric').value)||0)/100;
-  await sb.from('rr_settings').update({brandon_floor:settings.brandon_floor, eric_pct:settings.eric_pct}).eq('id',1);
+  var es=el('set-expsplit'); if(es) settings.exp_eric_share=(Number(es.value)||0)/100;
+  var patch={brandon_floor:settings.brandon_floor, eric_pct:settings.eric_pct, exp_eric_share:settings.exp_eric_share};
+  var r=await sb.from('rr_settings').update(patch).eq('id',1);
+  if(r.error && /exp_eric_share|column|schema cache/i.test(r.error.message||'')){ delete patch.exp_eric_share; await sb.from('rr_settings').update(patch).eq('id',1); }
   renderMoney(); renderGoals();
 }
+function expShareEric(){ return (settings.exp_eric_share!=null)?Number(settings.exp_eric_share):0.5; }
+// Net partner balance from personally-paid expenses + logged payments.
+// Positive = Eric owes Brandon; negative = Brandon owes Eric.
+function reimbBalance(){
+  var es=expShareEric(), bs=1-es, owed=0; // owed: + means Eric owes Brandon
+  expenses.forEach(function(e){
+    if(e.active===false) return; var amt=Number(e.amount||0); if(!amt) return;
+    if(e.paid_by==='brandon') owed += es*amt;       // Eric owes his share to Brandon
+    else if(e.paid_by==='eric') owed -= bs*amt;      // Brandon owes his share to Eric
+  });
+  reimbursements.forEach(function(p){
+    var amt=Number(p.amount||0);
+    if(p.from_partner==='eric') owed -= amt;          // Eric paid Brandon back → reduces what Eric owes
+    else if(p.from_partner==='brandon') owed += amt;  // Brandon paid Eric → reduces what Brandon owes
+  });
+  return owed;
+}
+function renderReimbursements(){
+  if(el('set-expsplit')) el('set-expsplit').value=Math.round(expShareEric()*100);
+  var bal=reimbBalance(); var bx=el('reimb-balance'); if(!bx) return;
+  var fronted=function(who){ return expenses.filter(function(e){return e.active!==false && e.paid_by===who;}).reduce(function(a,e){return a+Number(e.amount||0);},0); };
+  var bFront=fronted('brandon'), eFront=fronted('eric');
+  var owedTxt, owedCls;
+  if(Math.abs(bal)<0.005){ owedTxt='All square — nobody owes anybody right now. 🎉'; owedCls='var(--brand)'; }
+  else if(bal>0){ owedTxt='<b>Eric owes Brandon '+money(bal)+'</b>'; owedCls='var(--accent)'; }
+  else { owedTxt='<b>Brandon owes Eric '+money(-bal)+'</b>'; owedCls='var(--accent)'; }
+  bx.innerHTML='<div style="font-size:18px;color:'+owedCls+';margin-bottom:8px">'+owedTxt+'</div>'+
+    '<div style="font-size:12.5px;color:var(--muted)">Brandon fronted '+money(bFront)+' personally · Eric fronted '+money(eFront)+' · Eric covers '+Math.round(expShareEric()*100)+'% of shared expenses.</div>';
+  // ledger
+  var t=el('reimb-tbl'); if(!t) return;
+  if(!reimbursements.length){ t.innerHTML='<tbody><tr><td class="empty">No payments logged yet. Record a Venmo payback above.</td></tr></tbody>'; return; }
+  var rows=reimbursements.map(function(p){
+    var dir=(p.from_partner==='eric'?'Eric → Brandon':'Brandon → Eric');
+    return '<tr><td>'+esc(dir)+'</td><td class="num">'+money(p.amount)+'</td><td>'+esc(p.method||'')+'</td><td>'+(p.paid_on||'')+'</td>'+
+      '<td class="num"><span class="reveal" onclick="delReimbursement(\''+p.id+'\')">delete</span></td></tr>';
+  }).join('');
+  t.innerHTML='<thead><tr><th>Payment</th><th class="num">Amount</th><th>Method</th><th>Date</th><th></th></tr></thead><tbody>'+rows+'</tbody>';
+}
+async function logReimbursement(){
+  var dir=el('rb-dir').value, amt=Number(el('rb-amount').value)||0;
+  if(!amt){ alert('Enter an amount.'); return; }
+  var rec={ from_partner: dir==='eric_brandon'?'eric':'brandon', to_partner: dir==='eric_brandon'?'brandon':'eric',
+    amount: amt, method: el('rb-method').value.trim()||'Venmo', paid_on: el('rb-date').value||new Date().toISOString().slice(0,10) };
+  var r=await sb.from('rr_reimbursements').insert(rec);
+  if(r.error){ alert(r.error.message); return; }
+  el('rb-amount').value=''; el('rb-method').value=''; el('rb-date').value='';
+  await loadAll(); setTab('money');
+}
+async function delReimbursement(id){ if(confirm('Delete this payment?')){ await sb.from('rr_reimbursements').delete().eq('id',id); await loadAll(); } }
 
 /* expenses */
 var editingExpense = null;
@@ -1080,6 +1157,7 @@ function openExpense(id){
   el('e-cat').value = e ? (e.category||'') : '';
   el('e-recurring').value = e ? expFreq(e) : 'monthly';
   el('e-date').value = e ? (e.bill_date||'') : '';
+  el('e-paidby').value = e ? (e.paid_by||'business') : 'business';
   el('exp-delete').style.display = e ? 'inline-flex' : 'none';
   el('m-exp').classList.add('open');
 }
@@ -1087,14 +1165,16 @@ async function saveExpense(){
   var label=el('e-label').value.trim(); if(!label){ alert('Label required.'); return; }
   var freq=el('e-recurring').value;
   var rec={label:label, amount:Number(el('e-amount').value)||0, category:el('e-cat').value.trim(),
-    recurring:freq==='monthly', frequency:freq, bill_date: el('e-date').value||null};
+    recurring:freq==='monthly', frequency:freq, bill_date: el('e-date').value||null, paid_by: el('e-paidby').value};
   async function run(p){ return editingExpense ? sb.from('rr_expenses').update(p).eq('id',editingExpense) : sb.from('rr_expenses').insert(p); }
   var r=await run(rec);
-  // Degrade gracefully if an optional column (frequency / bill_date) hasn't been added to the table yet
-  for(var i=0;i<2 && r.error && /frequency|bill_date|column|schema cache/i.test(r.error.message||'');i++){
-    if(/frequency/i.test(r.error.message)) delete rec.frequency;
-    if(/bill_date/i.test(r.error.message)) delete rec.bill_date;
-    else if(!/frequency/i.test(r.error.message)){ delete rec.frequency; delete rec.bill_date; }
+  // Degrade gracefully if an optional column (frequency / bill_date / paid_by) hasn't been added to the table yet
+  for(var i=0;i<3 && r.error && /frequency|bill_date|paid_by|column|schema cache/i.test(r.error.message||'');i++){
+    var m=r.error.message;
+    if(/frequency/i.test(m)) delete rec.frequency;
+    if(/bill_date/i.test(m)) delete rec.bill_date;
+    if(/paid_by/i.test(m)) delete rec.paid_by;
+    if(!/frequency|bill_date|paid_by/i.test(m)){ delete rec.frequency; delete rec.bill_date; delete rec.paid_by; }
     r=await run(rec);
   }
   if(r.error){ alert(r.error.message); return; }
