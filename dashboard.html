@@ -400,7 +400,8 @@
     <div class="field" id="gintegrations" style="display:none">
       <label>Google</label>
       <div class="act-quick">
-        <button type="button" class="btn btn-ghost btn-sm" onclick="draftEmail()">✉️ Draft email in Gmail</button>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="aiDraft(editingId)">🤖 Draft with AI</button>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="draftEmail()">✉️ Blank draft in Gmail</button>
         <button type="button" class="btn btn-ghost btn-sm" onclick="calendarFollowUp()">📅 Add follow-up to Calendar</button>
       </div>
     </div>
@@ -545,6 +546,7 @@ async function emailLead(id){
   if(!c.email){ alert('No email on file for this lead — add one first.'); return; }
   var t=await authToken();
   if(t){
+    if(confirm('Let Claude write a first draft for you?\n\nOK = AI-written draft\nCancel = blank draft')){ return aiDraft(id); }
     var subject='Rank Rebels — '+(c.business_name||'');
     var body='Hi '+(c.contact_name||'there')+',\n\n';
     var r=await fetch('/api/google/draft',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t},body:JSON.stringify({to:c.email,subject:subject,body:body})});
@@ -555,6 +557,22 @@ async function emailLead(id){
   // fallback: open the device mail composer
   logActivity(id,'email','');
   window.location.href='mailto:'+encodeURIComponent(c.email);
+}
+// Have Claude write a tailored first email, then create it as a Gmail draft
+async function aiDraft(id){
+  var c=clients.find(function(x){return x.id===id;}); if(!c){ alert('Save the customer first.'); return; }
+  if(!c.email){ alert('No email on file for this lead — add one first.'); return; }
+  var t=await authToken(); if(!t){ alert('Connect Google first.'); return; }
+  var lead={ business_name:c.business_name, contact_name:c.contact_name, stage:stageName(c.stage),
+    interested_in:(Array.isArray(c.services)?c.services.join(', '):''), monthly_charge:c.monthly_charge, notes:c.notes };
+  var btn=el('gbtn'); if(btn) btn.textContent='✍️ Drafting…';
+  try{
+    var r=await fetch('/api/google/draft-ai',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t},body:JSON.stringify({to:c.email,lead:lead})});
+    var d=await r.json().catch(function(){return {};});
+    if(d.ok){ logActivity(id,'email','AI-drafted: '+(d.subject||'')); if(confirm('AI draft created in Gmail'+(d.subject?(': “'+d.subject+'”'):'')+'.\n\nOpen Gmail to review and send?')) window.open(d.link,'_blank'); }
+    else { alert(d.error||'Could not create AI draft.'); }
+  }catch(e){ alert('Could not reach the AI drafting service.'); }
+  finally{ checkGoogle(); }
 }
 // From a card: set a follow-up reminder (days from now or a date), save it, optionally add to Calendar
 async function setReminder(id){
