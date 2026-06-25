@@ -4,13 +4,18 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<!-- Google tag (gtag.js) -->
+<!-- Google tag (gtag.js) with consent mode -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-EMCTFLDP9K"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
+  // Don't store analytics cookies until the visitor accepts (see cookie banner).
+  gtag('consent', 'default', { 'analytics_storage': 'denied' });
   gtag('config', 'G-EMCTFLDP9K');
+  if (localStorage.getItem('rr_cookie_consent') === 'granted') {
+    gtag('consent', 'update', { 'analytics_storage': 'granted' });
+  }
 </script>
 <title>RankRebels — Websites that rank. Built to win.</title>
 <meta name="description" content="RankRebels builds high-converting, search-optimized websites for local businesses that refuse to blend in. Found on Google and AI search, built fast, managed for growth." />
@@ -446,10 +451,21 @@
 <footer>
   <div class="wrap foot-inner">
     <div class="logo" style="font-size:16px"><span class="mark" style="width:28px;height:28px;font-size:15px">⚡</span> Rank<span class="grad-text">Rebels</span></div>
-    <div>© <span id="year"></span> RankRebels · rankrebels.ai · <a href="/dashboard" style="color:var(--brand)">Team login →</a></div>
+    <div>© <span id="year"></span> RankRebels.AI LLC · <a href="/privacy" style="color:var(--brand)">Privacy</a> · <a href="/dashboard" style="color:var(--brand)">Team login →</a></div>
   </div>
 </footer>
 </div><!-- /.site -->
+
+<!-- Cookie consent -->
+<div id="cookie-banner" style="display:none;position:fixed;left:16px;right:16px;bottom:16px;z-index:60;max-width:640px;margin:0 auto;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 16px 40px -12px rgba(20,50,30,.25);padding:16px 18px">
+  <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap;justify-content:space-between">
+    <p style="margin:0;font-size:13.5px;color:var(--muted);flex:1;min-width:240px">We use cookies for analytics to improve our site. See our <a href="/privacy" style="color:var(--brand);font-weight:600">Privacy Policy</a>.</p>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-ghost btn-sm" onclick="cookieConsent(false)" style="padding:9px 14px">Decline</button>
+      <button class="btn btn-primary btn-sm" onclick="cookieConsent(true)" style="padding:9px 14px">Accept</button>
+    </div>
+  </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -492,6 +508,22 @@
       msg.textContent = '✓ Got it — we’ll be in touch within 24 hours with your free audit.';
     }
     return false;
+  }
+
+  /* Cookie consent — gate Google Analytics until the visitor chooses. */
+  (function(){
+    if(!localStorage.getItem('rr_cookie_consent')){
+      var b = document.getElementById('cookie-banner');
+      if(b) b.style.display = 'block';
+    }
+  })();
+  function cookieConsent(accepted){
+    localStorage.setItem('rr_cookie_consent', accepted ? 'granted' : 'denied');
+    if(accepted && typeof gtag === 'function'){
+      gtag('consent', 'update', { 'analytics_storage': 'granted' });
+    }
+    var b = document.getElementById('cookie-banner');
+    if(b) b.style.display = 'none';
   }
 </script>
 </body>
