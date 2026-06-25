@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>RankRebels — Command Center</title>
+<title>Rank Rebels — Team Dashboard</title>
 <meta name="robots" content="noindex" />
 <meta name="theme-color" content="#15803d" />
 <link rel="icon" type="image/png" sizes="32x32" href="/brand/icon-32.png" />
@@ -52,6 +52,10 @@
   .logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:17px;letter-spacing:-.02em}
   .logo .mark{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;background:linear-gradient(135deg,var(--brand),var(--accent));font-size:16px}
   .who{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:10px}
+  .who #who-email{max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  @media(max-width:720px){ .who #who-email{display:none} }
+  /* keyboard focus ring for PC/keyboard users */
+  button:focus-visible,input:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
   .tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin:0;padding:0 20px;position:sticky;top:60px;background:rgba(255,255,255,.85);backdrop-filter:blur(14px);z-index:30;overflow-x:auto}
   .tab{padding:14px 16px;font-weight:600;font-size:14.5px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}
   .tab.on{color:var(--text);border-bottom-color:var(--brand);border-bottom-width:3px;background:rgba(21,128,61,.08)}
@@ -102,6 +106,20 @@
   .cust .foot{margin-top:14px;padding-top:12px;border-top:1px solid var(--line);display:flex;justify-content:space-between;font-size:13px}
   .cust .foot b{color:var(--won)}
   .key-chip{font-size:11px;color:var(--brand-2);background:rgba(199,154,30,.1);border:1px solid var(--line);padding:2px 8px;border-radius:999px}
+
+  /* service add-on tiles + call/text buttons */
+  .svc-list{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .svc{display:flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:10px;padding:9px 11px;cursor:pointer;background:var(--panel);transition:.12s;font-size:13px}
+  .svc:hover{border-color:var(--brand)}
+  .svc.on{border-color:var(--brand);background:rgba(21,128,61,.07)}
+  .svc input{width:16px;height:16px;accent-color:var(--brand);margin:0;cursor:pointer}
+  .svc .sv-nm{font-weight:600}
+  .svc .sv-pr{margin-left:auto;color:var(--muted);white-space:nowrap}
+  .contact-btns{display:flex;gap:6px;margin-top:4px}
+  .cbtn{flex:1;text-align:center;font-size:12.5px;font-weight:600;padding:7px 10px;border-radius:8px;border:1px solid var(--line);text-decoration:none;color:var(--text);background:var(--panel);transition:.12s}
+  .cbtn:hover{border-color:var(--brand);background:rgba(21,128,61,.08)}
+  .cbtn.call{color:var(--brand)}
+  @media(max-width:560px){ .svc-list{grid-template-columns:1fr} }
 
   /* tables */
   .panel{background:var(--bg-soft);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:20px}
@@ -156,7 +174,7 @@
 <div id="login">
   <div class="login-card">
     <div class="mark">⚡</div>
-    <h1>Rank<span class="grad-text">Rebels</span> Command Center</h1>
+    <h1>Rank<span class="grad-text">Rebels</span></h1>
     <p>Team access only. Sign in with your email and password.</p>
     <div class="field"><input id="login-email" type="email" placeholder="you@email.com" autocomplete="email" onkeydown="if(event.key==='Enter')document.getElementById('login-pass').focus()" /></div>
     <div class="field"><input id="login-pass" type="password" placeholder="Password" autocomplete="current-password" onkeydown="if(event.key==='Enter')signIn()" /></div>
@@ -173,7 +191,7 @@
   <header class="top">
     <div class="wrap top-inner">
       <a class="logo" href="/" title="Back to the public site"><span class="mark">⚡</span> Rank<span class="grad-text">Rebels</span></a>
-      <div class="who"><span id="who-email"></span><button class="btn btn-ghost btn-sm" onclick="signOut()">Sign out</button><button id="rrAskBtn" onclick="rrAskToggle()">✨ Ask AI</button></div>
+      <div class="who"><span id="who-email"></span><button class="btn btn-ghost btn-sm" onclick="reportBug()" title="Report a bug or request a fix">🐞 Bug</button><button class="btn btn-ghost btn-sm" onclick="signOut()">Sign out</button><button id="rrAskBtn" onclick="rrAskToggle()">✨ Ask AI</button></div>
     </div>
   </header>
   <div class="tabs wrap" style="max-width:1280px">
@@ -305,6 +323,9 @@
       <div class="field"><label>Stage</label><select id="c-stage"></select></div>
       <div class="field"><label>Acquired by</label><select id="c-acq"><option value="brandon">Brandon</option><option value="eric">Eric</option></select></div>
     </div>
+    <div class="field"><label>Services &amp; add-ons <span style="color:var(--muted-2)">(check what they're buying — auto-fills the fees below)</span></label>
+      <div id="svc-list" class="svc-list"></div>
+    </div>
     <div class="grid2">
       <div class="field"><label>Onboarding fee ($, one-time)</label><input id="c-onboard" type="number" min="0" placeholder="3500"></div>
       <div class="field"><label>Monthly charge ($)</label><input id="c-monthly" type="number" min="0" placeholder="300"></div>
@@ -315,7 +336,8 @@
     </div>
     <div class="field"><label>Notes</label><textarea id="c-notes" rows="2"></textarea></div>
     <div class="field">
-      <label>Credentials &amp; web-dev info <span style="color:var(--muted-2)">(logins, tokens, passwords)</span></label>
+      <label>Credentials &amp; web-dev info</label>
+      <p style="margin:0 0 10px;font-size:12.5px;color:var(--muted);line-height:1.5">The client's website logins so any teammate can manage their site — e.g. WordPress/CMS admin username &amp; password, domain registrar login, hosting/cPanel login, GoDaddy/Cloudflare account, FTP, or API keys. Stored private to the team only. Add one row per login.</p>
       <div id="cred-list"></div>
       <button class="btn btn-ghost btn-sm" type="button" onclick="addCredRow()">+ Add field</button>
     </div>
@@ -377,6 +399,7 @@ var custSort = 'name', editingId = null, projRows = [], me = null;
 function money(n){ n=Number(n||0); return '$'+n.toLocaleString(undefined,{maximumFractionDigits:0}); }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
 function el(id){ return document.getElementById(id); }
+function telDigits(p){ return String(p||'').replace(/[^0-9+]/g,''); }
 function stageName(id){ var s=STAGES.find(function(x){return x.id===id;}); return s?s.name:id; }
 
 /* ===== auth ===== */
@@ -402,6 +425,11 @@ async function setNewPassword(){
   alert(error ? ('Could not set password: '+error.message) : 'Password set — you can now sign in with it.');
 }
 async function signOut(){ await sb.auth.signOut(); location.reload(); }
+function reportBug(){
+  var subj=encodeURIComponent('Rank Rebels dashboard — bug / fix request');
+  var body=encodeURIComponent('What happened (and what you expected):\n\n\n\n---\nReported by: '+(me||'(not signed in)')+'\nPage: '+location.href+'\nWhen: '+new Date().toString());
+  window.location.href='mailto:brandon@rankrebels.ai,eric@rankrebels.ai?subject='+subj+'&body='+body;
+}
 
 async function boot(){
   var {data:{session}} = await sb.auth.getSession();
@@ -496,6 +524,38 @@ function credRow(label, value){
   div.appendChild(a); div.appendChild(b); div.appendChild(x); return div;
 }
 function addCredRow(label,value){ el('cred-list').appendChild(credRow(label,value)); }
+
+/* service add-ons → auto-fill onboarding + monthly */
+var SERVICES=[
+  {key:'website', label:'Website Build', kind:'once', price:2000},
+  {key:'hosting', label:'Hosting', kind:'mo', price:49.99},
+  {key:'seo', label:'SEO', kind:'mo', price:269.99},
+  {key:'bundle', label:'Hosting + SEO bundle', kind:'mo', price:299.99}
+];
+function renderServices(selected){
+  selected=selected||[];
+  el('svc-list').innerHTML=SERVICES.map(function(s){
+    var on=selected.indexOf(s.key)>=0;
+    return '<label class="svc'+(on?' on':'')+'" data-key="'+s.key+'">'+
+      '<input type="checkbox" '+(on?'checked':'')+' onchange="onServiceToggle(this)">'+
+      '<span class="sv-nm">'+s.label+'</span>'+
+      '<span class="sv-pr">'+money(s.price)+(s.kind==='mo'?'/mo':' once')+'</span></label>';
+  }).join('');
+}
+function setSvc(key,val){ var l=el('svc-list').querySelector('.svc[data-key="'+key+'"]'); if(l) l.querySelector('input').checked=val; }
+function selectedServices(){ var out=[]; el('svc-list').querySelectorAll('.svc').forEach(function(l){ if(l.querySelector('input').checked) out.push(l.dataset.key); }); return out; }
+function onServiceToggle(box){
+  if(box && box.checked){
+    var key=box.closest('.svc').dataset.key;
+    if(key==='bundle'){ setSvc('hosting',false); setSvc('seo',false); }
+    if(key==='hosting'||key==='seo'){ setSvc('bundle',false); }
+  }
+  el('svc-list').querySelectorAll('.svc').forEach(function(l){ l.classList.toggle('on', l.querySelector('input').checked); });
+  var keys=selectedServices(), once=0, mo=0;
+  SERVICES.forEach(function(s){ if(keys.indexOf(s.key)>=0){ if(s.kind==='once') once+=s.price; else mo+=s.price; } });
+  el('c-onboard').value = once ? once : '';
+  el('c-monthly').value = mo ? Number(mo.toFixed(2)) : '';
+}
 function openClient(id, presetStage){
   fillStageSelect(); editingId=id||null;
   var c = id ? clients.find(function(x){return x.id===id;}) : null;
@@ -505,6 +565,7 @@ function openClient(id, presetStage){
   el('c-address').value=c?(c.address||''):''; el('c-stage').value=c?c.stage:(presetStage||'lead');
   el('c-acq').value=c?c.acquired_by:(EMAIL_TO_ACQ[me]||'brandon');
   el('c-onboard').value=c?(c.onboarding_fee||''):''; el('c-monthly').value=c?(c.monthly_charge||''):'';
+  renderServices(c&&Array.isArray(c.services)?c.services:[]);
   el('c-domain').value=c?(c.domain||''):''; el('c-hosting').value=c?(c.hosting||''):'';
   el('c-notes').value=c?(c.notes||''):'';
   el('cred-list').innerHTML='';
@@ -529,11 +590,14 @@ async function saveClient(){
     onboarding_fee:Number(el('c-onboard').value)||null, deal_value:Number(el('c-onboard').value)||null,
     monthly_charge:Number(el('c-monthly').value)||null,
     domain:el('c-domain').value.trim(), hosting:el('c-hosting').value.trim(),
-    notes:el('c-notes').value.trim(), credentials:collectCreds()
+    notes:el('c-notes').value.trim(), credentials:collectCreds(), services:selectedServices()
   };
   if(rec.stage==='published'){ var ex=editingId&&clients.find(function(x){return x.id===editingId;}); if(!ex||!ex.published_at) rec.published_at=new Date().toISOString().slice(0,10); }
-  if(editingId){ var r=await sb.from('rr_clients').update(rec).eq('id',editingId).select().single(); if(r.error){alert(r.error.message);return;} }
-  else { var r2=await sb.from('rr_clients').insert(rec).select().single(); if(r2.error){alert(r2.error.message);return;} }
+  async function run(p){ return editingId ? sb.from('rr_clients').update(p).eq('id',editingId).select().single() : sb.from('rr_clients').insert(p).select().single(); }
+  var r=await run(rec);
+  // Degrade gracefully if the optional `services` column hasn't been added to the table yet
+  if(r.error && /services|column|schema cache/i.test(r.error.message||'')){ var rec2=Object.assign({},rec); delete rec2.services; r=await run(rec2); }
+  if(r.error){ alert(r.error.message); return; }
   closeModal('m-client'); await loadAll();
 }
 async function deleteClient(){
@@ -565,6 +629,7 @@ function renderCustomers(){
       (c.domain?'<div class="line"><span class="k">Domain</span>'+esc(c.domain)+'</div>':'')+
       (c.hosting?'<div class="line"><span class="k">Hosting</span>'+esc(c.hosting)+'</div>':'')+
       (creds.length?'<div class="line"><span class="k">Secrets</span><span class="key-chip">🔒 '+creds.length+' saved — tap to view</span></div>':'')+
+      (c.phone?'<div class="contact-btns"><a class="cbtn call" href="tel:'+telDigits(c.phone)+'" onclick="event.stopPropagation()">📞 Call</a><a class="cbtn" href="sms:'+telDigits(c.phone)+'" onclick="event.stopPropagation()">💬 Text</a></div>':'')+
       '<div class="foot"><span>Since '+(c.published_at||'—')+'</span><b>'+money(c.monthly_charge)+'/mo</b></div>';
     card.onclick=function(){ openClient(c.id); };
     g.appendChild(card);
@@ -1033,7 +1098,7 @@ var rrAskHistory=[], rrAskGreeted=false;
 function rrAskToggle(){
   var pnl=el('rrAskPanel'); pnl.classList.toggle('open');
   if(pnl.classList.contains('open')){
-    if(!rrAskGreeted){ rrAskAdd('bot', "Hi 👋 I'm your Command Center assistant. Ask me about your pipeline, revenue, expenses, budget, or goals.\n\nTry: \"What's our MRR and net this month?\" or \"Which expense category costs us the most?\""); rrAskGreeted=true; }
+    if(!rrAskGreeted){ rrAskAdd('bot', "Hi 👋 I'm your Rank Rebels assistant. Ask me about your pipeline, revenue, expenses, budget, or goals.\n\nTry: \"What's our MRR and net this month?\" or \"Which expense category costs us the most?\""); rrAskGreeted=true; }
     el('rrAskInput').focus();
   }
 }
@@ -1100,8 +1165,8 @@ async function rrAskSend(){
   .rrc-send{border:none;background:linear-gradient(100deg,var(--brand),var(--brand-2));color:#fff;border-radius:10px;padding:0 16px;cursor:pointer;font-weight:600}
   .rrc-send:disabled{opacity:.5;cursor:default}
 </style>
-<div id="rrAskPanel" role="dialog" aria-label="Command Center AI">
-  <div class="rrc-head"><div><b>Command Center AI</b><small>Sees your live pipeline, money & budget</small></div>
+<div id="rrAskPanel" role="dialog" aria-label="Rank Rebels AI">
+  <div class="rrc-head"><div><b>Rank Rebels AI</b><small>Sees your live pipeline, money & budget</small></div>
     <button class="rrc-x" onclick="rrAskToggle()" aria-label="Close">×</button></div>
   <div class="rrc-body" id="rrAskBody"></div>
   <div class="rrc-foot">
