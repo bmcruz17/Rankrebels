@@ -298,8 +298,9 @@
             <option value="eric|brandon">Eric → Brandon</option>
             <option value="brandon|eric">Brandon → Eric</option>
           </select></div>
-        <div class="field" style="margin:0;width:100px"><label>Amount ($)</label><input id="rb-amount" type="number" min="0" placeholder="58.85" style="height:42px"></div>
-        <div class="field" style="margin:0;width:130px"><label>Method</label><input id="rb-method" placeholder="Venmo / transfer" style="height:42px"></div>
+        <div class="field" style="margin:0;width:100px"><label>Amount ($)</label><input id="rb-amount" type="number" min="0" step="0.01" placeholder="58.85" style="height:42px"></div>
+        <div class="field" style="margin:0;flex:1 1 150px;min-width:130px"><label>For (what it covered)</label><input id="rb-note" placeholder="Domain + Supabase" style="height:42px"></div>
+        <div class="field" style="margin:0;width:120px"><label>Method</label><input id="rb-method" placeholder="Venmo" style="height:42px"></div>
         <div class="field" style="margin:0;width:150px"><label>Date</label><input id="rb-date" type="date" style="height:42px"></div>
         <button class="btn btn-primary btn-sm" onclick="logReimbursement()" style="height:42px;margin:0">Log reimbursement</button>
       </div>
@@ -537,7 +538,7 @@ var clients = [], expenses = [], requests = [], reimbursements = [], charges = [
 var custSort = 'name', editingId = null, projRows = [], me = null;
 
 /* ===== helpers ===== */
-function money(n){ n=Number(n||0); return '$'+n.toLocaleString(undefined,{maximumFractionDigits:0}); }
+function money(n){ n=Number(n||0); return '$'+n.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}); }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
 function el(id){ return document.getElementById(id); }
 function telDigits(p){ return String(p||'').replace(/[^0-9+]/g,''); }
@@ -1387,10 +1388,10 @@ function renderReimbursements(){
   var t=el('reimb-tbl'); if(!t) return;
   if(!reimbursements.length){ t.innerHTML='<tbody><tr><td class="empty">No reimbursements logged yet. Record one above (company → partner, or partner → partner).</td></tr></tbody>'; return; }
   var rows=reimbursements.map(function(p){
-    return '<tr><td>'+esc(partnerName(p.from_partner))+' → '+esc(partnerName(p.to_partner))+'</td><td class="num">'+money(p.amount)+'</td><td>'+esc(p.method||'')+'</td><td>'+(p.paid_on||'')+'</td>'+
+    return '<tr><td>'+esc(partnerName(p.from_partner))+' → '+esc(partnerName(p.to_partner))+'</td><td class="num">'+money(p.amount)+'</td><td>'+esc(p.note||'')+'</td><td>'+esc(p.method||'')+'</td><td>'+(p.paid_on||'')+'</td>'+
       '<td class="num"><span class="reveal" onclick="delReimbursement(\''+p.id+'\')">delete</span></td></tr>';
   }).join('');
-  t.innerHTML='<thead><tr><th>Reimbursement</th><th class="num">Amount</th><th>Method</th><th>Date</th><th></th></tr></thead><tbody>'+rows+'</tbody>';
+  t.innerHTML='<thead><tr><th>Reimbursement</th><th class="num">Amount</th><th>For</th><th>Method</th><th>Date</th><th></th></tr></thead><tbody>'+rows+'</tbody>';
 }
 function settleUp(who){
   var owed=owedTo(who); if(owed<=0.005) return;
@@ -1407,10 +1408,10 @@ async function logReimbursement(){
   if(!amt){ alert('Enter an amount.'); return; }
   if(from===to){ alert('Pick two different parties.'); return; }
   var rec={ from_partner:from, to_partner:to,
-    amount: amt, method: el('rb-method').value.trim()||'Transfer', paid_on: el('rb-date').value||new Date().toISOString().slice(0,10) };
+    amount: amt, method: el('rb-method').value.trim()||'Transfer', note: el('rb-note').value.trim()||null, paid_on: el('rb-date').value||new Date().toISOString().slice(0,10) };
   var r=await sb.from('rr_reimbursements').insert(rec);
   if(r.error){ alert(r.error.message); return; }
-  el('rb-amount').value=''; el('rb-method').value=''; el('rb-date').value='';
+  el('rb-amount').value=''; el('rb-method').value=''; el('rb-note').value=''; el('rb-date').value='';
   await loadAll(); setTab('money');
 }
 async function delReimbursement(id){ if(confirm('Delete this payment?')){ await sb.from('rr_reimbursements').delete().eq('id',id); await loadAll(); } }
