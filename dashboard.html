@@ -286,19 +286,17 @@
     </div>
 
     <div class="panel">
-      <div class="panel-h">Partner reimbursements
-        <span style="font-weight:500;font-size:12.5px;color:var(--muted)">
-          Eric covers <input class="mini" id="set-expsplit" type="number" step="1" style="display:inline-block;width:56px;padding:5px 8px" onchange="saveSettings()">% of shared expenses
-        </span>
+      <div class="panel-h">Expense reimbursements
+        <span style="font-weight:500;font-size:12.5px;color:var(--muted)">money the company owes a partner for costs they fronted</span>
       </div>
       <div id="reimb-balance" style="padding:16px 18px"></div>
       <div style="padding:0 18px 12px;display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;border-top:1px solid var(--line)">
-        <div class="field" style="margin:12px 0 0"><label>Payment</label>
-          <select id="rb-dir" style="padding:8px"><option value="eric_brandon">Eric → Brandon</option><option value="brandon_eric">Brandon → Eric</option></select></div>
-        <div class="field" style="margin:0;width:110px"><label>Amount ($)</label><input id="rb-amount" type="number" min="0" placeholder="50"></div>
-        <div class="field" style="margin:0;width:140px"><label>Method</label><input id="rb-method" placeholder="Venmo"></div>
+        <div class="field" style="margin:12px 0 0"><label>Company reimburses</label>
+          <select id="rb-dir" style="padding:8px"><option value="brandon">→ Brandon</option><option value="eric">→ Eric</option></select></div>
+        <div class="field" style="margin:0;width:110px"><label>Amount ($)</label><input id="rb-amount" type="number" min="0" placeholder="58.85"></div>
+        <div class="field" style="margin:0;width:140px"><label>Method</label><input id="rb-method" placeholder="Venmo / transfer"></div>
         <div class="field" style="margin:0;width:150px"><label>Date</label><input id="rb-date" type="date"></div>
-        <button class="btn btn-primary btn-sm" onclick="logReimbursement()" style="margin-bottom:2px">Log payment</button>
+        <button class="btn btn-primary btn-sm" onclick="logReimbursement()" style="margin-bottom:2px">Log reimbursement</button>
       </div>
       <table id="reimb-tbl"></table>
     </div>
@@ -1354,55 +1352,37 @@ function wf(l,v,cls){ return '<tr><td>'+(cls?'<span class="'+cls+'">'+l.replace(
 async function saveSettings(){
   settings.brandon_floor=Number(el('set-floor').value)||0;
   settings.eric_pct=(Number(el('set-eric').value)||0)/100;
-  var es=el('set-expsplit'); if(es) settings.exp_eric_share=(Number(es.value)||0)/100;
-  var patch={brandon_floor:settings.brandon_floor, eric_pct:settings.eric_pct, exp_eric_share:settings.exp_eric_share};
-  var r=await sb.from('rr_settings').update(patch).eq('id',1);
-  if(r.error && /exp_eric_share|column|schema cache/i.test(r.error.message||'')){ delete patch.exp_eric_share; await sb.from('rr_settings').update(patch).eq('id',1); }
+  var patch={brandon_floor:settings.brandon_floor, eric_pct:settings.eric_pct};
+  await sb.from('rr_settings').update(patch).eq('id',1);
   renderMoney(); renderGoals();
 }
-function expShareEric(){ return (settings.exp_eric_share!=null)?Number(settings.exp_eric_share):0.5; }
-// Net partner balance from personally-paid expenses + logged payments.
-// Positive = Eric owes Brandon; negative = Brandon owes Eric.
-function reimbBalance(){
-  var es=expShareEric(), bs=1-es, owed=0; // owed: + means Eric owes Brandon
-  expenses.forEach(function(e){
-    if(e.active===false) return; var amt=Number(e.amount||0); if(!amt) return;
-    if(e.paid_by==='brandon') owed += es*amt;       // Eric owes his share to Brandon
-    else if(e.paid_by==='eric') owed -= bs*amt;      // Brandon owes his share to Eric
-  });
-  reimbursements.forEach(function(p){
-    var amt=Number(p.amount||0);
-    if(p.from_partner==='eric') owed -= amt;          // Eric paid Brandon back → reduces what Eric owes
-    else if(p.from_partner==='brandon') owed += amt;  // Brandon paid Eric → reduces what Brandon owes
-  });
-  return owed;
-}
+// What the company still owes each partner: expenses they fronted minus reimbursements paid to them.
+function frontedBy(who){ return expenses.filter(function(e){return e.active!==false && e.paid_by===who;}).reduce(function(a,e){return a+Number(e.amount||0);},0); }
+function reimbursedTo(who){ return reimbursements.filter(function(p){return p.to_partner===who;}).reduce(function(a,p){return a+Number(p.amount||0);},0); }
+function owedTo(who){ return frontedBy(who)-reimbursedTo(who); }
 function renderReimbursements(){
-  if(el('set-expsplit')) el('set-expsplit').value=Math.round(expShareEric()*100);
-  var bal=reimbBalance(); var bx=el('reimb-balance'); if(!bx) return;
-  var fronted=function(who){ return expenses.filter(function(e){return e.active!==false && e.paid_by===who;}).reduce(function(a,e){return a+Number(e.amount||0);},0); };
-  var bFront=fronted('brandon'), eFront=fronted('eric');
-  var owedTxt, owedCls;
-  if(Math.abs(bal)<0.005){ owedTxt='All square — nobody owes anybody right now. 🎉'; owedCls='var(--brand)'; }
-  else if(bal>0){ owedTxt='<b>Eric owes Brandon '+money(bal)+'</b>'; owedCls='var(--accent)'; }
-  else { owedTxt='<b>Brandon owes Eric '+money(-bal)+'</b>'; owedCls='var(--accent)'; }
-  bx.innerHTML='<div style="font-size:18px;color:'+owedCls+';margin-bottom:8px">'+owedTxt+'</div>'+
-    '<div style="font-size:12.5px;color:var(--muted)">Brandon fronted '+money(bFront)+' personally · Eric fronted '+money(eFront)+' · Eric covers '+Math.round(expShareEric()*100)+'% of shared expenses.</div>';
-  // ledger
+  var bx=el('reimb-balance'); if(!bx) return;
+  var ob=owedTo('brandon'), oe=owedTo('eric');
+  function line(name,owed,fronted){
+    if(owed<=0.005) return '<div class="gs-row"><span>'+name+' — fully reimbursed'+(fronted>0?' ('+money(fronted)+' fronted)':'')+'</span><b style="color:var(--brand)">$0</b></div>';
+    return '<div class="gs-row"><span><b>Company owes '+name+'</b> <span style="color:var(--muted-2)">('+money(fronted)+' fronted)</span></span><b style="color:var(--accent);font-size:16px">'+money(owed)+'</b></div>';
+  }
+  var allSquare=(ob<=0.005 && oe<=0.005);
+  bx.innerHTML=(allSquare?'<div style="font-size:16px;color:var(--brand);margin-bottom:6px">All square — the company doesn’t owe either partner right now. 🎉</div>':'')+
+    line('Brandon', ob, frontedBy('brandon'))+ line('Eric', oe, frontedBy('eric'));
   var t=el('reimb-tbl'); if(!t) return;
-  if(!reimbursements.length){ t.innerHTML='<tbody><tr><td class="empty">No payments logged yet. Record a Venmo payback above.</td></tr></tbody>'; return; }
+  if(!reimbursements.length){ t.innerHTML='<tbody><tr><td class="empty">No reimbursements logged yet. When the company pays a partner back, record it above.</td></tr></tbody>'; return; }
   var rows=reimbursements.map(function(p){
-    var dir=(p.from_partner==='eric'?'Eric → Brandon':'Brandon → Eric');
-    return '<tr><td>'+esc(dir)+'</td><td class="num">'+money(p.amount)+'</td><td>'+esc(p.method||'')+'</td><td>'+(p.paid_on||'')+'</td>'+
+    return '<tr><td>Company → '+esc((p.to_partner||'').charAt(0).toUpperCase()+(p.to_partner||'').slice(1))+'</td><td class="num">'+money(p.amount)+'</td><td>'+esc(p.method||'')+'</td><td>'+(p.paid_on||'')+'</td>'+
       '<td class="num"><span class="reveal" onclick="delReimbursement(\''+p.id+'\')">delete</span></td></tr>';
   }).join('');
-  t.innerHTML='<thead><tr><th>Payment</th><th class="num">Amount</th><th>Method</th><th>Date</th><th></th></tr></thead><tbody>'+rows+'</tbody>';
+  t.innerHTML='<thead><tr><th>Reimbursement</th><th class="num">Amount</th><th>Method</th><th>Date</th><th></th></tr></thead><tbody>'+rows+'</tbody>';
 }
 async function logReimbursement(){
-  var dir=el('rb-dir').value, amt=Number(el('rb-amount').value)||0;
+  var to=el('rb-dir').value, amt=Number(el('rb-amount').value)||0;
   if(!amt){ alert('Enter an amount.'); return; }
-  var rec={ from_partner: dir==='eric_brandon'?'eric':'brandon', to_partner: dir==='eric_brandon'?'brandon':'eric',
-    amount: amt, method: el('rb-method').value.trim()||'Venmo', paid_on: el('rb-date').value||new Date().toISOString().slice(0,10) };
+  var rec={ from_partner:'company', to_partner: to,
+    amount: amt, method: el('rb-method').value.trim()||'Transfer', paid_on: el('rb-date').value||new Date().toISOString().slice(0,10) };
   var r=await sb.from('rr_reimbursements').insert(rec);
   if(r.error){ alert(r.error.message); return; }
   el('rb-amount').value=''; el('rb-method').value=''; el('rb-date').value='';
