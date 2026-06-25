@@ -456,9 +456,10 @@
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)">
         <span style="font-size:14px">Unpaid balance: <b id="charge-balance" style="color:var(--accent)">$0</b></span>
-        <span style="display:flex;gap:8px">
-          <button type="button" class="btn btn-ghost btn-sm" onclick="generateInvoice()">🧾 Generate invoice</button>
+        <span style="display:flex;gap:8px;flex-wrap:wrap">
+          <button type="button" class="btn btn-ghost btn-sm" onclick="generateInvoice()">🧾 Print invoice</button>
           <button type="button" class="btn btn-ghost btn-sm" onclick="emailInvoice()">✉️ Email invoice</button>
+          <button type="button" class="btn btn-primary btn-sm" onclick="stripeInvoice()">💳 Send Stripe invoice</button>
         </span>
       </div>
     </div>
@@ -1016,6 +1017,21 @@ async function emailInvoice(){
   var d=await r.json().catch(function(){return {};});
   if(d.ok){ logActivity(editingId,'email','Invoice drafted — '+money(total)); if(confirm('Invoice draft created in Gmail. Mark charges Invoiced and open Gmail?')){ list.forEach(function(x){ setChargeStatus(x.id,'invoiced'); }); window.open(d.link,'_blank'); } }
   else { alert(d.error||'Could not create invoice draft.'); }
+}
+async function stripeInvoice(){
+  if(!editingId){ alert('Save the customer first.'); return; }
+  var c=clients.find(function(x){return x.id===editingId;});
+  if(!c.email){ alert("Add the customer's email first — Stripe emails the invoice to them."); return; }
+  var list=unpaidCharges(); if(!list.length){ alert('No unpaid charges to invoice.'); return; }
+  var total=list.reduce(function(a,x){return a+Number(x.amount||0);},0);
+  if(!confirm('Send a Stripe invoice to '+c.email+' for '+money(total)+'?\n\nThey’ll get an email with a Pay button (card or bank).')) return;
+  var t=await authToken(); if(!t){ alert('Please sign in again.'); return; }
+  var items=list.map(function(x){ return {description:x.description, amount:x.amount}; });
+  var r=await fetch('/api/stripe/invoice',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t},body:JSON.stringify({email:c.email, name:c.business_name, items:items})});
+  var d=await r.json().catch(function(){return {};});
+  if(d.ok){ list.forEach(function(x){ setChargeStatus(x.id,'invoiced'); }); logActivity(editingId,'note','Stripe invoice sent — '+money(d.total||total));
+    if(confirm('✅ Stripe invoice sent to '+c.email+'! Open the invoice page?')) window.open(d.url,'_blank'); }
+  else { alert(d.error||'Could not create the Stripe invoice.'); }
 }
 function renderActivityLog(c){
   var box=el('act-log'); if(!box) return;

@@ -6,6 +6,12 @@ function b64url(str) {
   let s = ''; for (let i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
   return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
+function encHeader(s) {
+  if (/^[\x00-\x7F]*$/.test(s)) return s;
+  const bytes = new TextEncoder().encode(s);
+  let raw = ''; for (let i = 0; i < bytes.length; i++) raw += String.fromCharCode(bytes[i]);
+  return '=?UTF-8?B?' + btoa(raw) + '?=';
+}
 
 export async function onRequestPost({ request, env }) {
   const email = await verifyTeam(bearer(request));
@@ -45,7 +51,7 @@ export async function onRequestPost({ request, env }) {
 
   const mime = [
     'To: ' + to,
-    'Subject: ' + subject,
+    'Subject: ' + encHeader(subject),
     'Content-Type: text/plain; charset="UTF-8"',
     'MIME-Version: 1.0',
     '',
