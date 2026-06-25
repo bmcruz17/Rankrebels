@@ -249,6 +249,15 @@
     <div class="stats" id="goal-stats"></div>
 
     <div class="panel">
+      <div class="panel-h">Revenue target planner <span style="font-weight:500;font-size:12.5px;color:var(--muted)">combines onboarding fees + recurring revenue</span></div>
+      <div style="padding:14px 18px 4px;display:flex;gap:14px;align-items:flex-end;flex-wrap:wrap">
+        <div class="f" style="flex:1;min-width:170px"><label>I want us to bring in ($)</label><input type="number" min="0" id="rt-amount" placeholder="100000" oninput="onRevTarget()"></div>
+        <div class="f" style="min-width:120px"><label>Over (months)</label><input type="number" min="1" id="rt-months" placeholder="12" oninput="onRevTarget()"></div>
+      </div>
+      <div id="revplan" style="padding:2px 18px 16px"></div>
+    </div>
+
+    <div class="panel">
       <div class="panel-h">Assumptions <span style="font-weight:500;font-size:12.5px;color:var(--muted)">edit to model — saved for the team</span></div>
       <div class="assume" id="assumptions"></div>
     </div>
@@ -846,7 +855,7 @@ async function importExpenses(input){
 }
 
 /* ===== GOALS / PROJECTIONS (CFO board) ===== */
-var GOAL_DEFAULTS = {targetMrr:25000, newPerMonth:3, avgOnboard:2500, avgMonthly:300, churnPct:2, months:12, ericSharePct:50};
+var GOAL_DEFAULTS = {targetMrr:25000, newPerMonth:3, avgOnboard:2000, avgMonthly:300, churnPct:2, months:12, ericSharePct:50, targetRevenue:0, targetMonths:12};
 var GOAL_FIELDS = [
   ['targetMrr','Target MRR ($)'], ['newPerMonth','New customers / mo'],
   ['avgOnboard','Avg onboarding ($)'], ['avgMonthly','Avg monthly ($)'],
@@ -861,7 +870,39 @@ function renderGoals(){
   el('assumptions').innerHTML = GOAL_FIELDS.map(function(f){
     return '<div class="f"><label>'+f[1]+'</label><input type="number" min="0" id="g-'+f[0]+'" value="'+g[f[0]]+'" oninput="onGoalInput()"></div>';
   }).join('');
+  if(el('rt-amount')) el('rt-amount').value = g.targetRevenue ? g.targetRevenue : '';
+  if(el('rt-months')) el('rt-months').value = g.targetMonths || 12;
+  renderRevPlan();
   renderGoalsCalc();
+}
+function renderRevPlan(){
+  var g=goals();
+  var T=Number(g.targetRevenue)||0, M=Math.max(1, Number(g.targetMonths)||12);
+  var O=Number(g.avgOnboard)||0, R=Number(g.avgMonthly)||0;
+  var box=el('revplan'); if(!box) return;
+  if(T<=0){ box.innerHTML='<div class="gs-row"><span>Enter a revenue target above and it’ll show how many customers it takes — onboarding fees + recurring combined.</span><b></b></div>'; return; }
+  var perCust=O + R*M;
+  if(perCust<=0){ box.innerHTML='<div class="gs-row"><span>Set an average onboarding fee and/or monthly charge in Assumptions below first.</span><b></b></div>'; return; }
+  var N=Math.ceil(T/perCust);
+  var onbTotal=N*O, mrrOverPeriod=N*R*M, newMRR=N*R;
+  var perMonth=Math.ceil(N/M);
+  var eShare=(Number(g.ericSharePct)||0)/100;
+  var ericC=Math.round(N*eShare), brandonC=N-ericC;
+  box.innerHTML=
+    '<div class="gs-row" style="border-bottom:2px solid var(--line)"><span style="font-size:14.5px"><b>To bring in '+money(T)+' over '+M+' months, you need about</b></span><b style="font-size:22px;color:var(--brand)">'+N+' customers</b></div>'+
+    '<div class="gs-row"><span>↳ Onboarding fees ('+N+' × '+money(O)+' one-time)</span><b>'+money(onbTotal)+'</b></div>'+
+    '<div class="gs-row"><span>↳ Recurring over '+M+' months ('+N+' × '+money(R)+'/mo × '+M+')</span><b>'+money(mrrOverPeriod)+'</b></div>'+
+    '<div class="gs-row"><span><b>= Combined revenue brought in</b></span><b>'+money(onbTotal+mrrOverPeriod)+'</b></div>'+
+    '<div class="gs-row"><span>New recurring revenue added (run-rate)</span><b>'+money(newMRR)+'/mo · '+money(newMRR*12)+'/yr</b></div>'+
+    '<div class="gs-row"><span>Pace needed to get there</span><b>~'+perMonth+' new customers / month</b></div>'+
+    '<div class="gs-row"><span>Split at '+Math.round(eShare*100)+'% Eric / '+Math.round((1-eShare)*100)+'% Brandon</span><b>'+brandonC+' Brandon · '+ericC+' Eric</b></div>'+
+    '<div class="gs-row" style="border-bottom:none"><span style="font-size:11.5px;color:var(--muted-2)">Assumes customers stay active through the period. Tune the average onboarding/monthly in Assumptions below.</span><b></b></div>';
+}
+function onRevTarget(){
+  var amt=Number(el('rt-amount').value)||0, mo=Math.max(1, Number(el('rt-months').value)||12);
+  settings.goals=Object.assign({}, settings.goals||{}, goalsFromInputs(), {targetRevenue:amt, targetMonths:mo});
+  renderRevPlan();
+  clearTimeout(goalTimer); goalTimer=setTimeout(saveGoals,700);
 }
 function renderGoalsCalc(){
   var g=goals();
@@ -937,9 +978,10 @@ function monthsToReach(g, target){
   return -1;
 }
 var goalTimer=null;
+function goalsFromInputs(){ var g={}; GOAL_FIELDS.forEach(function(f){ var n=el('g-'+f[0]); if(n) g[f[0]]=Number(n.value)||0; }); return g; }
 function onGoalInput(){
-  var g={}; GOAL_FIELDS.forEach(function(f){ g[f[0]]=Number(el('g-'+f[0]).value)||0; });
-  settings.goals=g;
+  settings.goals=Object.assign({}, settings.goals||{}, goalsFromInputs());
+  renderRevPlan();
   renderGoalsCalc();
   clearTimeout(goalTimer); goalTimer=setTimeout(saveGoals,700);
 }
