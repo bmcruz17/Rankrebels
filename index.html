@@ -349,6 +349,25 @@
   .promise{display:flex;justify-content:center;gap:14px 30px;flex-wrap:wrap;margin-top:18px}
   .promise span{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-size:15px;font-weight:600}
   .promise b{color:var(--brand)}
+  /* industry portfolio */
+  .port-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  @media(max-width:880px){.port-grid{grid-template-columns:1fr 1fr}}
+  @media(max-width:560px){.port-grid{grid-template-columns:1fr}}
+  .port{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--panel);transition:.2s ease}
+  .port:hover{transform:translateY(-3px);border-color:rgba(21,128,61,.35);box-shadow:var(--shadow)}
+  .port .shot{height:148px;display:flex;align-items:flex-end;padding:16px;color:#fff;font-weight:800;font-size:18px;line-height:1.2;position:relative}
+  .port .shot .em{position:absolute;top:13px;right:15px;font-size:28px;opacity:.92}
+  .port .b2{padding:15px 18px 18px}
+  .port .tag{font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--brand)}
+  .port h4{margin:4px 0 10px;font-size:17px}
+  .port .view{color:var(--brand);font-weight:700;font-size:14.5px}
+  /* testimonials */
+  .quotes{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  @media(max-width:880px){.quotes{grid-template-columns:1fr}}
+  .quote{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:24px}
+  .quote .stars{color:var(--accent);font-size:15px;letter-spacing:3px}
+  .quote p{font-size:15.5px;margin:12px 0 14px;color:var(--text)}
+  .quote .who{font-size:13.5px;color:var(--muted);font-weight:600}
 </style>
 </head>
 <body>
@@ -360,8 +379,9 @@
     <a href="#top" class="logo"><span class="mark">⚡</span> Rank<span class="grad-text">Rebels</span></a>
     <nav class="nav-links">
       <a href="#services">Services</a>
+      <a href="#work">Work</a>
       <a href="#process">Process</a>
-      <a href="#why">Why us</a>
+      <a href="#reviews">Reviews</a>
       <a href="#faq">FAQ</a>
     </nav>
     <div class="nav-cta">
@@ -486,6 +506,62 @@
           <tr><td>Invested in your growth</td><td class="us"><span class="yes">✓ 2-yr partnership</span></td><td>Project, then gone</td><td class="no">On your own</td></tr>
         </tbody>
       </table>
+    </div>
+  </div>
+</section>
+
+<!-- INDUSTRY DEMO PORTFOLIO. Replace the "View demo site" hrefs (#contact) with real demo URLs as you build them. -->
+<section id="work" style="background:var(--bg-soft)">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">See what we can build</span>
+      <h2>Designed for <span class="hl">your industry</span></h2>
+      <p>Examples of the kind of sites we build. Yours will be custom‑designed for your brand and your business.</p>
+    </div>
+    <div class="port-grid">
+      <div class="port">
+        <div class="shot" style="background:linear-gradient(135deg,#0c2417,#15803d)"><span class="em">🔧</span>Fast, Friendly Repairs You Can Count On</div>
+        <div class="b2"><div class="tag">Home Services</div><h4>Plumbing &amp; HVAC</h4><a class="view" href="#contact">View demo site →</a></div>
+      </div>
+      <div class="port">
+        <div class="shot" style="background:linear-gradient(135deg,#11241a,#c79a1e)"><span class="em">🍽️</span>Taste the Difference. Book a Table.</div>
+        <div class="b2"><div class="tag">Restaurant</div><h4>Restaurant &amp; Café</h4><a class="view" href="#contact">View demo site →</a></div>
+      </div>
+      <div class="port">
+        <div class="shot" style="background:linear-gradient(135deg,#0d3b66,#1aa251)"><span class="em">🦷</span>A Healthier Smile Starts Here</div>
+        <div class="b2"><div class="tag">Healthcare</div><h4>Dental Practice</h4><a class="view" href="#contact">View demo site →</a></div>
+      </div>
+      <div class="port">
+        <div class="shot" style="background:linear-gradient(135deg,#1f2937,#c79a1e)"><span class="em">⚖️</span>Trusted Counsel When It Matters Most</div>
+        <div class="b2"><div class="tag">Legal</div><h4>Law Firm</h4><a class="view" href="#contact">View demo site →</a></div>
+      </div>
+      <div class="port">
+        <div class="shot" style="background:linear-gradient(135deg,#0c2417,#1aa251)"><span class="em">🚗</span>Honest Auto Care, Done Right</div>
+        <div class="b2"><div class="tag">Auto</div><h4>Auto Repair Shop</h4><a class="view" href="#contact">View demo site →</a></div>
+      </div>
+      <div class="port">
+        <div class="shot" style="background:linear-gradient(135deg,#4a1d3f,#c79a1e)"><span class="em">💅</span>Look Good. Feel Amazing.</div>
+        <div class="b2"><div class="tag">Beauty &amp; Wellness</div><h4>Salon &amp; Spa</h4><a class="view" href="#contact">View demo site →</a></div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:30px"><a class="btn btn-primary" href="#contact">Get my custom design →</a></div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS — PLACEHOLDERS. Replace with REAL customer reviews before relying on them (FTC + your MSA §7.3 prohibit fake testimonials). Edit the text/name in each .quote below. -->
+<section id="reviews">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">What clients say</span>
+      <h2>Businesses that stopped <span class="hl">blending in</span></h2>
+    </div>
+    <div class="quotes">
+      <div class="quote"><div class="stars">★★★★★</div><p>"Our new site looks amazing and we're finally getting calls straight from it. Total night-and-day difference."</p><div class="who">— Owner, Home Services</div></div>
+      <div class="quote"><div class="stars">★★★★★</div><p>"I was embarrassed to send people to our old site. Now I'm proud of it — and we're showing up on Google."</p><div class="who">— Owner, Local Restaurant</div></div>
+      <div class="quote"><div class="stars">★★★★★</div><p>"They handled everything — design, content, SEO, and our Google profile. I just approved it. Easiest thing I've done for my business."</p><div class="who">— Owner, Dental Practice</div></div>
+      <div class="quote"><div class="stars">★★★★★</div><p>"We went from invisible to first page in our area. The leads have not stopped since launch."</p><div class="who">— Owner, Auto Repair</div></div>
+      <div class="quote"><div class="stars">★★★★★</div><p>"Fast, professional, and they actually answer. Best money we've spent on the business this year."</p><div class="who">— Owner, Salon &amp; Spa</div></div>
+      <div class="quote"><div class="stars">★★★★★</div><p>"They treat our growth like it's their own. Two years in and the rankings just keep climbing."</p><div class="who">— Owner, Law Firm</div></div>
     </div>
   </div>
 </section>
