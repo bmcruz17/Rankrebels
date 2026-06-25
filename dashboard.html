@@ -302,7 +302,8 @@
         <div class="field" style="margin:0;flex:1 1 150px;min-width:130px"><label>For (what it covered)</label><input id="rb-note" placeholder="Domain + Supabase" style="height:42px"></div>
         <div class="field" style="margin:0;width:120px"><label>Method</label><input id="rb-method" placeholder="Venmo" style="height:42px"></div>
         <div class="field" style="margin:0;width:150px"><label>Date</label><input id="rb-date" type="date" style="height:42px"></div>
-        <button class="btn btn-primary btn-sm" onclick="logReimbursement()" style="height:42px;margin:0">Log reimbursement</button>
+        <button id="rb-btn" class="btn btn-primary btn-sm" onclick="logReimbursement()" style="height:42px;margin:0">Log reimbursement</button>
+        <button id="rb-cancel" class="btn btn-ghost btn-sm" onclick="cancelEditReimb()" style="height:42px;margin:0;display:none">Cancel</button>
       </div>
       <table id="reimb-tbl"></table>
     </div>
@@ -1389,7 +1390,7 @@ function renderReimbursements(){
   if(!reimbursements.length){ t.innerHTML='<tbody><tr><td class="empty">No reimbursements logged yet. Record one above (company → partner, or partner → partner).</td></tr></tbody>'; return; }
   var rows=reimbursements.map(function(p){
     return '<tr><td>'+esc(partnerName(p.from_partner))+' → '+esc(partnerName(p.to_partner))+'</td><td class="num">'+money(p.amount)+'</td><td>'+esc(p.note||'')+'</td><td>'+esc(p.method||'')+'</td><td>'+(p.paid_on||'')+'</td>'+
-      '<td class="num"><span class="reveal" onclick="delReimbursement(\''+p.id+'\')">delete</span></td></tr>';
+      '<td class="num" style="white-space:nowrap"><span class="reveal" onclick="editReimbursement(\''+p.id+'\')">edit</span> · <span class="reveal" onclick="delReimbursement(\''+p.id+'\')">delete</span></td></tr>';
   }).join('');
   t.innerHTML='<thead><tr><th>Reimbursement</th><th class="num">Amount</th><th>For</th><th>Method</th><th>Date</th><th></th></tr></thead><tbody>'+rows+'</tbody>';
 }
@@ -1402,6 +1403,25 @@ function settleUp(who){
   el('rb-amount').focus();
   try{ el('rb-amount').scrollIntoView({behavior:'smooth',block:'center'}); }catch(e){}
 }
+var editingReimb=null;
+function editReimbursement(id){
+  var p=reimbursements.find(function(x){return x.id===id;}); if(!p) return;
+  editingReimb=id;
+  el('rb-dir').value=(p.from_partner||'company')+'|'+(p.to_partner||'brandon');
+  el('rb-amount').value=p.amount!=null?p.amount:'';
+  el('rb-note').value=p.note||'';
+  el('rb-method').value=p.method||'';
+  el('rb-date').value=p.paid_on||'';
+  el('rb-btn').textContent='Update reimbursement';
+  el('rb-cancel').style.display='inline-flex';
+  el('rb-amount').focus();
+  try{ el('rb-dir').scrollIntoView({behavior:'smooth',block:'center'}); }catch(e){}
+}
+function cancelEditReimb(){
+  editingReimb=null;
+  el('rb-amount').value=''; el('rb-method').value=''; el('rb-note').value=''; el('rb-date').value='';
+  el('rb-btn').textContent='Log reimbursement'; el('rb-cancel').style.display='none';
+}
 async function logReimbursement(){
   var parts=(el('rb-dir').value||'company|brandon').split('|');
   var from=parts[0], to=parts[1], amt=Number(el('rb-amount').value)||0;
@@ -1409,9 +1429,9 @@ async function logReimbursement(){
   if(from===to){ alert('Pick two different parties.'); return; }
   var rec={ from_partner:from, to_partner:to,
     amount: amt, method: el('rb-method').value.trim()||'Transfer', note: el('rb-note').value.trim()||null, paid_on: el('rb-date').value||new Date().toISOString().slice(0,10) };
-  var r=await sb.from('rr_reimbursements').insert(rec);
+  var r = editingReimb ? await sb.from('rr_reimbursements').update(rec).eq('id',editingReimb) : await sb.from('rr_reimbursements').insert(rec);
   if(r.error){ alert(r.error.message); return; }
-  el('rb-amount').value=''; el('rb-method').value=''; el('rb-note').value=''; el('rb-date').value='';
+  cancelEditReimb();
   await loadAll(); setTab('money');
 }
 async function delReimbursement(id){ if(confirm('Delete this payment?')){ await sb.from('rr_reimbursements').delete().eq('id',id); await loadAll(); } }
