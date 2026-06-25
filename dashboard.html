@@ -718,7 +718,7 @@ function setTab(t){
   if(t==='requests') renderRequests();
 }
 /* ===== FIND LEADS (Google Places) ===== */
-var lastLeads=[];
+var lastLeads=[], lastLeadsMeta=null;
 async function findLeads(){
   var q=el('lf-query').value.trim(); var box=el('leads-results');
   if(!q){ box.innerHTML='<div class="panel"><div class="empty" style="padding:18px">Enter a search like "auto repair in El Monte CA".</div></div>'; return; }
@@ -731,13 +731,22 @@ async function findLeads(){
     var d=await r.json().catch(function(){return {error:'Unexpected response (HTTP '+r.status+').'};});
     if(d.error){ box.innerHTML='<div class="panel"><div class="empty" style="padding:18px;white-space:pre-wrap">'+esc(d.error)+'</div></div>'; return; }
     lastLeads=d.places||[];
+    lastLeadsMeta={totalFound:d.totalFound||0, withSite:d.withSite||0};
     renderLeads();
   }catch(e){ box.innerHTML='<div class="panel"><div class="empty" style="padding:18px">Could not reach the lead finder ('+esc(e.message||'network error')+').</div></div>'; }
 }
 function leadExists(name, phone){ return clients.some(function(c){ return (phone&&c.phone&&telDigits(c.phone)===telDigits(phone)) || (c.business_name||'').toLowerCase()===(name||'').toLowerCase(); }); }
 function renderLeads(){
   var box=el('leads-results');
-  if(!lastLeads.length){ box.innerHTML='<div class="panel"><div class="empty" style="padding:18px">No matches. Try lowering the min reviews/rating, unchecking "no website only", or a broader search.</div></div>'; return; }
+  if(!lastLeads.length){
+    var msg;
+    if(lastLeadsMeta && lastLeadsMeta.withSite>0 && el('lf-nosite').checked){
+      msg='Found '+lastLeadsMeta.totalFound+' matching businesses, but they all already have a website. Uncheck "No website only" to see them, or lower Min reviews to surface smaller shops that often have no site.';
+    } else {
+      msg='No matches. Try lowering Min reviews/rating, unchecking "No website only", or a broader search (e.g. add the state: "restaurants in Henderson NV").';
+    }
+    box.innerHTML='<div class="panel"><div class="empty" style="padding:18px">'+esc(msg)+'</div></div>'; return;
+  }
   var rows=lastLeads.map(function(p,i){
     var added=leadExists(p.name,p.phone);
     return '<tr><td><b>'+esc(p.name)+'</b><div style="font-size:12px;color:var(--muted-2)">'+esc(p.address)+'</div></td>'+

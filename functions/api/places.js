@@ -63,12 +63,13 @@ export async function onRequestPost({ request, env }) {
       mapsUri: p.googleMapsUri || '',
       status: p.businessStatus || ''
     }));
-    places = places
+    const base = places
       .filter(p => p.status !== 'CLOSED_PERMANENTLY')
-      .filter(p => p.rating >= minRating && p.reviews >= minReviews && (!onlyNoWebsite || !p.website))
-      .sort((a, b) => b.reviews - a.reviews);
+      .filter(p => p.rating >= minRating && p.reviews >= minReviews);
+    const withSite = base.filter(p => p.website).length;
+    const filtered = (onlyNoWebsite ? base.filter(p => !p.website) : base).sort((a, b) => b.reviews - a.reviews);
 
-    return json({ count: places.length, places });
+    return json({ count: filtered.length, totalFound: base.length, withSite: withSite, places: filtered });
   } catch (err) {
     return json({ error: 'Lead finder error: ' + String(err && err.message || err).slice(0, 300) }, 200);
   }
