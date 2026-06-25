@@ -217,7 +217,7 @@
   <header class="top">
     <div class="wrap top-inner">
       <a class="logo" href="/" title="Back to the public site"><span class="mark">⚡</span> Rank<span class="grad-text">Rebels</span></a>
-      <div class="who"><span id="who-email"></span><button class="btn btn-ghost btn-sm" onclick="reportBug()" title="Report a bug or request a fix">🐞 Bug</button><button class="btn btn-ghost btn-sm" onclick="signOut()">Sign out</button><button id="rrAskBtn" onclick="rrAskToggle()">✨ Ask AI</button></div>
+      <div class="who"><span id="who-email"></span><button id="gbtn" class="btn btn-ghost btn-sm" onclick="connectGoogle()">🔗 Connect Google</button><button class="btn btn-ghost btn-sm" onclick="reportBug()" title="Report a bug or request a fix">🐞 Bug</button><button class="btn btn-ghost btn-sm" onclick="signOut()">Sign out</button><button id="rrAskBtn" onclick="rrAskToggle()">✨ Ask AI</button></div>
     </div>
   </header>
   <div class="tabs wrap" style="max-width:1280px">
@@ -397,6 +397,13 @@
       </div>
       <div id="act-log" class="act-log"></div>
     </div>
+    <div class="field" id="gintegrations" style="display:none">
+      <label>Google</label>
+      <div class="act-quick">
+        <button type="button" class="btn btn-ghost btn-sm" onclick="draftEmail()">✉️ Draft email in Gmail</button>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="calendarFollowUp()">📅 Add follow-up to Calendar</button>
+      </div>
+    </div>
     <div class="field">
       <label>Credentials &amp; web-dev info</label>
       <p style="margin:0 0 10px;font-size:12.5px;color:var(--muted);line-height:1.5">The client's website logins so any teammate can manage their site — e.g. WordPress/CMS admin username &amp; password, domain registrar login, hosting/cPanel login, GoDaddy/Cloudflare account, FTP, or API keys. Stored private to the team only. Add one row per login.</p>
@@ -493,12 +500,55 @@ function reportBug(){
   window.location.href='mailto:brandon@rankrebels.ai,eric@rankrebels.ai?subject='+subj+'&body='+body;
 }
 
+/* ===== Google integration ===== */
+async function authToken(){ var s=(await sb.auth.getSession()).data.session; return s?s.access_token:null; }
+async function connectGoogle(){
+  var t=await authToken(); if(!t){ alert('Please sign in again.'); return; }
+  var r=await fetch('/api/google/auth-url',{method:'POST',headers:{'Authorization':'Bearer '+t}});
+  var d=await r.json().catch(function(){return {};});
+  if(d.url){ window.location.href=d.url; } else { alert(d.error||'Could not start Google connect. Make sure the Cloudflare secrets are set.'); }
+}
+async function checkGoogle(){
+  try{
+    var t=await authToken(); if(!t) return;
+    var r=await fetch('/api/google/status',{method:'POST',headers:{'Authorization':'Bearer '+t}});
+    var d=await r.json(); var btn=el('gbtn'); if(!btn) return;
+    if(d.connected){ btn.textContent='✓ Google'; btn.title='Google connected — Gmail drafts & Calendar enabled'; }
+    else { btn.textContent='🔗 Connect Google'; btn.title='Connect your @rankrebels.ai Google account'; }
+  }catch(e){}
+}
+async function draftEmail(){
+  var c=clients.find(function(x){return x.id===editingId;}); if(!c){ alert('Save the customer first.'); return; }
+  if(!c.email){ alert('No email on file for this customer — add one first.'); return; }
+  var subject=prompt('Email subject:', 'Rank Rebels — '+(c.business_name||'')); if(subject===null) return;
+  var body=prompt('Email body:', 'Hi '+(c.contact_name||'there')+',\n\n'); if(body===null) return;
+  var t=await authToken(); if(!t){ alert('Please sign in again.'); return; }
+  var r=await fetch('/api/google/draft',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t},body:JSON.stringify({to:c.email,subject:subject,body:body})});
+  var d=await r.json().catch(function(){return {};});
+  if(d.ok){ logActivity(editingId,'email','Drafted: '+subject); if(confirm('Draft created in your Gmail. Open Gmail now?')) window.open(d.link,'_blank'); }
+  else { alert(d.error||'Could not create draft.'); }
+}
+async function calendarFollowUp(){
+  var c=clients.find(function(x){return x.id===editingId;}); if(!c){ alert('Save the customer first.'); return; }
+  var date=el('c-followup').value || c.follow_up;
+  if(!date){ alert('Set a follow-up date first, then add it to your calendar.'); return; }
+  var t=await authToken(); if(!t){ alert('Please sign in again.'); return; }
+  var desc=[c.contact_name,c.phone,c.email].filter(Boolean).join(' · ');
+  var r=await fetch('/api/google/calendar',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t},body:JSON.stringify({date:date,summary:'Follow up: '+(c.business_name||''),description:desc})});
+  var d=await r.json().catch(function(){return {};});
+  if(d.ok){ if(confirm('Added to your Google Calendar. Open it?')) window.open(d.link,'_blank'); }
+  else { alert(d.error||'Could not create event.'); }
+}
+
 async function boot(){
   var {data:{session}} = await sb.auth.getSession();
   if(!session){ el('login').style.display='grid'; el('app').style.display='none'; return; }
   me = session.user.email;
   el('login').style.display='none'; el('app').style.display='block';
   el('who-email').textContent = me;
+  var gp=new URLSearchParams(location.search).get('google');
+  if(gp){ if(gp==='connected') alert('Google connected! Gmail drafts and Calendar are now enabled.'); else if(gp==='denied') alert('Google connection was cancelled.'); else alert('Google connection failed — check the Cloudflare secrets and try again.'); history.replaceState(null,'',location.pathname); }
+  checkGoogle();
   await loadAll();
 }
 sb.auth.onAuthStateChange(function(e, session){
@@ -712,6 +762,7 @@ function openClient(id, presetStage){
   var creds=(c&&Array.isArray(c.credentials))?c.credentials:[];
   if(creds.length){ creds.forEach(function(r){ addCredRow(r.label,r.value); }); } else { addCredRow(); }
   el('c-delete').style.visibility = c?'visible':'hidden';
+  el('gintegrations').style.display = c ? 'block' : 'none';
   el('m-client').classList.add('open');
 }
 function renderActivityLog(c){
