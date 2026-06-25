@@ -15,6 +15,7 @@ Env vars only load on a *new* build, so always Retry Deployment after changing t
 | `GOOGLE_PLACES_API_KEY` | Find Leads tool | ✅ added |
 | `GOOGLE_CLIENT_SECRET` | Google OAuth (Gmail drafts + Calendar) | ✅ added |
 | `TURNSTILE_SECRET_KEY` | Bot/abuse protection on the chat endpoint | ⬜ optional — needs Turnstile widget |
+| `STRIPE_SECRET_KEY` | Stripe invoices (customers pay by card/ACH) | ⬜ optional — needs a Stripe account |
 
 > The public **Turnstile site key** also gets pasted into `index.html` + `dashboard.html` (`TURNSTILE_SITE_KEY`). Send it to Claude and it gets wired in.
 
@@ -115,6 +116,33 @@ language sql stable security definer set search_path=public as $$
   select business_name from rr_clients
   where lower(email)=lower(auth.jwt()->>'email') order by created_at limit 1; $$;
 grant execute on function public.rr_my_business() to authenticated;
+
+-- 11) Customer charges + invoicing
+create table if not exists rr_charges (
+  id uuid primary key default gen_random_uuid(),
+  client_id uuid, client_email text, description text, amount numeric not null,
+  charge_date date, status text not null default 'unbilled', created_at timestamptz default now());
+alter table rr_charges enable row level security;
+drop policy if exists rr_charges_team on rr_charges;
+create policy rr_charges_team on rr_charges for all to authenticated
+  using (public.rr_is_team()) with check (public.rr_is_team());
+drop policy if exists rr_charges_cust_sel on rr_charges;
+create policy rr_charges_cust_sel on rr_charges for select to authenticated
+  using (lower(client_email)=lower(auth.jwt()->>'email') or public.rr_is_team());
+
+-- 12) Signed service agreements (customer e-signs the MSA at /agreement.html)
+create table if not exists rr_agreements (
+  id uuid primary key default gen_random_uuid(),
+  client_id uuid, client_email text, business_name text, signer_name text,
+  signed_at timestamptz default now(), setup_fee numeric, monthly_fee numeric,
+  terms_version text, user_agent text);
+alter table rr_agreements enable row level security;
+drop policy if exists rr_agree_team on rr_agreements;
+create policy rr_agree_team on rr_agreements for all to authenticated
+  using (public.rr_is_team()) with check (public.rr_is_team());
+drop policy if exists rr_agree_sign on rr_agreements;
+create policy rr_agree_sign on rr_agreements for insert to anon
+  with check (signer_name is not null);
 ```
 
 ---
@@ -140,7 +168,8 @@ grant execute on function public.rr_my_business() to authenticated;
 - [ ] **Connect Google** → shows "✓ Google"
 - [ ] Open a lead → **✉️ → Draft with AI** → draft appears in Gmail
 - [ ] Open a lead → **⏰** set a reminder → adds to Google Calendar
-- [ ] Add a **charge** to a customer → **Generate invoice** prints
+- [ ] Add a **charge** to a customer → **Print invoice** opens; **Send Stripe invoice** emails a payable invoice (if Stripe key set)
+- [ ] Move a customer to **Accepted** → **Send agreement to sign** → open the link → sign → shows "✅ Signed" in the dashboard
 - [ ] Money tab → **Partner reimbursements** shows a balance
 - [ ] Customer portal (`/portal.html`) → sign in as a test customer → submit a request → it appears in the **Requests** tab
 
