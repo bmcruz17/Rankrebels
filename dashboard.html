@@ -87,6 +87,31 @@
   .lead .nm{font-weight:700;font-size:14px;margin-bottom:4px;padding-right:14px}
   .lead .meta{font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 10px}
   .lead .money{color:var(--won);font-weight:700}
+  .lead .sub-nm{font-size:12px;color:var(--muted);margin:-1px 0 5px}
+  .lead.stale{border-left:3px solid var(--accent)}
+  .card-actions{display:flex;gap:6px;margin-top:9px}
+  .card-actions .ci{width:30px;height:30px;display:grid;place-items:center;border:1px solid var(--line);border-radius:8px;text-decoration:none;font-size:14px;background:var(--panel);transition:.12s}
+  .card-actions .ci:hover{border-color:var(--brand);background:rgba(21,128,61,.1)}
+  .card-actions .ci.adv{border-color:var(--brand);color:var(--brand);font-weight:800}
+  .stage-arrows{margin-left:auto;display:flex;gap:6px}
+  .last-act{font-size:11px;color:var(--muted-2);margin-top:8px;line-height:1.4}
+  .fu{font-size:11px;font-weight:700;margin-top:7px;padding:3px 8px;border-radius:6px;display:inline-block}
+  .fu-over{background:rgba(220,38,38,.12);color:#c0392b}
+  .fu-today{background:rgba(199,154,30,.16);color:#9a7b18}
+  .fu-up{background:rgba(21,128,61,.1);color:var(--brand)}
+  /* activity timeline in modal */
+  .act-quick{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px}
+  .act-log{display:flex;flex-direction:column;gap:8px;max-height:230px;overflow-y:auto}
+  .act-empty{font-size:12.5px;color:var(--muted-2);padding:6px 0}
+  .act-item{display:flex;gap:9px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:9px 11px}
+  .act-ic{font-size:15px;line-height:1.4}
+  .act-body{flex:1;min-width:0}
+  .act-top{display:flex;justify-content:space-between;gap:8px;font-size:13px}
+  .act-time{color:var(--muted-2);font-size:11.5px;white-space:nowrap}
+  .act-note{font-size:13px;color:var(--text);margin-top:3px;white-space:pre-wrap;word-wrap:break-word}
+  .act-by{font-size:11px;color:var(--muted-2);margin-top:3px}
+  .act-del{background:none;border:none;color:var(--muted-2);cursor:pointer;font-size:16px;line-height:1;padding:0 2px}
+  .act-del:hover{color:#c0392b}
   .badge{font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:999px;text-transform:uppercase;letter-spacing:.03em}
   .badge.brandon{background:rgba(21,128,61,.16);color:#15803d}
   .badge.eric{background:rgba(201,154,30,.18);color:#a8791a}
@@ -334,7 +359,20 @@
       <div class="field"><label>Domain</label><input id="c-domain" placeholder="acme.com"></div>
       <div class="field"><label>Hosting</label><input id="c-hosting" placeholder="Cloudflare Pages"></div>
     </div>
-    <div class="field"><label>Notes</label><textarea id="c-notes" rows="2"></textarea></div>
+    <div class="grid2">
+      <div class="field"><label>Notes</label><textarea id="c-notes" rows="2"></textarea></div>
+      <div class="field"><label>Next follow-up date</label><input id="c-followup" type="date"></div>
+    </div>
+    <div class="field" id="act-section">
+      <label>Activity log</label>
+      <div class="act-quick">
+        <button type="button" class="btn btn-ghost btn-sm" onclick="modalLog('call')">📞 Log call</button>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="modalLog('text')">💬 Log text</button>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="modalLog('email')">✉️ Log email</button>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="modalLog('note')">📝 Add note</button>
+      </div>
+      <div id="act-log" class="act-log"></div>
+    </div>
     <div class="field">
       <label>Credentials &amp; web-dev info</label>
       <p style="margin:0 0 10px;font-size:12.5px;color:var(--muted);line-height:1.5">The client's website logins so any teammate can manage their site — e.g. WordPress/CMS admin username &amp; password, domain registrar login, hosting/cPanel login, GoDaddy/Cloudflare account, FTP, or API keys. Stored private to the team only. Add one row per login.</p>
@@ -388,7 +426,7 @@ var STAGES = [
   {id:'published',name:'Published', color:'#16a34a'},
   {id:'archived', name:'Archived',  color:'#82938a'}
 ];
-var EMAIL_TO_ACQ = {'brandonmcruz@mac.com':'brandon','eric.paul.ellsworth@gmail.com':'eric'};
+var EMAIL_TO_ACQ = {'brandonmcruz@mac.com':'brandon','eric.paul.ellsworth@gmail.com':'eric','brandon@rankrebels.ai':'brandon','eric@rankrebels.ai':'eric'};
 var EXPENSE_CATEGORIES = ['AI','Hosting','Marketing','Legal','Insurance','Rent','Phone Bill','Emails','Internet','Utilities','Equipment','Software','Travel/Conferences','Miscellaneous','Other'];
 var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
@@ -497,13 +535,86 @@ function renderBoard(){
     b.appendChild(col);
   });
 }
+/* ===== activity log + contact + stage helpers ===== */
+var ACT_ICON={call:'📞',text:'💬',email:'✉️',note:'📝'};
+function actLabel(t){ return {call:'Call',text:'Text',email:'Email',note:'Note'}[t]||'Activity'; }
+function relTime(iso){
+  if(!iso) return '';
+  var then=new Date(iso).getTime(); if(isNaN(then)) return '';
+  var s=Math.floor((Date.now()-then)/1000);
+  if(s<60) return 'just now';
+  var m=Math.floor(s/60); if(m<60) return m+'m ago';
+  var h=Math.floor(m/60); if(h<24) return h+'h ago';
+  var d=Math.floor(h/24); if(d<7) return d+'d ago';
+  var w=Math.floor(d/7); if(w<5) return w+'w ago';
+  return new Date(iso).toLocaleDateString();
+}
+function lastActivity(c){ var a=c.activities; return (Array.isArray(a)&&a.length)?a[0]:null; }
+function isStale(c){
+  if(c.stage==='published'||c.stage==='archived') return false;
+  var la=lastActivity(c); var ref=la?la.at:c.created_at; if(!ref) return false;
+  return (Date.now()-new Date(ref).getTime())>7*86400000;
+}
+function stageIndex(id){ for(var i=0;i<STAGES.length;i++){ if(STAGES[i].id===id) return i; } return -1; }
+async function advanceStage(id, dir){
+  var c=clients.find(function(x){return x.id===id;}); if(!c) return;
+  var i=stageIndex(c.stage); if(i<0) return; var ni=i+dir;
+  if(ni<0||ni>=STAGES.length) return;
+  var ns=STAGES[ni].id, patch={stage:ns};
+  if(ns==='published' && !c.published_at){ patch.published_at=new Date().toISOString().slice(0,10); c.published_at=patch.published_at; }
+  c.stage=ns; renderAll();
+  await sb.from('rr_clients').update(patch).eq('id',id);
+}
+async function logActivity(id, type, note){
+  var c=clients.find(function(x){return x.id===id;}); if(!c) return;
+  var entry={type:type, note:(note||''), at:new Date().toISOString(), by:(me||'')};
+  var list=Array.isArray(c.activities)?c.activities.slice():[];
+  list.unshift(entry); c.activities=list;
+  renderAll(); if(editingId===id) renderActivityLog(c);
+  var r=await sb.from('rr_clients').update({activities:list}).eq('id',id);
+  if(r.error && /activities|column|schema cache/i.test(r.error.message||'')){
+    if(!window._actWarned){ window._actWarned=true; alert('Heads up: activity logging needs one quick setup step (add an "activities" column — see the SQL I sent). It’s saved locally for now but won’t persist until that runs.'); }
+  }
+}
+function quickNote(id){ var n=prompt('Add a note:',''); if(n) logActivity(id,'note',n); }
+function contactIcons(c){
+  var b='';
+  if(c.phone){
+    b+='<a class="ci" draggable="false" href="tel:'+telDigits(c.phone)+'" title="Call" onclick="logActivity(\''+c.id+'\',\'call\');event.stopPropagation()">📞</a>';
+    b+='<a class="ci" draggable="false" href="sms:'+telDigits(c.phone)+'" title="Text" onclick="logActivity(\''+c.id+'\',\'text\');event.stopPropagation()">💬</a>';
+  }
+  if(c.email){ b+='<a class="ci" draggable="false" href="mailto:'+esc(c.email)+'" title="Email" onclick="logActivity(\''+c.id+'\',\'email\');event.stopPropagation()">✉️</a>'; }
+  b+='<a class="ci" draggable="false" href="#" title="Add note" onclick="quickNote(\''+c.id+'\');event.stopPropagation();return false">📝</a>';
+  return b;
+}
+function stageArrows(c){
+  var i=stageIndex(c.stage), s='';
+  if(i>0) s+='<a class="ci" draggable="false" href="#" title="Back to '+esc(STAGES[i-1].name)+'" onclick="advanceStage(\''+c.id+'\',-1);event.stopPropagation();return false">←</a>';
+  if(i>=0 && i<STAGES.length-1) s+='<a class="ci adv" draggable="false" href="#" title="Advance to '+esc(STAGES[i+1].name)+'" onclick="advanceStage(\''+c.id+'\',1);event.stopPropagation();return false">→</a>';
+  return s?'<span class="stage-arrows">'+s+'</span>':'';
+}
+function followUpBadge(c){
+  if(!c.follow_up) return '';
+  var today=new Date(); today.setHours(0,0,0,0);
+  var d=new Date(c.follow_up+'T00:00:00'); if(isNaN(d.getTime())) return '';
+  var diff=Math.round((d-today)/86400000);
+  var cls=diff<0?'fu-over':(diff===0?'fu-today':'fu-up');
+  var label=diff<0?('Follow up overdue '+(-diff)+'d'):(diff===0?'Follow up today':'Follow up in '+diff+'d');
+  return '<div class="fu '+cls+'">📅 '+label+'</div>';
+}
 function leadCard(c){
-  var d=document.createElement('div'); d.className='lead'; d.draggable=true;
+  var d=document.createElement('div'); d.className='lead'+(isStale(c)?' stale':''); d.draggable=true;
+  var la=lastActivity(c);
   d.innerHTML='<span class="del-x" title="Delete">×</span>'+
     '<div class="nm">'+esc(c.business_name)+'</div>'+
+    (c.contact_name?'<div class="sub-nm">'+esc(c.contact_name)+'</div>':'')+
     '<div class="meta"><span class="badge '+c.acquired_by+'">'+c.acquired_by+'</span>'+
-    (c.onboarding_fee?'<span class="money">'+money(c.onboarding_fee)+'</span>':'')+
-    (c.monthly_charge?'<span>'+money(c.monthly_charge)+'/mo</span>':'')+'</div>';
+      (c.onboarding_fee?'<span class="money">'+money(c.onboarding_fee)+'</span>':'')+
+      (c.monthly_charge?'<span>'+money(c.monthly_charge)+'/mo</span>':'')+
+      (c.phone?'<span>'+esc(c.phone)+'</span>':'')+'</div>'+
+    '<div class="card-actions">'+contactIcons(c)+stageArrows(c)+'</div>'+
+    (la?'<div class="last-act">'+(ACT_ICON[la.type]||'•')+' '+actLabel(la.type)+' · '+relTime(la.at)+(la.note?' — '+esc(la.note):'')+'</div>':'')+
+    followUpBadge(c);
   d.addEventListener('dragstart', function(ev){ ev.dataTransfer.setData('text/plain', c.id); d.classList.add('dragging'); });
   d.addEventListener('dragend', function(){ d.classList.remove('dragging'); });
   d.addEventListener('click', function(ev){ if(!ev.target.classList.contains('del-x')) openClient(c.id); });
@@ -568,11 +679,38 @@ function openClient(id, presetStage){
   renderServices(c&&Array.isArray(c.services)?c.services:[]);
   el('c-domain').value=c?(c.domain||''):''; el('c-hosting').value=c?(c.hosting||''):'';
   el('c-notes').value=c?(c.notes||''):'';
+  el('c-followup').value=c?(c.follow_up||''):'';
+  renderActivityLog(c);
   el('cred-list').innerHTML='';
   var creds=(c&&Array.isArray(c.credentials))?c.credentials:[];
   if(creds.length){ creds.forEach(function(r){ addCredRow(r.label,r.value); }); } else { addCredRow(); }
   el('c-delete').style.visibility = c?'visible':'hidden';
   el('m-client').classList.add('open');
+}
+function renderActivityLog(c){
+  var box=el('act-log'); if(!box) return;
+  if(!c || !editingId){ box.innerHTML='<div class="act-empty">Save the customer first — then you can log calls, texts, and emails here.</div>'; return; }
+  var list=Array.isArray(c.activities)?c.activities:[];
+  if(!list.length){ box.innerHTML='<div class="act-empty">No activity yet. Log a call, text, or email above.</div>'; return; }
+  box.innerHTML=list.map(function(a,i){
+    return '<div class="act-item"><span class="act-ic">'+(ACT_ICON[a.type]||'•')+'</span>'+
+      '<div class="act-body"><div class="act-top"><b>'+actLabel(a.type)+'</b><span class="act-time" title="'+esc(a.at)+'">'+relTime(a.at)+'</span></div>'+
+      (a.note?'<div class="act-note">'+esc(a.note)+'</div>':'')+
+      (a.by?'<div class="act-by">'+esc(a.by)+'</div>':'')+'</div>'+
+      '<button type="button" class="act-del" title="Delete" onclick="delActivity('+i+')">×</button></div>';
+  }).join('');
+}
+function modalLog(type){
+  if(!editingId){ alert('Save the customer first, then you can log activity.'); return; }
+  var note=prompt(actLabel(type)+' — add a note (optional):','');
+  if(note===null) return;
+  logActivity(editingId, type, note);
+}
+async function delActivity(i){
+  var c=clients.find(function(x){return x.id===editingId;}); if(!c||!Array.isArray(c.activities)) return;
+  c.activities.splice(i,1);
+  renderActivityLog(c); renderAll();
+  await sb.from('rr_clients').update({activities:c.activities}).eq('id',editingId);
 }
 function collectCreds(){
   var out=[]; el('cred-list').querySelectorAll('.cred-row').forEach(function(r){
@@ -590,13 +728,19 @@ async function saveClient(){
     onboarding_fee:Number(el('c-onboard').value)||null, deal_value:Number(el('c-onboard').value)||null,
     monthly_charge:Number(el('c-monthly').value)||null,
     domain:el('c-domain').value.trim(), hosting:el('c-hosting').value.trim(),
-    notes:el('c-notes').value.trim(), credentials:collectCreds(), services:selectedServices()
+    notes:el('c-notes').value.trim(), credentials:collectCreds(), services:selectedServices(),
+    follow_up: el('c-followup').value || null
   };
   if(rec.stage==='published'){ var ex=editingId&&clients.find(function(x){return x.id===editingId;}); if(!ex||!ex.published_at) rec.published_at=new Date().toISOString().slice(0,10); }
   async function run(p){ return editingId ? sb.from('rr_clients').update(p).eq('id',editingId).select().single() : sb.from('rr_clients').insert(p).select().single(); }
   var r=await run(rec);
-  // Degrade gracefully if the optional `services` column hasn't been added to the table yet
-  if(r.error && /services|column|schema cache/i.test(r.error.message||'')){ var rec2=Object.assign({},rec); delete rec2.services; r=await run(rec2); }
+  // Degrade gracefully if optional columns (services / follow_up) haven't been added to the table yet
+  for(var i=0;i<2 && r.error && /services|follow_up|column|schema cache/i.test(r.error.message||'');i++){
+    if(/services/i.test(r.error.message)) delete rec.services;
+    if(/follow_up/i.test(r.error.message)) delete rec.follow_up;
+    if(!/services|follow_up/i.test(r.error.message)){ delete rec.services; delete rec.follow_up; }
+    r=await run(rec);
+  }
   if(r.error){ alert(r.error.message); return; }
   closeModal('m-client'); await loadAll();
 }
@@ -629,7 +773,10 @@ function renderCustomers(){
       (c.domain?'<div class="line"><span class="k">Domain</span>'+esc(c.domain)+'</div>':'')+
       (c.hosting?'<div class="line"><span class="k">Hosting</span>'+esc(c.hosting)+'</div>':'')+
       (creds.length?'<div class="line"><span class="k">Secrets</span><span class="key-chip">🔒 '+creds.length+' saved — tap to view</span></div>':'')+
-      (c.phone?'<div class="contact-btns"><a class="cbtn call" href="tel:'+telDigits(c.phone)+'" onclick="event.stopPropagation()">📞 Call</a><a class="cbtn" href="sms:'+telDigits(c.phone)+'" onclick="event.stopPropagation()">💬 Text</a></div>':'')+
+      ((c.phone||c.email)?'<div class="contact-btns">'+
+        (c.phone?'<a class="cbtn call" href="tel:'+telDigits(c.phone)+'" onclick="logActivity(\''+c.id+'\',\'call\');event.stopPropagation()">📞 Call</a><a class="cbtn" href="sms:'+telDigits(c.phone)+'" onclick="logActivity(\''+c.id+'\',\'text\');event.stopPropagation()">💬 Text</a>':'')+
+        (c.email?'<a class="cbtn" href="mailto:'+esc(c.email)+'" onclick="logActivity(\''+c.id+'\',\'email\');event.stopPropagation()">✉️ Email</a>':'')+
+        '</div>':'')+
       '<div class="foot"><span>Since '+(c.published_at||'—')+'</span><b>'+money(c.monthly_charge)+'/mo</b></div>';
     card.onclick=function(){ openClient(c.id); };
     g.appendChild(card);
