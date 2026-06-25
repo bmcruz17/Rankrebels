@@ -929,21 +929,16 @@ function payout(){
   var revBrandon=mrrBrandon+onbBrandon, revEric=mrrEric+onbEric, revWeb=mrrWeb+onbWeb;
   var total=revBrandon+revEric+revWeb;
   var floor=Number(settings.brandon_floor)||0, pct=Number(settings.eric_pct)||0;
-  var webPct=(settings.web_eric_pct!=null)?Number(settings.web_eric_pct):0.35; // Eric's flat share of website/inbound revenue
-  // Personal deals: Brandon's floor applies here; Eric earns `pct` of HIS deals above the floor
-  var personal=revBrandon+revEric;
-  var above=Math.max(0, personal-floor);
-  var ericShare=personal>0 ? revEric/personal : 0;
-  var ericAbove=above*ericShare;
-  var ericPayPersonal=pct*ericAbove;
-  // Website / inbound: flat split — Eric gets webPct (35%), Brandon the rest (65%)
-  var ericPayWeb=webPct*revWeb;
-  var ericPay=ericPayPersonal+ericPayWeb;
-  var brandonPay=total-ericPay;
-  return {mrrBrandon:mrrBrandon,mrrEric:mrrEric,mrrWeb:mrrWeb,onbBrandon:onbBrandon,onbEric:onbEric,onbWeb:onbWeb,
-    revBrandon:revBrandon,revEric:revEric,revWeb:revWeb,mrr:mrrBrandon+mrrEric+mrrWeb,onb:onbBrandon+onbEric+onbWeb,
-    total:total,floor:floor,pct:pct,webPct:webPct,above:above,ericAbove:ericAbove,
-    ericPayPersonal:ericPayPersonal,ericPayWeb:ericPayWeb,ericPay:ericPay,brandonPay:brandonPay};
+  return splitPay(total, floor, pct, {mrrBrandon:mrrBrandon,mrrEric:mrrEric,mrrWeb:mrrWeb,
+    onbBrandon:onbBrandon,onbEric:onbEric,onbWeb:onbWeb,revBrandon:revBrandon,revEric:revEric,revWeb:revWeb,
+    mrr:mrrBrandon+mrrEric+mrrWeb,onb:onbBrandon+onbEric+onbWeb});
+}
+// Eric earns a flat `pct` (35%) of ALL revenue; Brandon keeps the rest but is guaranteed at least `floor`.
+function splitPay(total, floor, pct, extra){
+  var ericPay=pct*total, brandonPay=total-ericPay, guaranteeActive=false;
+  if(brandonPay<floor){ brandonPay=Math.min(floor,total); ericPay=total-brandonPay; guaranteeActive=true; }
+  return Object.assign({ total:total, floor:floor, pct:pct, ericPay:ericPay, brandonPay:brandonPay,
+    guaranteeActive:guaranteeActive, ericRaw:pct*total }, extra||{});
 }
 function expFreq(e){ return e.frequency || (e.recurring?'monthly':'once'); }
 function freqLabel(f){ return f==='monthly'?'Monthly':f==='yearly'?'Yearly':'One-time'; }
@@ -966,12 +961,10 @@ function renderMoney(){
     '<tr><td>&nbsp;&nbsp;from <span class="badge brandon">brandon</span> deals</td><td class="num">'+money(p.revBrandon)+'</td></tr>'+
     '<tr><td>&nbsp;&nbsp;from <span class="badge eric">eric</span> deals</td><td class="num">'+money(p.revEric)+'</td></tr>'+
     '<tr><td>&nbsp;&nbsp;from <span class="badge website">website</span> (inbound)</td><td class="num">'+money(p.revWeb)+'</td></tr>'+
-    wf('Floor to Brandon (first '+money(p.floor)+', personal deals)', money(Math.min(p.floor,p.revBrandon+p.revEric)), '')+
-    wf('Eric\'s deals above floor', money(p.ericAbove), '')+
-    '<tr><td>Eric from personal deals ('+Math.round(p.pct*100)+'% above floor)</td><td class="num">'+money(p.ericPayPersonal)+'</td></tr>'+
-    '<tr><td>Eric from website ('+Math.round(p.webPct*100)+'% of '+money(p.revWeb)+')</td><td class="num">'+money(p.ericPayWeb)+'</td></tr>'+
-    '<tr class="tot"><td>Eric gets (total take-home)</td><td class="num">'+money(p.ericPay)+'</td></tr>'+
-    '<tr class="tot"><td>Brandon gets (floor + 65% website + remainder)</td><td class="num">'+money(p.brandonPay)+'</td></tr>'+
+    '<tr><td>Eric\'s share ('+Math.round(p.pct*100)+'% of all revenue)</td><td class="num">'+money(p.ericRaw)+'</td></tr>'+
+    (p.guaranteeActive ? '<tr><td style="color:var(--accent)">↳ reduced — Brandon\'s '+money(p.floor)+' guarantee kicked in</td><td class="num">−'+money(p.ericRaw-p.ericPay)+'</td></tr>' : '')+
+    '<tr class="tot"><td>Eric take-home</td><td class="num">'+money(p.ericPay)+'</td></tr>'+
+    '<tr class="tot"><td>Brandon take-home ('+(p.guaranteeActive?money(p.floor)+' guarantee':Math.round((1-p.pct)*100)+'%')+')</td><td class="num">'+money(p.brandonPay)+'</td></tr>'+
     '</tbody>';
 
   // revenue by source (feeds the waterfall above)
@@ -1195,8 +1188,9 @@ function exportExcel(){
     ['Revenue this period (onboarding + MRR)', p.total],
     ['  from Brandon deals', p.revBrandon],
     ['  from Eric deals', p.revEric],
-    ['Floor to Brandon', p.floor],
-    ['Eric % above floor', Math.round(p.pct*100)+'%'],
+    ['  from Website (inbound)', p.revWeb],
+    ['Eric share (% of all revenue)', Math.round(p.pct*100)+'%'],
+    ['Brandon minimum guarantee', p.floor],
     ['Eric take-home', p.ericPay],
     ['Brandon take-home', p.brandonPay]
   ];
@@ -1389,10 +1383,11 @@ function projection(g){
     actB=actB*(1-cf)+newB; actE=actE*(1-cf)+newE;
     var onbB=newB*onb, onbE=newE*onb;
     var revB=mrrB+onbB, revE=mrrE+onbE, total=revB+revE;
-    var above=Math.max(0,total-floor);
-    var ericPay=pct*(total>0?above*revE/total:0);
+    // Eric gets a flat `pct` (35%) of all revenue; Brandon keeps the rest but is guaranteed `floor`.
+    var ericPay=pct*total, brandonPay=total-ericPay;
+    if(brandonPay<floor){ brandonPay=Math.min(floor,total); ericPay=total-brandonPay; }
     cum+=total;
-    out.push({m:m,newC:npm,active:actB+actE,mrr:mrrB+mrrE,onb:onbB+onbE,total:total,brandon:total-ericPay,eric:ericPay,cum:cum});
+    out.push({m:m,newC:npm,active:actB+actE,mrr:mrrB+mrrE,onb:onbB+onbE,total:total,brandon:brandonPay,eric:ericPay,cum:cum});
   }
   return out;
 }
