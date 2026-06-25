@@ -847,8 +847,26 @@ function contactIcons(c){
   }
   if(c.email){ b+='<a class="ci" draggable="false" href="#" title="Draft email in Gmail" onclick="emailLead(\''+c.id+'\');event.stopPropagation();return false">✉️</a>'; }
   b+='<a class="ci" draggable="false" href="#" title="Set follow-up reminder" onclick="setReminder(\''+c.id+'\');event.stopPropagation();return false">⏰</a>';
+  b+='<a class="ci" draggable="false" href="#" title="Ask for a Google review" onclick="askReview(\''+c.id+'\');event.stopPropagation();return false">⭐</a>';
   b+='<a class="ci" draggable="false" href="#" title="Add note" onclick="quickNote(\''+c.id+'\');event.stopPropagation();return false">📝</a>';
   return b;
+}
+// Set this to your Google "leave a review" short link (Business Profile → Ask for reviews → copy link, e.g. https://g.page/r/XXXX/review)
+var GOOGLE_REVIEW_URL='';
+async function askReview(id){
+  var c=clients.find(function(x){return x.id===id;}); if(!c) return;
+  if(!GOOGLE_REVIEW_URL){ alert('Set your Google review link first: open dashboard.html and paste your link into GOOGLE_REVIEW_URL (from Google Business Profile → Ask for reviews).'); return; }
+  if(!c.email){ alert('No email on file for this customer — add one to send a review request.'); return; }
+  var subject='Quick favor — mind leaving us a review?';
+  var body='Hi '+(c.contact_name||'there')+',\n\nIt’s been great working with '+(c.business_name||'you')+'! If you have a minute, a quick Google review would mean the world and helps other local businesses find us:\n\n'+GOOGLE_REVIEW_URL+'\n\nThank you so much!\n\n— The Rank Rebels Team';
+  var t=await authToken();
+  if(t){
+    var r=await fetch('/api/google/draft',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t},body:JSON.stringify({to:c.email,subject:subject,body:body})});
+    var d=await r.json().catch(function(){return {};});
+    if(d.ok){ logActivity(id,'email','Asked for a Google review'); if(confirm('Review request drafted in Gmail. Open it?')) window.open(d.link,'_blank'); return; }
+    if(d.error && !/not connected/i.test(d.error)){ alert(d.error); return; }
+  }
+  window.location.href='mailto:'+encodeURIComponent(c.email)+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
 }
 function stageArrows(c){
   var i=stageIndex(c.stage), s='';
