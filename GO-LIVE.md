@@ -14,10 +14,11 @@ Env vars only load on a *new* build, so always Retry Deployment after changing t
 | `SUPABASE_SERVICE_ROLE_KEY` | Stores Google tokens for Gmail/Calendar | ✅ added |
 | `GOOGLE_PLACES_API_KEY` | Find Leads tool | ✅ added |
 | `GOOGLE_CLIENT_SECRET` | Google OAuth (Gmail drafts + Calendar) | ✅ added |
-| `TURNSTILE_SECRET_KEY` | Bot/abuse protection on the chat endpoint | ⬜ optional — needs Turnstile widget |
+| `TURNSTILE_SECRET_KEY` | Bot/abuse protection on the chat endpoint | ✅ added |
 | `STRIPE_SECRET_KEY` | Stripe invoices (customers pay by card/ACH) | ⬜ optional — needs a Stripe account |
 
-> The public **Turnstile site key** also gets pasted into `index.html` + `dashboard.html` (`TURNSTILE_SITE_KEY`). Send it to Claude and it gets wired in.
+> The public **Turnstile site key** is wired into `index.html` + `dashboard.html` (`TURNSTILE_SITE_KEY`). ✅ done.
+> **Supabase SQL:** ✅ all run successfully.
 
 ---
 
@@ -176,7 +177,21 @@ create policy rr_agree_sign on rr_agreements for insert to anon
 ---
 
 ## 6. Optional polish (not blocking)
-- Turnstile widget → bot protection
-- Email signatures (in `/signatures`) installed in Gmail
-- Branded magic‑link email + point Supabase Auth SMTP at Resend (kills email rate limits)
-- SPF / DKIM / DMARC for deliverability
+- ✅ Turnstile widget → bot protection (site key wired, secret key added)
+- ⬜ Email signatures (in `/signatures`) installed in Gmail
+- ⬜ Branded magic‑link email + point Supabase Auth SMTP at Resend (kills email rate limits)
+- ⬜ SPF / DKIM / DMARC for email deliverability (DNS records at Squarespace) — see notes below
+
+### Email signatures (Gmail)
+For each person (brandon.html, eric.html, sales.html):
+1. Open the signature file in a browser (or have Claude render it).
+2. Select all (Cmd+A) and copy the **rendered** signature (not the raw HTML).
+3. Gmail → ⚙️ → See all settings → General → Signature → Create new → paste → Save.
+
+### SPF / DKIM / DMARC (plain English)
+Three DNS records that prove your email really comes from rankrebels.ai — they keep you out of spam and stop anyone from spoofing your domain. Add them where your DNS lives (Squarespace).
+- **SPF** — lists who's allowed to send for your domain. TXT record on `rankrebels.ai`:
+  `v=spf1 include:_spf.google.com include:amazonses.com ~all`  (Google Workspace + Resend)
+- **DKIM** — a signature proving the email wasn't tampered with. Generate in **Google Admin → Apps → Gmail → Authenticate email**, add the TXT record it gives you, then turn it on. (Resend's DKIM was added when you verified the domain in Resend.)
+- **DMARC** — tells inboxes what to do if SPF/DKIM fail. TXT record on `_dmarc.rankrebels.ai`:
+  `v=DMARC1; p=none; rua=mailto:dmarc@rankrebels.ai`  (start with p=none to monitor, tighten later)
