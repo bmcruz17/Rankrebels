@@ -539,6 +539,42 @@ async function calendarFollowUp(){
   if(d.ok){ if(confirm('Added to your Google Calendar. Open it?')) window.open(d.link,'_blank'); }
   else { alert(d.error||'Could not create event.'); }
 }
+// From a card: draft the email in Gmail (falls back to mailto if Google isn't connected)
+async function emailLead(id){
+  var c=clients.find(function(x){return x.id===id;}); if(!c) return;
+  if(!c.email){ alert('No email on file for this lead — add one first.'); return; }
+  var t=await authToken();
+  if(t){
+    var subject='Rank Rebels — '+(c.business_name||'');
+    var body='Hi '+(c.contact_name||'there')+',\n\n';
+    var r=await fetch('/api/google/draft',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t},body:JSON.stringify({to:c.email,subject:subject,body:body})});
+    var d=await r.json().catch(function(){return {};});
+    if(d.ok){ logActivity(id,'email','Drafted email in Gmail'); window.open(d.link,'_blank'); return; }
+    if(d.error && !/not connected/i.test(d.error)){ alert(d.error); return; }
+  }
+  // fallback: open the device mail composer
+  logActivity(id,'email','');
+  window.location.href='mailto:'+encodeURIComponent(c.email);
+}
+// From a card: set a follow-up reminder (days from now or a date), save it, optionally add to Calendar
+async function setReminder(id){
+  var c=clients.find(function(x){return x.id===id;}); if(!c) return;
+  var ans=prompt('Remind to follow up — enter days from now (e.g. 3) or a date (YYYY-MM-DD):','3');
+  if(ans===null) return; ans=ans.trim(); var date;
+  if(/^\d{4}-\d{2}-\d{2}$/.test(ans)){ date=ans; }
+  else { var n=parseInt(ans,10); if(isNaN(n)){ alert('Enter a number of days or a date like 2026-07-15.'); return; } var dd=new Date(); dd.setDate(dd.getDate()+n); date=dd.toISOString().slice(0,10); }
+  c.follow_up=date; renderAll();
+  var r=await sb.from('rr_clients').update({follow_up:date}).eq('id',id);
+  if(r.error && /follow_up|column|schema cache/i.test(r.error.message||'')){ alert('Reminder set locally, but the follow_up column isn’t added yet (see SQL).'); }
+  var t=await authToken();
+  if(t && confirm('Reminder set for '+date+'. Add it to your Google Calendar too?')){
+    var desc=[c.contact_name,c.phone,c.email].filter(Boolean).join(' · ');
+    var cr=await fetch('/api/google/calendar',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t},body:JSON.stringify({date:date,summary:'Follow up: '+(c.business_name||''),description:desc})});
+    var cd=await cr.json().catch(function(){return {};});
+    if(cd.ok){ if(confirm('Added to Google Calendar. Open it?')) window.open(cd.link,'_blank'); }
+    else { alert(cd.error||'Could not add to calendar — is Google connected?'); }
+  }
+}
 
 async function boot(){
   var {data:{session}} = await sb.auth.getSession();
@@ -660,7 +696,8 @@ function contactIcons(c){
     b+='<a class="ci" draggable="false" href="tel:'+telDigits(c.phone)+'" title="Call" onclick="logActivity(\''+c.id+'\',\'call\');event.stopPropagation()">📞</a>';
     b+='<a class="ci" draggable="false" href="sms:'+telDigits(c.phone)+'" title="Text" onclick="logActivity(\''+c.id+'\',\'text\');event.stopPropagation()">💬</a>';
   }
-  if(c.email){ b+='<a class="ci" draggable="false" href="mailto:'+esc(c.email)+'" title="Email" onclick="logActivity(\''+c.id+'\',\'email\');event.stopPropagation()">✉️</a>'; }
+  if(c.email){ b+='<a class="ci" draggable="false" href="#" title="Draft email in Gmail" onclick="emailLead(\''+c.id+'\');event.stopPropagation();return false">✉️</a>'; }
+  b+='<a class="ci" draggable="false" href="#" title="Set follow-up reminder" onclick="setReminder(\''+c.id+'\');event.stopPropagation();return false">⏰</a>';
   b+='<a class="ci" draggable="false" href="#" title="Add note" onclick="quickNote(\''+c.id+'\');event.stopPropagation();return false">📝</a>';
   return b;
 }
@@ -853,7 +890,7 @@ function renderCustomers(){
       (creds.length?'<div class="line"><span class="k">Secrets</span><span class="key-chip">🔒 '+creds.length+' saved — tap to view</span></div>':'')+
       ((c.phone||c.email)?'<div class="contact-btns">'+
         (c.phone?'<a class="cbtn call" href="tel:'+telDigits(c.phone)+'" onclick="logActivity(\''+c.id+'\',\'call\');event.stopPropagation()">📞 Call</a><a class="cbtn" href="sms:'+telDigits(c.phone)+'" onclick="logActivity(\''+c.id+'\',\'text\');event.stopPropagation()">💬 Text</a>':'')+
-        (c.email?'<a class="cbtn" href="mailto:'+esc(c.email)+'" onclick="logActivity(\''+c.id+'\',\'email\');event.stopPropagation()">✉️ Email</a>':'')+
+        (c.email?'<a class="cbtn" href="#" onclick="emailLead(\''+c.id+'\');event.stopPropagation();return false">✉️ Email</a>':'')+
         '</div>':'')+
       '<div class="foot"><span>Since '+(c.published_at||'—')+'</span><b>'+money(c.monthly_charge)+'/mo</b></div>';
     card.onclick=function(){ openClient(c.id); };
