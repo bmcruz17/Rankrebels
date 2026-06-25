@@ -59,6 +59,7 @@
   .tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin:0;padding:0 20px;position:sticky;top:60px;background:rgba(255,255,255,.85);backdrop-filter:blur(14px);z-index:30;overflow-x:auto}
   .tab{padding:14px 16px;font-weight:600;font-size:14.5px;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}
   .tab.on{color:var(--text);border-bottom-color:var(--brand);border-bottom-width:3px;background:rgba(21,128,61,.08)}
+  .req-badge{background:var(--accent);color:#fff;font-size:11px;font-weight:800;border-radius:999px;padding:1px 7px;margin-left:4px;vertical-align:middle}
   .view{padding:24px 0 80px}
   .view.hidden{display:none}
   .row-between{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px}
@@ -225,6 +226,7 @@
     <div class="tab" data-tab="money" onclick="setTab('money')">Money</div>
     <div class="tab" data-tab="budget" onclick="setTab('budget')">Budget</div>
     <div class="tab" data-tab="goals" onclick="setTab('goals')">Goals</div>
+    <div class="tab" data-tab="requests" onclick="setTab('requests')">Requests <span id="req-badge" class="req-badge" style="display:none"></span></div>
   </div>
 
   <!-- PIPELINE -->
@@ -329,6 +331,28 @@
       <table id="unit-econ"></table>
     </div>
   </div>
+
+  <!-- REQUESTS -->
+  <div class="view wrap hidden" id="view-requests">
+    <div class="row-between"><div><h2>Customer requests</h2><p class="sub">Change requests submitted by onboarded customers through their portal, plus publish quarterly reviews.</p></div></div>
+    <div class="panel">
+      <div class="panel-h">Open &amp; recent requests</div>
+      <table id="requests-tbl"></table>
+    </div>
+    <div class="panel">
+      <div class="panel-h">Publish a quarterly review</div>
+      <div style="padding:14px 18px">
+        <div class="grid2">
+          <div class="field"><label>Customer email (on their record)</label><input id="rv-email" placeholder="owner@theirbusiness.com"></div>
+          <div class="field"><label>Period</label><input id="rv-period" placeholder="Q2 2026"></div>
+        </div>
+        <div class="field"><label>Summary</label><textarea id="rv-summary" rows="3" placeholder="How the site performed this quarter, wins, and what's next…"></textarea></div>
+        <div class="field"><label>Metrics <span style="color:var(--muted-2)">(optional — one per line as Label: Value, e.g. "Visitors: 1,240")</span></label><textarea id="rv-metrics" rows="3" placeholder="Visitors: 1,240&#10;Calls: 38&#10;Top page: /services"></textarea></div>
+        <button class="btn btn-primary btn-sm" onclick="publishReview()">Publish review</button>
+        <span id="rv-msg" class="msg" style="margin-left:10px"></span>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- client modal -->
@@ -430,7 +454,7 @@ var EMAIL_TO_ACQ = {'brandonmcruz@mac.com':'brandon','eric.paul.ellsworth@gmail.
 var EXPENSE_CATEGORIES = ['AI','Hosting','Marketing','Legal','Insurance','Rent','Phone Bill','Emails','Internet','Utilities','Equipment','Software','Travel/Conferences','Miscellaneous','Other'];
 var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-var clients = [], expenses = [], settings = {brandon_floor:6000, eric_pct:0.35};
+var clients = [], expenses = [], requests = [], settings = {brandon_floor:6000, eric_pct:0.35};
 var custSort = 'name', editingId = null, projRows = [], me = null;
 
 /* ===== helpers ===== */
@@ -492,19 +516,22 @@ async function loadAll(){
   }
   clients = c.data||[]; expenses = e.data||[];
   if(s.data){ settings = s.data; }
+  var rq = await sb.from('rr_requests').select('*').order('created_at',{ascending:false});
+  requests = (rq && !rq.error && rq.data) ? rq.data : [];
   renderAll();
 }
-function renderAll(){ fillCatList(); renderBoard(); renderCustomers(); renderMoney(); renderBudget(); renderGoals(); }
+function renderAll(){ fillCatList(); renderBoard(); renderCustomers(); renderMoney(); renderBudget(); renderGoals(); renderRequests(); }
 function fillCatList(){ var d=el('e-cat'); if(!d) return; var cats=EXPENSE_CATEGORIES.slice(); expenses.forEach(function(e){ if(e.category && cats.indexOf(e.category)<0) cats.push(e.category); }); var cur=d.value; d.innerHTML='<option value="">— select —</option>'+cats.map(function(c){return '<option value="'+c.replace(/"/g,'&quot;')+'">'+c+'</option>';}).join(''); if(cur) d.value=cur; }
 
 /* ===== tabs ===== */
 function setTab(t){
-  ['pipeline','customers','money','budget','goals'].forEach(function(v){
+  ['pipeline','customers','money','budget','goals','requests'].forEach(function(v){
     el('view-'+v).classList.toggle('hidden', v!==t);
   });
   document.querySelectorAll('.tab').forEach(function(x){ x.classList.toggle('on', x.dataset.tab===t); });
   if(t==='goals') renderGoals();
   if(t==='budget') renderBudget();
+  if(t==='requests') renderRequests();
 }
 
 /* ===== PIPELINE (kanban) ===== */
@@ -965,6 +992,52 @@ async function saveExpense(){
 }
 function deleteExpense(){ if(editingExpense){ var id=editingExpense; closeModal('m-exp'); delExpense(id); } }
 async function delExpense(id){ if(confirm('Delete expense?')){ await sb.from('rr_expenses').delete().eq('id',id); await loadAll(); } }
+
+/* ===== CUSTOMER REQUESTS + REVIEWS ===== */
+var REQ_STATUSES=['open','in_progress','done'];
+function reqStatusLabel(s){ return {open:'Open',in_progress:'In progress',done:'Done'}[s]||s; }
+function bizForEmail(email){ var c=clients.find(function(x){return x.email && email && x.email.toLowerCase()===email.toLowerCase();}); return c?c.business_name:null; }
+function renderRequests(){
+  var badge=el('req-badge');
+  var openCount=requests.filter(function(q){return (q.status||'open')==='open';}).length;
+  if(badge){ if(openCount){ badge.textContent=openCount; badge.style.display='inline-block'; } else { badge.style.display='none'; } }
+  var t=el('requests-tbl'); if(!t) return;
+  if(!requests.length){ t.innerHTML='<tbody><tr><td class="empty">No customer requests yet.</td></tr></tbody>'; return; }
+  var rows=requests.map(function(q){
+    var biz=bizForEmail(q.client_email);
+    var opts=REQ_STATUSES.map(function(s){return '<option value="'+s+'"'+((q.status||'open')===s?' selected':'')+'>'+reqStatusLabel(s)+'</option>';}).join('');
+    return '<tr><td><b>'+esc(q.subject||'Change request')+'</b><div style="font-size:12.5px;color:var(--muted);margin-top:3px;white-space:pre-wrap">'+esc(q.message)+'</div></td>'+
+      '<td style="white-space:nowrap">'+esc(biz||q.client_email||'')+(biz?'<div style="font-size:11.5px;color:var(--muted-2)">'+esc(q.client_email)+'</div>':'')+'</td>'+
+      '<td style="white-space:nowrap">'+(q.created_at?new Date(q.created_at).toLocaleDateString():'')+'</td>'+
+      '<td><select class="mini" onchange="updateRequestStatus(\''+q.id+'\',this.value)" style="padding:5px 8px">'+opts+'</select></td></tr>';
+  }).join('');
+  t.innerHTML='<thead><tr><th>Request</th><th>Customer</th><th>Date</th><th>Status</th></tr></thead><tbody>'+rows+'</tbody>';
+}
+async function updateRequestStatus(id, status){
+  var q=requests.find(function(x){return x.id===id;}); if(q) q.status=status;
+  renderRequests();
+  await sb.from('rr_requests').update({status:status}).eq('id',id);
+}
+function parseMetrics(text){
+  var out={};
+  String(text||'').split('\n').forEach(function(line){
+    var i=line.indexOf(':'); if(i<0) return;
+    var k=line.slice(0,i).trim(), v=line.slice(i+1).trim();
+    if(k&&v) out[k]=v;
+  });
+  return Object.keys(out).length?out:null;
+}
+async function publishReview(){
+  var email=el('rv-email').value.trim(), m=el('rv-msg');
+  if(!email){ m.className='msg err'; m.textContent='Enter the customer email.'; return; }
+  var rec={ client_email:email, period:el('rv-period').value.trim()||null, summary:el('rv-summary').value.trim()||null, metrics:parseMetrics(el('rv-metrics').value) };
+  if(!rec.summary && !rec.metrics){ m.className='msg err'; m.textContent='Add a summary or some metrics.'; return; }
+  m.className='msg'; m.textContent='Publishing…';
+  var r=await sb.from('rr_reviews').insert(rec);
+  if(r.error){ m.className='msg err'; m.textContent=r.error.message; return; }
+  el('rv-period').value=''; el('rv-summary').value=''; el('rv-metrics').value='';
+  m.className='msg ok'; m.textContent='Published — the customer can see it in their portal now.';
+}
 
 /* ===== EXPORT TO EXCEL ===== */
 function exportExcel(){
