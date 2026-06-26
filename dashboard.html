@@ -98,6 +98,20 @@
   .lead .money{color:var(--won);font-weight:800;font-size:13px}
   .lead .sub-nm{font-size:12.5px;color:var(--muted);margin:-1px 0 5px}
   .lead.stale{border-left:3px solid var(--accent)}
+  .lead .addr{font-size:12px;color:var(--muted-2);margin:-2px 0 6px;line-height:1.4;display:flex;align-items:baseline;gap:5px}
+  .lead .addr .a-ic{flex:0 0 auto;opacity:.7}
+  /* bulk select */
+  .lead.bulkmode{cursor:pointer}
+  .lead.bulkmode .nm{padding-left:28px}
+  .lead.bulksel{outline:2px solid var(--brand);outline-offset:-1px;background:rgba(21,128,61,.05)}
+  .lead.bulkmode.bulk-noemail{opacity:.5}
+  .lead-check{position:absolute;top:12px;left:12px;width:21px;height:21px;border:2px solid var(--line);border-radius:6px;display:grid;place-items:center;font-size:13px;font-weight:800;background:var(--panel);color:#fff;line-height:1}
+  .lead-check.on{background:var(--brand);border-color:var(--brand)}
+  .lead-check.dis{border-style:dashed;color:var(--muted-2);background:transparent;font-size:10px}
+  .bulk-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:rgba(21,128,61,.08);border:1px solid rgba(21,128,61,.25);border-radius:11px;padding:9px 14px;margin-bottom:12px}
+  .bulk-bar .bb-count{font-weight:800;font-size:14px;color:var(--brand)}
+  .bulk-bar .bb-sub{font-size:12px;color:var(--muted)}
+  .bulk-bar .bb-actions{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
   /* info block */
   .lead-contact{display:flex;flex-direction:column;gap:4px;font-size:12.5px;margin-top:9px}
   .lead-contact a{color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:6px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -312,10 +326,12 @@
           <button onclick="setPipeOwner('eric')">Eric</button>
         </div>
         <button class="btn btn-ghost btn-sm" id="legend-btn" onclick="toggleLegend()" title="What does each icon mean?">❔ Legend</button>
+        <button class="btn btn-ghost btn-sm" id="bulk-btn" onclick="toggleBulkMode()" title="Select multiple leads and schedule AI emails to all of them">☑︎ Bulk email</button>
         <button class="btn btn-primary" onclick="openClient()">+ Add customer</button>
       </div>
     </div>
     <div id="pipe-owner-sum" class="sub" style="margin:2px 0 10px"></div>
+    <div id="bulk-bar" class="bulk-bar" style="display:none"></div>
     <div id="pipe-legend" class="panel" style="display:none;margin-bottom:12px"></div>
     <div class="board" id="board"></div>
   </div>
@@ -720,6 +736,27 @@
   </div>
 </div>
 
+<div class="modal-bg" id="m-bulksched" onclick="if(event.target===this)closeModal('m-bulksched')">
+  <div class="modal" style="max-width:420px">
+    <h3>📅 AI email <span id="bsch-count" style="color:var(--brand)"></span></h3>
+    <p class="sub" style="margin:-4px 0 14px">We’ll AI-draft a personalized outreach email for each selected lead and queue them all to auto-send at the time below.</p>
+    <div class="grid2">
+      <div class="field"><label>Send date</label><input id="bsch-date" type="date"></div>
+      <div class="field"><label>Time (Pacific)</label><input id="bsch-time" type="time" value="08:30"></div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin:-2px 0 10px">
+      <button type="button" class="btn btn-ghost btn-sm" onclick="bschPreset(1,'08:30')">Tomorrow 8:30am</button>
+      <button type="button" class="btn btn-ghost btn-sm" onclick="bschPreset(1,'09:00')">Tomorrow 9:00am</button>
+      <button type="button" class="btn btn-ghost btn-sm" onclick="bschPreset(0,'17:00')">Today 5:00pm</button>
+    </div>
+    <div id="bsch-log" style="max-height:150px;overflow:auto;font-size:12px;line-height:1.5;margin-bottom:8px"></div>
+    <div class="modal-actions"><div></div><div style="display:flex;gap:10px">
+      <button class="btn btn-ghost" onclick="closeModal('m-bulksched')">Close</button>
+      <button class="btn btn-primary" id="bsch-go" onclick="confirmBulkSched()">Draft &amp; schedule</button>
+    </div></div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <script>
@@ -895,6 +932,33 @@ function scheduleAiEmail(id){
   el('m-sched').classList.add('open');
 }
 function schedPreset(addDays, time){ el('sched-date').value=pacificYmd(addDays); el('sched-time').value=time; }
+// Shared core: AI-draft an outreach email for one client, queue it to auto-send at sendAt,
+// move Leads→Contacted, and set a 48h follow-up. Returns {ok, subject, error}.
+async function scheduleAiFor(c, sendAt, t){
+  try{
+    var lead=leadForAI(c);
+    var r=await fetch('/api/google/draft-ai',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t},body:JSON.stringify({to:c.email,lead:lead,kind:'outreach'})});
+    var d=await r.json().catch(function(){return {};});
+    if(!d.ok || !d.draftId) return {ok:false, error:d.error||'Could not create the draft (connect Google first).'};
+    var ins=await sb.from('rr_scheduled_emails').insert({ client_id:c.id, sender_email:me, to_email:c.email, subject:d.subject||null, draft_id:d.draftId, send_at:sendAt.toISOString(), status:'scheduled' }).select().single();
+    if(ins.error) return {ok:false, error:(/relation|does not exist|rr_scheduled/i.test(ins.error.message||'')?'Run the rr_scheduled_emails SQL first.':ins.error.message)};
+    if(ins.data) scheduledEmails.unshift(ins.data);
+    var whenLbl=schedWhenLbl(sendAt.toISOString());
+    logActivity(c.id,'email','Scheduled email for '+whenLbl+': '+(d.subject||''));
+    if(c.stage==='lead'){ c.stage='contacted'; await sb.from('rr_clients').update({stage:'contacted'}).eq('id',c.id); }
+    // follow-up ≥48h after the send time
+    var pac=new Date(sendAt.toLocaleString('en-US',{timeZone:'America/Los_Angeles'}));
+    var followUp=new Date(Date.UTC(pac.getFullYear(),pac.getMonth(),pac.getDate()+2)).toISOString().slice(0,10);
+    if(!c.follow_up || c.follow_up < followUp){
+      c.follow_up=followUp;
+      var fr=await sb.from('rr_clients').update({follow_up:followUp}).eq('id',c.id);
+      if(!(fr.error && /follow_up|column|schema cache/i.test(fr.error.message||''))){
+        logActivity(c.id,'note','⏰ Follow-up set for '+followUp+' (48h after send) — if no reply, call '+(c.phone?c.phone:'them')+'.');
+      }
+    }
+    return {ok:true, subject:d.subject||'email'};
+  }catch(e){ return {ok:false, error:'Could not reach the AI drafting service.'}; }
+}
 async function confirmSchedSend(){
   var id=schedClientId; var c=clients.find(function(x){return x.id===id;}); if(!c) return;
   var dateStr=el('sched-date').value, timeStr=el('sched-time').value||'08:30';
@@ -905,34 +969,82 @@ async function confirmSchedSend(){
   var t=await authToken();
   try{
     if(!t){ alert('Please sign in again.'); return; }
-    var lead=leadForAI(c);
-    var r=await fetch('/api/google/draft-ai',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t},body:JSON.stringify({to:c.email,lead:lead,kind:'outreach'})});
-    var d=await r.json().catch(function(){return {};});
-    if(!d.ok || !d.draftId){ alert(d.error||'Could not create the draft. Connect Google first.'); return; }
-    var ins=await sb.from('rr_scheduled_emails').insert({ client_id:id, sender_email:me, to_email:c.email, subject:d.subject||null, draft_id:d.draftId, send_at:sendAt.toISOString(), status:'scheduled' }).select().single();
-    if(ins.error){ if(/relation|does not exist|rr_scheduled/i.test(ins.error.message||'')){ alert('Run the rr_scheduled_emails SQL first.'); } else alert(ins.error.message); return; }
-    if(ins.data) scheduledEmails.unshift(ins.data);
-    var whenLbl=sendAt.toLocaleString('en-US',{timeZone:'America/Los_Angeles',weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})+' PT';
-    logActivity(id,'email','Scheduled email for '+whenLbl+': '+(d.subject||''));
-    // Auto-advance Leads → Contacted (never move a deal backward)
-    var movedToContacted=false;
-    if(c.stage==='lead'){ c.stage='contacted'; movedToContacted=true; await sb.from('rr_clients').update({stage:'contacted'}).eq('id',id); }
-    // Set a follow-up reminder ≥48h after the send time, nudging a phone call
-    var p=dateStr.split('-'); var followUp=new Date(Date.UTC(+p[0],+p[1]-1,+p[2]+2)).toISOString().slice(0,10);
-    if(!c.follow_up || c.follow_up < followUp){
-      c.follow_up=followUp;
-      var fr=await sb.from('rr_clients').update({follow_up:followUp}).eq('id',id);
-      if(!(fr.error && /follow_up|column|schema cache/i.test(fr.error.message||''))){
-        logActivity(id,'note','⏰ Follow-up set for '+followUp+' (48h after send) — if no reply, call '+(c.phone?c.phone:'them')+'. A quick call converts far better than a second email.');
-      }
-    }
+    var res=await scheduleAiFor(c, sendAt, t);
+    if(!res.ok){ alert(res.error); return; }
     renderScheduledStrip(); renderAll(); closeModal('m-sched');
-    alert('✅ Drafted “'+(d.subject||'email')+'” in Gmail and scheduled to send '+whenLbl+'.\n\n'+
-      (movedToContacted?'→ Moved to Contacted.\n':'')+
-      '→ Follow-up reminder set for '+followUp+' (48h after send). If they haven’t replied, give them a call.\n\n'+
-      'It’s in your Gmail Drafts now — review or edit it anytime before then.');
+    var whenLbl=schedWhenLbl(sendAt.toISOString());
+    alert('✅ Drafted “'+res.subject+'” in Gmail and scheduled to send '+whenLbl+'.\n\n→ Moved to Contacted (if it was a lead) and set a 48h follow-up.\n\nIt’s in your Gmail Drafts now — review or edit it anytime before then.');
   }catch(e){ alert('Could not reach the AI drafting service.'); }
   finally{ btn.disabled=false; btn.textContent='Draft & schedule'; }
+}
+
+/* ===== BULK: AI-draft + schedule for many leads at once ===== */
+var bulkMode=false, bulkSel={};
+function toggleBulkMode(){
+  bulkMode=!bulkMode; bulkSel={};
+  var btn=el('bulk-btn'); if(btn) btn.classList.toggle('on', bulkMode);
+  renderBoard(); renderBulkBar();
+}
+function bulkEligible(c){ return !!(c.email && (c.email+'').indexOf('@')>=0); }
+function toggleBulkSel(id){
+  var c=clients.find(function(x){return x.id===id;}); if(!c || !bulkEligible(c)) return;
+  if(bulkSel[id]) delete bulkSel[id]; else bulkSel[id]=true;
+  renderBoard(); renderBulkBar();
+}
+function bulkSelectAllEmail(){
+  var list=pipeFiltered().filter(bulkEligible);
+  var allOn=list.length && list.every(function(c){return bulkSel[c.id];});
+  bulkSel={}; if(!allOn) list.forEach(function(c){ bulkSel[c.id]=true; });
+  renderBoard(); renderBulkBar();
+}
+function bulkSelIds(){ return Object.keys(bulkSel).filter(function(id){ var c=clients.find(function(x){return x.id===id;}); return c && bulkEligible(c); }); }
+function renderBulkBar(){
+  var bar=el('bulk-bar'); if(!bar) return;
+  if(!bulkMode){ bar.style.display='none'; return; }
+  bar.style.display='flex';
+  var n=bulkSelIds().length;
+  var eligible=pipeFiltered().filter(bulkEligible).length;
+  bar.innerHTML='<span class="bb-count">'+n+' selected</span>'+
+    '<span class="bb-sub">'+eligible+' leads with an email in view</span>'+
+    '<span class="bb-actions">'+
+      '<button class="btn btn-ghost btn-sm" onclick="bulkSelectAllEmail()">Select all w/ email</button>'+
+      '<button class="btn btn-primary btn-sm" '+(n?'':'disabled')+' onclick="openBulkSched()">📅 AI email '+(n?('& schedule ('+n+')'):'& schedule')+'</button>'+
+      '<button class="btn btn-ghost btn-sm" onclick="toggleBulkMode()">Done</button>'+
+    '</span>';
+}
+function openBulkSched(){
+  if(!bulkSelIds().length) return;
+  el('bsch-date').value=pacificYmd(1); el('bsch-time').value='08:30';
+  el('bsch-count').textContent=bulkSelIds().length+' lead'+(bulkSelIds().length===1?'':'s');
+  el('bsch-go').disabled=false; el('bsch-go').textContent='Draft & schedule';
+  el('bsch-log').innerHTML='';
+  el('m-bulksched').classList.add('open');
+}
+function bschPreset(addDays,time){ el('bsch-date').value=pacificYmd(addDays); el('bsch-time').value=time; }
+async function confirmBulkSched(){
+  var ids=bulkSelIds(); if(!ids.length) return;
+  var dateStr=el('bsch-date').value, timeStr=el('bsch-time').value||'08:30';
+  if(!dateStr){ alert('Pick a send date.'); return; }
+  var sendAt=pacificDateTimeToUtc(dateStr, timeStr);
+  if(sendAt.getTime() < Date.now()+60000){ alert('Pick a time in the future.'); return; }
+  var t=await authToken(); if(!t){ alert('Please sign in again.'); return; }
+  var btn=el('bsch-go'); btn.disabled=true;
+  var logBox=el('bsch-log'); var done=0, ok=0, fail=0;
+  for(var k=0;k<ids.length;k++){
+    var c=clients.find(function(x){return x.id===ids[k];}); if(!c) continue;
+    btn.textContent='Drafting '+(done+1)+' of '+ids.length+'…';
+    var res=await scheduleAiFor(c, sendAt, t);
+    done++; if(res.ok){ ok++; } else { fail++; }
+    logBox.innerHTML='<div style="'+(res.ok?'color:var(--brand)':'color:#c0392b')+'">'+(res.ok?'✓':'✗')+' '+esc(c.business_name)+(res.ok?'':' — '+esc(res.error||'failed'))+'</div>'+logBox.innerHTML;
+    renderScheduledStrip();
+  }
+  btn.textContent='Draft & schedule';
+  var whenLbl=schedWhenLbl(sendAt.toISOString());
+  renderAll();
+  bulkSel={}; renderBulkBar();
+  alert('✅ Scheduled '+ok+' AI email'+(ok===1?'':'s')+' to send '+whenLbl+(fail?(' · '+fail+' failed'):'')+'.\n\nThe drafts are in your Gmail now — review or edit any before then. Leads moved to Contacted with a 48h follow-up.');
+  if(!fail) closeModal('m-bulksched');
+  else btn.disabled=false;
 }
 var scheduledEmails=[];
 var schedCollapsed=false;
@@ -1864,16 +1976,21 @@ function toggleLegend(){
   } else { box.style.display='none'; if(btn) btn.classList.remove('on'); }
 }
 function leadCard(c){
-  var d=document.createElement('div'); d.className='lead'+(isStale(c)?' stale':''); d.draggable=true;
+  var selable=bulkMode && bulkEligible(c);
+  var d=document.createElement('div');
+  d.className='lead'+(isStale(c)?' stale':'')+(bulkMode?' bulkmode':'')+(bulkMode&&bulkSel[c.id]?' bulksel':'')+(bulkMode&&!bulkEligible(c)?' bulk-noemail':'');
+  d.draggable=!bulkMode;
   var la=lastActivity(c), ln=lastNote(c);
+  var addr=addrShort(c.address);
   var contactLine = (c.phone||c.email) ? '<div class="lead-contact">'+
       (c.phone?'<a href="tel:'+telDigits(c.phone)+'" title="Call" onclick="event.stopPropagation()"><span class="ci-ic">📞</span>'+esc(c.phone)+'</a>':'')+
       (c.email?'<a href="#" title="'+esc(c.email)+'" onclick="emailLead(\''+c.id+'\');event.stopPropagation();return false"><span class="ci-ic">✉️</span>'+esc(c.email)+'</a>':'')+
     '</div>' : '';
   var noteTxt = ln ? cleanNote(ln.note) : '';
   var actTxt = (la && la.type!=='note' && la.note) ? cleanNote(la.note) : '';
-  d.innerHTML='<span class="del-x" title="Delete">×</span>'+
+  d.innerHTML=(bulkMode?'<span class="lead-check'+(bulkSel[c.id]?' on':'')+(bulkEligible(c)?'':' dis')+'" title="'+(bulkEligible(c)?'Select':'No email on file')+'">'+(bulkSel[c.id]?'✓':(bulkEligible(c)?'':'✕'))+'</span>':'<span class="del-x" title="Delete">×</span>')+
     '<div class="nm">'+esc(c.business_name)+'</div>'+
+    (addr?'<div class="addr"><span class="a-ic">📍</span>'+esc(addr)+'</div>':'')+
     (c.contact_name?'<div class="sub-nm">'+esc(c.contact_name)+'</div>':'')+
     '<div class="meta"><span class="badge '+c.acquired_by+'">'+c.acquired_by+'</span>'+
       (c.partner?'<span class="partner-chip" title="Referred by '+esc(c.partner)+(c.partner_rep?' · '+esc(c.partner_rep):'')+'">🤝 '+esc(c.partner)+'</span>':'')+
@@ -1889,12 +2006,21 @@ function leadCard(c){
     followUpBadge(c);
   d.addEventListener('dragstart', function(ev){ ev.dataTransfer.setData('text/plain', c.id); d.classList.add('dragging'); });
   d.addEventListener('dragend', function(){ d.classList.remove('dragging'); });
-  d.addEventListener('click', function(ev){ if(!ev.target.classList.contains('del-x')) openClient(c.id); });
-  d.querySelector('.del-x').addEventListener('click', async function(ev){
+  d.addEventListener('click', function(ev){
+    if(bulkMode){ toggleBulkSel(c.id); return; }
+    if(!ev.target.classList.contains('del-x')) openClient(c.id);
+  });
+  var delx=d.querySelector('.del-x');
+  if(delx) delx.addEventListener('click', async function(ev){
     ev.stopPropagation();
     if(confirm('Delete "'+c.business_name+'"?')){ await sb.from('rr_clients').delete().eq('id',c.id); clients=clients.filter(function(x){return x.id!==c.id;}); renderAll(); }
   });
   return d;
+}
+// Tidy a Google address for the tile: drop ", USA" and the long zip+country tail.
+function addrShort(a){
+  if(!a) return '';
+  return String(a).replace(/,?\s*USA$/i,'').replace(/\s+\d{5}(-\d{4})?$/,'').trim();
 }
 
 /* ===== client modal ===== */
