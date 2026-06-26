@@ -601,6 +601,21 @@
   </div>
 </div>
 
+<div class="modal-bg" id="m-scripts" onclick="if(event.target===this)closeModal('m-scripts')">
+  <div class="modal" style="max-width:560px">
+    <h3 id="scripts-title">Outreach scripts</h3>
+    <p class="sub" style="margin:-4px 0 12px">Personalized from this lead's Google reviews &amp; website status. Tap copy.</p>
+    <div class="field"><label>💬 Text message <span class="reveal" style="margin-left:8px" onclick="copyFrom('scr-text')">copy</span></label>
+      <textarea id="scr-text" rows="4"></textarea></div>
+    <div class="field"><label>📞 Call script <span class="reveal" style="margin-left:8px" onclick="copyFrom('scr-call')">copy</span></label>
+      <textarea id="scr-call" rows="12" style="font-size:13px;line-height:1.5"></textarea></div>
+    <div class="modal-actions"><div></div><div style="display:flex;gap:10px">
+      <button class="btn btn-ghost" onclick="closeModal('m-scripts')">Close</button>
+      <button class="btn btn-primary" id="scr-sms" onclick="sendScriptText()">Open in Messages</button>
+    </div></div>
+  </div>
+</div>
+
 <div class="modal-bg" id="m-sched" onclick="if(event.target===this)closeModal('m-sched')">
   <div class="modal" style="max-width:400px">
     <h3>📅 Schedule AI email</h3>
@@ -744,9 +759,7 @@ async function aiDraft(id, kind){
   var c=clients.find(function(x){return x.id===id;}); if(!c){ alert('Save the customer first.'); return; }
   if(!c.email){ alert('No email on file for this lead — add one first.'); return; }
   var t=await authToken(); if(!t){ alert('Connect Google first.'); return; }
-  var noteText=clientNotes(c).map(function(n){return n.note;}).filter(Boolean).join(' | ');
-  var lead={ business_name:c.business_name, contact_name:c.contact_name, stage:stageName(c.stage),
-    interested_in:(Array.isArray(c.services)?c.services.join(', '):''), setup_fee:c.onboarding_fee, monthly_charge:c.monthly_charge, notes:noteText };
+  var lead=leadForAI(c);
   var btn=el('gbtn'); if(btn) btn.textContent='✍️ Drafting…';
   try{
     var r=await fetch('/api/google/draft-ai',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t},body:JSON.stringify({to:c.email,lead:lead,kind:kind||'outreach'})});
@@ -772,6 +785,22 @@ function pacificYmd(addDays){
   var m=('0'+(la.getMonth()+1)).slice(-2), d=('0'+la.getDate()).slice(-2);
   return la.getFullYear()+'-'+m+'-'+d;
 }
+var scriptsClientId=null;
+function openScripts(id){
+  var c=clients.find(function(x){return x.id===id;}); if(!c) return;
+  scriptsClientId=id;
+  el('scripts-title').textContent='Scripts · '+c.business_name;
+  el('scr-text').value=leadText(c);
+  el('scr-call').value=leadCallScript(c);
+  el('scr-sms').style.display = c.phone ? '' : 'none';
+  el('m-scripts').classList.add('open');
+}
+function copyFrom(id){ var t=el(id); t.select(); try{ navigator.clipboard.writeText(t.value); }catch(e){ document.execCommand('copy'); } var n=event&&event.target; if(n){ var o=n.textContent; n.textContent='copied!'; setTimeout(function(){n.textContent=o;},1200); } }
+function sendScriptText(){
+  var c=clients.find(function(x){return x.id===scriptsClientId;}); if(!c||!c.phone) return;
+  logActivity(c.id,'text','Sent text from template');
+  window.location.href='sms:'+telDigits(c.phone)+'?&body='+encodeURIComponent(el('scr-text').value);
+}
 var schedClientId=null;
 // 📅 button → open the time picker
 function scheduleAiEmail(id){
@@ -793,9 +822,7 @@ async function confirmSchedSend(){
   var t=await authToken();
   try{
     if(!t){ alert('Please sign in again.'); return; }
-    var noteText=clientNotes(c).map(function(n){return n.note;}).filter(Boolean).join(' | ');
-    var lead={ business_name:c.business_name, contact_name:c.contact_name, stage:stageName(c.stage),
-      interested_in:(Array.isArray(c.services)?c.services.join(', '):''), setup_fee:c.onboarding_fee, monthly_charge:c.monthly_charge, notes:noteText };
+    var lead=leadForAI(c);
     var r=await fetch('/api/google/draft-ai',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t},body:JSON.stringify({to:c.email,lead:lead,kind:'outreach'})});
     var d=await r.json().catch(function(){return {};});
     if(!d.ok || !d.draftId){ alert(d.error||'Could not create the draft. Connect Google first.'); return; }
@@ -1247,6 +1274,7 @@ function contactIcons(c){
   }
   if(c.email){ b+='<a class="ci" draggable="false" href="#" title="Draft email in Gmail" onclick="emailLead(\''+c.id+'\');event.stopPropagation();return false">✉️</a>'; }
   if(c.email){ b+='<a class="ci" draggable="false" href="#" title="AI email · auto-send tomorrow 8:30am PT" onclick="scheduleAiEmail(\''+c.id+'\');event.stopPropagation();return false">📅</a>'; }
+  b+='<a class="ci" draggable="false" href="#" title="Text template & call script" onclick="openScripts(\''+c.id+'\');event.stopPropagation();return false">📋</a>';
   b+='<a class="ci" draggable="false" href="#" title="Set follow-up reminder" onclick="setReminder(\''+c.id+'\');event.stopPropagation();return false">⏰</a>';
   b+='<a class="ci" draggable="false" href="#" title="Ask for a Google review" onclick="askReview(\''+c.id+'\');event.stopPropagation();return false">⭐</a>';
   b+='<a class="ci" draggable="false" href="#" title="Send a personalized proposal" onclick="sendProposal(\''+c.id+'\');event.stopPropagation();return false">📄</a>';
@@ -1286,6 +1314,80 @@ async function sendProposal(id){
 }
 // Set this to your Google "leave a review" short link (Business Profile → Ask for reviews → copy link, e.g. https://g.page/r/XXXX/review)
 var GOOGLE_REVIEW_URL='';
+// Paste your booking links (Calendly, Google Calendar appointment schedule, etc.) so the AI email/text can offer them.
+var BOOKING={ brandon:'', eric:'' };
+
+// Pull the lead-finder signals (rating, reviews, has-website, city) back out of a customer record.
+function leadSignals(c){
+  var blob=((c&&c.notes)||'')+' '+((c&&c.description)||'');
+  var rating=null, reviews=null, hasWebsite=null;
+  var m=blob.match(/[⭐★]\s*([\d.]+)\s*\((\d+)\s*review/i);
+  if(m){ rating=parseFloat(m[1]); reviews=parseInt(m[2],10); }
+  if(/no website/i.test(blob)) hasWebsite=false; else if(/site:\s*http|has site/i.test(blob)) hasWebsite=true;
+  var city='';
+  if(c&&c.address){ var p=c.address.split(','); if(p.length>=2){ city=p.slice(1,3).join(',').replace(/\b\d{5}(-\d{4})?\b/,'').replace(/\bUSA\b/i,'').replace(/\s+,/g,',').trim().replace(/^,|,$/g,'').trim(); } }
+  return { rating:rating, reviews:reviews, has_website:hasWebsite, city:city };
+}
+// Build the lead object the AI email uses (signals + booking links).
+function leadForAI(c){
+  var noteText=clientNotes(c).map(function(n){return n.note;}).filter(Boolean).join(' | ');
+  var s=leadSignals(c);
+  var lead={ business_name:c.business_name, contact_name:c.contact_name, city:s.city, business_type:c.description||'',
+    stage:stageName(c.stage), interested_in:(Array.isArray(c.services)?c.services.join(', '):''),
+    setup_fee:c.onboarding_fee, monthly_charge:c.monthly_charge, notes:noteText };
+  if(s.rating) lead.rating=s.rating;
+  if(s.reviews) lead.reviews=s.reviews;
+  if(s.has_website!==null) lead.has_website=s.has_website;
+  var bk={}; if(BOOKING.brandon) bk.brandon=BOOKING.brandon; if(BOOKING.eric) bk.eric=BOOKING.eric;
+  if(Object.keys(bk).length) lead.booking=bk;
+  return lead;
+}
+function bookingLine(){
+  var b=[]; if(BOOKING.brandon) b.push('Book with Brandon: '+BOOKING.brandon); if(BOOKING.eric) b.push('Book with Eric: '+BOOKING.eric);
+  return b.length ? ('\n\nGrab a quick 15-min call:\n'+b.join('\n')) : '';
+}
+// Personalized SMS text template (uses the same lead-finder signals)
+function leadText(c){
+  var s=leadSignals(c), nm=(c.contact_name||c.business_name||'there');
+  var praise = s.rating ? ('I saw '+c.business_name+'’s '+s.rating+'★'+(s.reviews?(' ('+s.reviews+'+ reviews)'):'')+' — seriously strong reputation.') : ('I came across '+c.business_name+'.');
+  var hook = (s.has_website===false) ? ' One thing stood out: you don’t have a website yet, so people searching for you may be landing on competitors instead of booking you.'
+    : ' We help local businesses get found on Google and AI search.';
+  var ask = (BOOKING.brandon||BOOKING.eric) ? bookingLine() : '\n\nWorth a quick chat?';
+  return 'Hi '+nm+' — this is [your name] with Rank Rebels. '+praise+hook+ask;
+}
+// Personalized cold-call script
+function leadCallScript(c){
+  var s=leadSignals(c), nm=(c.contact_name||'there');
+  var L=[];
+  L.push('CALL SCRIPT — '+c.business_name+(s.city?(' ('+s.city+')'):''));
+  L.push('');
+  L.push('Opener:');
+  L.push('“Hi, is this '+nm+'? This is [your name] with Rank Rebels — I’ll be quick.”');
+  L.push('');
+  L.push('The hook (lead with their reputation):');
+  if(s.rating) L.push('“I was actually looking at '+c.business_name+' and your '+s.rating+' stars'+(s.reviews?(' across '+s.reviews+'+ reviews'):'')+' really stood out — clearly people love working with you.”');
+  else L.push('“I came across '+c.business_name+' and wanted to reach out directly.”');
+  L.push('');
+  if(s.has_website===false){
+    L.push('The gap:');
+    L.push('“Here’s why I’m calling — with a reputation like that, I was surprised to see you don’t have a website. That usually means people who search for you find nothing… or worse, find a competitor. You’ve earned the demand; right now it’s leaking.”');
+  } else {
+    L.push('The gap:');
+    L.push('“The reason I’m calling — we help businesses like yours show up first on Google, the Map pack, and even when people ask ChatGPT for a recommendation.”');
+  }
+  L.push('');
+  L.push('The offer:');
+  L.push('“I’d love to put together a quick free audit of your online presence — no cost, no pressure — and show you exactly what we’d do. Worst case you get a free roadmap.”');
+  L.push('');
+  L.push('The ask:');
+  if(BOOKING.brandon||BOOKING.eric) L.push('“Easiest is to grab a 15-minute slot on my calendar — I’ll text/email you the link. What’s the best number/email?”');
+  else L.push('“Could I grab your email to send the audit and a couple times to chat this week?”');
+  L.push('');
+  L.push('If "not interested": “Totally fair — can I at least send the free audit so you have it? No strings.”');
+  L.push('If "how much": “Depends what you need — but the audit’s free and I’ll give you an honest recommendation either way.”');
+  L.push('Reminder: never promise a specific ranking or “#1 on Google.”');
+  return L.join('\n');
+}
 async function askReview(id){
   var c=clients.find(function(x){return x.id===id;}); if(!c) return;
   if(!GOOGLE_REVIEW_URL){ alert('Set your Google review link first: open dashboard.html and paste your link into GOOGLE_REVIEW_URL (from Google Business Profile → Ask for reviews).'); return; }
