@@ -1836,16 +1836,27 @@ function leadSignals(c){
   if(c&&c.address){ var p=c.address.split(','); if(p.length>=2){ city=p.slice(1,3).join(',').replace(/\b\d{5}(-\d{4})?\b/,'').replace(/\bUSA\b/i,'').replace(/\s+,/g,',').trim().replace(/^,|,$/g,'').trim(); } }
   return { rating:rating, reviews:reviews, has_website:hasWebsite, city:city };
 }
-// Build the lead object the AI email uses (signals + booking links).
+// Parse the "📘 Facebook profile:" block we save into notes back into structured fields for the AI.
+function fbFromNotes(c){
+  var notes=(c&&c.notes)||''; var fb={};
+  ['category','about','followers','likes','rating','phone','email','website','hours','priceRange','services'].forEach(function(k){
+    var m=notes.match(new RegExp('•\\s*'+k+'\\s*:\\s*([^\\n]+)','i'));
+    if(m && m[1].trim()) fb[k]=m[1].trim();
+  });
+  return Object.keys(fb).length?fb:null;
+}
+// Build the lead object the AI email uses — everything we know, so it can write a genuinely unique email.
 function leadForAI(c){
-  var noteText=clientNotes(c).map(function(n){return n.note;}).filter(Boolean).join(' | ');
+  var noteText=clientNotes(c).map(function(n){return n.note;}).filter(Boolean).join('\n');
   var s=leadSignals(c);
-  var lead={ business_name:c.business_name, contact_name:c.contact_name, city:s.city, business_type:c.description||'',
-    stage:stageName(c.stage), interested_in:(Array.isArray(c.services)?c.services.join(', '):''),
+  var lead={ business_name:c.business_name, contact_name:c.contact_name, city:s.city, address:c.address||'',
+    business_description:c.description||'', stage:stageName(c.stage),
+    interested_in:(Array.isArray(c.services)?c.services.join(', '):''),
     setup_fee:c.onboarding_fee, monthly_charge:c.monthly_charge, notes:noteText };
   if(s.rating) lead.rating=s.rating;
   if(s.reviews) lead.reviews=s.reviews;
   if(s.has_website!==null) lead.has_website=s.has_website;
+  var fb=fbFromNotes(c); if(fb) lead.facebook=fb;   // category, hours, services, about, followers, rating…
   var bk={}; if(BOOKING.brandon) bk.brandon=BOOKING.brandon; if(BOOKING.eric) bk.eric=BOOKING.eric;
   if(Object.keys(bk).length) lead.booking=bk;
   return lead;

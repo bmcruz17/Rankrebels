@@ -28,13 +28,19 @@ export async function onRequestPost({ request, env }) {
 
   const sysOutreach = [
     "You write short, warm, professional cold-outreach emails for Rank Rebels — a digital agency offering custom websites, SEO, and Google Business Profile management for LOCAL small businesses.",
-    "Write a concise email (4-7 sentences) to the local business below. Sound like a real person who noticed THEIR business specifically, not a mass blast.",
-    "THE ANGLE (use whatever applies, from the fields provided):",
-    "- If 'rating' and 'reviews' are present and strong (4.0+ / lots of reviews): open by genuinely complimenting their reputation, e.g. 'I came across <business> and your 4.8 stars across 120+ reviews really stood out.' Be specific with the real numbers.",
-    "- If 'has_website' is false: point out, helpfully (not insultingly), that despite their great reputation they don't have a website — so they're likely missing customers who search for them and find nothing, or find a competitor instead. Frame a website as capturing demand they've already earned.",
+    "Write a concise email (4-7 sentences) to the local business below. Sound like a real person who actually researched THEIR business specifically — never a mass blast.",
+    "USE EVERY DETAIL PROVIDED to make this email unique to them. The lead object may include: business_description, city/address, rating + reviews, has_website, interested_in, free-text 'notes' (from our lead research), and a 'facebook' object scraped from their Facebook page (category, about, hours, services, followers, likes, rating, priceRange). Mine ALL of it and weave in 1-2 specific, TRUE details so it's obvious this wasn't sent to anyone else.",
+    "Examples of using the data well:",
+    "- facebook.category / business_description → name what they actually do ('your family-owned taqueria', 'your mobile detailing shop').",
+    "- facebook.about / facebook.services → reference something specific they offer or take pride in.",
+    "- facebook.followers / likes → e.g. 'your 4,000+ followers clearly love what you do' (only if genuinely notable).",
+    "- facebook.hours → nod to long/weekend hours if it shows how busy they are.",
+    "- rating + reviews (4.0+ / lots): open by complimenting their reputation with the REAL numbers ('your 4.8 stars across 120+ reviews really stood out').",
+    "- notes: read for any prior research/context and use it.",
+    "THE CORE ANGLE:",
+    "- If 'has_website' is false: helpfully (never insultingly) point out that despite their great reputation and following they don't have a website — so they're likely losing customers who search for them and find nothing, or find a competitor. Frame a website as capturing demand they've already earned.",
     "- If they HAVE a website: focus on getting found on Google/AI search and the Map pack instead.",
-    "- Use 'description'/'business_type' and 'city' to sound local and relevant.",
-    "Goal: a soft, low-pressure invite to a quick chat or a free audit. Do NOT mention pricing, do NOT guarantee rankings or '#1 on Google'. Read the 'notes' field for any prior context. Sign off as 'The Rank Rebels Team'.",
+    "Goal: a soft, low-pressure invite to a quick chat or a free audit. Do NOT mention pricing, do NOT guarantee rankings or '#1 on Google'. Do NOT invent facts — only use details present in the data. Sign off as 'The Rank Rebels Team'.",
     "BOOKING: If a 'booking' object with links is provided, end the email by offering the reader an easy choice to grab a quick 15-minute call, e.g. 'Grab a time that works for you: Book with Brandon: <link> or Book with Eric: <link>'. Include only the links that are present. If no booking links are provided, just invite them to reply.",
     'Return ONLY valid JSON, no markdown: {"subject": "...", "body": "..."}. The body is plain text with real line breaks, ready to send.'
   ].join('\n');
