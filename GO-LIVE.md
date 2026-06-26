@@ -56,6 +56,24 @@ drop policy if exists rr_clients_team_all on rr_clients;
 create policy rr_clients_team_all on rr_clients for all to authenticated
   using (public.rr_is_team()) with check (public.rr_is_team());
 
+-- 2b) Blog (auto-posted daily; public can read published posts)
+create table if not exists rr_blog_posts (
+  id uuid primary key default gen_random_uuid(),
+  slug text unique not null,
+  title text not null,
+  excerpt text,
+  body_html text,
+  tags text[],
+  author text default 'Rank Rebels',
+  published boolean default true,
+  published_at timestamptz default now(),
+  created_at timestamptz default now()
+);
+alter table rr_blog_posts enable row level security;
+drop policy if exists rr_blog_public_read on rr_blog_posts;
+create policy rr_blog_public_read on rr_blog_posts for select to anon using (published = true);
+-- (the daily bot inserts via the service-role key, which bypasses RLS)
+
 -- 3) Expenses: extra columns
 alter table rr_expenses add column if not exists frequency text;
 alter table rr_expenses add column if not exists bill_date date;
@@ -251,6 +269,20 @@ Lets a partner's reps refer leads that land straight in your pipeline (`acquired
 **⚠️ Still to do (business terms, not code):**
 - **Reseller agreement** — a short partner contract (the commission above, term, who owns the client, non-circumvention). Have your attorney review; I can draft a starting template.
 - **Key security** — if reps use the included `partner-portal.html` as a public page, the key is visible in its source. Either host it behind Ryzen's own login, or have their Claude Code put the key in a tiny server-side proxy. (For internal rep use this is usually fine; the key can only *create* leads.)
+
+---
+
+## 9. Blog + daily auto-poster
+A blog at **`/blog.html`** (linked in the nav) that reads posts from `rr_blog_posts`. A GitHub Action writes one new post per day with Claude.
+
+**To turn it on:**
+1. **Run the blog SQL** (§2 — `rr_blog_posts` + public-read policy).
+2. **Add two GitHub repo secrets** (GitHub → repo → Settings → Secrets and variables → Actions):
+   - `ANTHROPIC_API_KEY` (your Claude key)
+   - `SUPABASE_SERVICE_ROLE_KEY` (Supabase → Settings → API → service_role)
+3. The **Daily blog post** Action runs ~14:23 UTC daily (edit the cron in `.github/workflows/daily-blog.yml`). Run it once now from the **Actions** tab to publish the first post.
+- Model defaults to `claude-opus-4-8` (~a few cents/post). Set a `BLOG_MODEL` repo variable to use a cheaper model (e.g. `claude-haiku-4-5`) if you'd rather.
+- Posts never claim guaranteed rankings (the prompt forbids it).
 
 ---
 

@@ -1,0 +1,27 @@
+name: Daily blog post
+
+# Auto-publishes one on-brand blog post per day to rr_blog_posts (shown at /blog).
+# Runs on GitHub's servers — needs no live session.
+
+on:
+  schedule:
+    - cron: "23 14 * * *"   # ~14:23 UTC (mid-morning US). Adjust to taste; cron is UTC.
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-blog
+  cancel-in-progress: false
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Generate & publish a blog post
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node scripts/post-blog.mjs
