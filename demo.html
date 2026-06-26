@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Demo Site — Rank Rebels</title>
+<meta name="robots" content="noindex" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
+<style>
+  :root{--a:#15803d;--a2:#1aa251;--ink:#15201b;--muted:#5b6b62;--line:#e5ece6;--bg:#fff}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.55}
+  a{color:inherit}
+  .demobar{background:#0c1f15;color:#fff;font-size:13.5px;text-align:center;padding:9px 16px}
+  .demobar b{color:#ffe08a}
+  .demobar a{color:#fff;font-weight:700;text-decoration:underline;margin-left:8px}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+  nav{display:flex;align-items:center;justify-content:space-between;height:68px;border-bottom:1px solid var(--line)}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:20px}
+  .brand .lg{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;color:#fff;font-size:20px;background:linear-gradient(135deg,var(--a),var(--a2))}
+  nav .links{display:flex;gap:24px;font-size:14.5px;color:var(--muted)}
+  @media(max-width:680px){nav .links{display:none}}
+  .cta{background:var(--a);color:#fff;border:none;border-radius:10px;padding:11px 18px;font-weight:700;font-size:14.5px;text-decoration:none;display:inline-block}
+  .hero{display:grid;grid-template-columns:1.1fr .9fr;gap:30px;align-items:center;padding:60px 0}
+  @media(max-width:780px){.hero{grid-template-columns:1fr;padding:38px 0}}
+  .hero h1{font-size:clamp(30px,5vw,46px);line-height:1.08;letter-spacing:-.02em;margin:0 0 14px}
+  .hero p{font-size:18px;color:var(--muted);margin:0 0 24px;max-width:48ch}
+  .hero .btns{display:flex;gap:12px;flex-wrap:wrap}
+  .ghost{border:1px solid var(--line);border-radius:10px;padding:11px 18px;font-weight:700;font-size:14.5px;text-decoration:none;display:inline-block}
+  .heroart{height:300px;border-radius:20px;display:grid;place-items:center;font-size:96px;color:#fff;box-shadow:0 30px 60px -30px rgba(0,0,0,.4)}
+  .stars{color:#f5a623;letter-spacing:2px}
+  .trust{display:flex;gap:26px;flex-wrap:wrap;align-items:center;color:var(--muted);font-size:14px;margin-top:18px}
+  section{padding:54px 0}
+  .sec-t{font-size:13px;text-transform:uppercase;letter-spacing:.14em;color:var(--a);font-weight:800}
+  h2{font-size:clamp(24px,3.5vw,34px);letter-spacing:-.02em;margin:6px 0 26px}
+  .svcs{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  @media(max-width:780px){.svcs{grid-template-columns:1fr}}
+  .svc{border:1px solid var(--line);border-radius:16px;padding:24px;background:linear-gradient(180deg,#fff,#f6faf7)}
+  .svc .i{font-size:28px}.svc h3{margin:12px 0 6px;font-size:18px}.svc p{margin:0;color:var(--muted);font-size:14.5px}
+  .band{background:#0c1f15;color:#fff;border-radius:22px;padding:44px 30px;display:grid;grid-template-columns:repeat(3,1fr);gap:24px;text-align:center}
+  @media(max-width:680px){.band{grid-template-columns:1fr;gap:18px}}
+  .band .n{font-size:38px;font-weight:800;color:#ffe08a}.band .l{color:#b6d0bf;font-size:14px;margin-top:4px}
+  .revs{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+  @media(max-width:680px){.revs{grid-template-columns:1fr}}
+  .rev{border:1px solid var(--line);border-radius:16px;padding:22px;background:#fff}
+  .rev p{margin:8px 0 10px;font-size:15px}.rev .who{font-weight:700;font-size:14px}
+  .contact{background:linear-gradient(135deg,#0c1f15,var(--a));color:#fff;border-radius:22px;padding:48px 30px;text-align:center}
+  .contact h2{color:#fff}.contact p{color:rgba(255,255,255,.8);max-width:46ch;margin:0 auto 22px}
+  .contact .cta{background:#fff;color:var(--ink)}
+  footer{padding:34px 0;color:var(--muted);font-size:13.5px;text-align:center;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<div class="demobar">✨ <b>Demo site</b> by Rank Rebels — an example of what we'd build for your business.
+  <a href="/#contact">Get one like this →</a></div>
+
+<div class="wrap">
+  <nav>
+    <div class="brand"><span class="lg" id="brand-em">🔧</span> <span id="brand-name">Demo Co.</span></div>
+    <div class="links"><a href="#services">Services</a><a href="#why">Why us</a><a href="#reviews">Reviews</a><a href="#contact">Contact</a></div>
+    <a class="cta" href="#contact" id="nav-cta">Get a quote</a>
+  </nav>
+
+  <header class="hero">
+    <div>
+      <div class="stars">★★★★★ <span style="color:var(--muted);font-size:14px">5.0 · 120+ reviews</span></div>
+      <h1 id="hero-h">Your Headline Here</h1>
+      <p id="hero-p">A short, friendly description of the business and what makes it the obvious choice.</p>
+      <div class="btns"><a class="cta" id="hero-cta" href="#contact">Get a free quote</a><a class="ghost" id="hero-call" href="tel:5551234567">📞 (555) 123‑4567</a></div>
+      <div class="trust" id="trust"></div>
+    </div>
+    <div class="heroart" id="heroart">🔧</div>
+  </header>
+</div>
+
+<div class="wrap">
+  <section id="services">
+    <div class="sec-t">What we do</div>
+    <h2 id="svc-h">Our services</h2>
+    <div class="svcs" id="svcs"></div>
+  </section>
+
+  <section id="why">
+    <div class="band">
+      <div><div class="n" id="b1n">15+</div><div class="l" id="b1l">years in business</div></div>
+      <div><div class="n">Same‑day</div><div class="l">service available</div></div>
+      <div><div class="n">5.0★</div><div class="l">average rating</div></div>
+    </div>
+  </section>
+
+  <section id="reviews">
+    <div class="sec-t">Reviews</div>
+    <h2>What our customers say</h2>
+    <div class="revs" id="revs"></div>
+  </section>
+
+  <section>
+    <div class="contact" id="contact">
+      <h2 id="c-h">Ready to get started?</h2>
+      <p id="c-p">Call or request a free quote today. We’ll get right back to you.</p>
+      <a class="cta" href="tel:5551234567">📞 Call (555) 123‑4567</a>
+    </div>
+  </section>
+</div>
+
+<footer>© <span id="y"></span> <span id="foot-name">Demo Co.</span> · Demo built by <a href="/" style="color:var(--a);font-weight:700">Rank Rebels</a> · rankrebels.ai</footer>
+
+<script>
+document.getElementById('y').textContent=new Date().getFullYear();
+var THEMES={
+  plumbing:{name:'Summit Plumbing & HVAC',em:'🔧',a:'#15803d',a2:'#1aa251',h:'Fast, friendly repairs you can count on.',p:'Licensed plumbing & HVAC for your home — upfront pricing, same‑day service, and work that’s done right the first time.',svcH:'Plumbing & HVAC services',
+    trust:['Licensed & insured','Upfront pricing','Same‑day service'],b1n:'15+',b1l:'years serving the area',
+    svcs:[['🚿','Plumbing repairs','Leaks, clogs, water heaters, and more — fixed fast.'],['❄️','Heating & cooling','AC and furnace install, repair, and tune‑ups.'],['🛠️','Emergency service','Burst pipe or no heat? We’re on the way.']],
+    revs:[['Showed up on time, fixed our water heater same day. Fair price and super friendly.','— Maria G.'],['Our AC died in a heatwave and they had it running in two hours. Lifesavers.','— Dave R.']]},
+  restaurant:{name:'Olive & Ember',em:'🍽️',a:'#b4761c',a2:'#d8a32a',h:'Taste the difference. Book a table.',p:'Seasonal plates, craft cocktails, and a warm room. Fresh ingredients, made‑from‑scratch, in the heart of downtown.',svcH:'On the menu',
+    trust:['Locally sourced','Reservations welcome','Private events'],b1n:'4.9★',b1l:'on Google & Yelp',
+    svcs:[['🍝','Dinner','A rotating seasonal menu made from scratch daily.'],['🍸','Craft bar','Signature cocktails and a curated wine list.'],['🎉','Events','Private dining for birthdays, parties, and more.']],
+    revs:[['Best meal we’ve had all year. The service was warm and the food was unreal.','— Priya S.'],['Our go‑to date‑night spot. Book ahead, it fills up fast!','— Tom & Lia']]},
+  dental:{name:'Bright Smile Dental',em:'🦷',a:'#0d8db5',a2:'#16a7d6',h:'A healthier smile starts here.',p:'Gentle, modern dental care for the whole family. New patients welcome, most insurance accepted, and same‑week appointments.',svcH:'Dental services',
+    trust:['New patients welcome','Most insurance accepted','Gentle care'],b1n:'20+',b1l:'years of trusted care',
+    svcs:[['🪥','Cleanings & checkups','Preventive care to keep your smile healthy.'],['✨','Cosmetic','Whitening, veneers, and smile makeovers.'],['🦷','Restorative','Crowns, implants, and same‑day repairs.']],
+    revs:[['Best dental experience I’ve had. Zero pain and they explained everything.','— Janet K.'],['They got my whole family in the same week. Clean office, kind staff.','— Marcus T.']]},
+  legal:{name:'Harbor & Stone Law',em:'⚖️',a:'#26405e',a2:'#3a6391',h:'Trusted counsel when it matters most.',p:'Straightforward legal help with no surprises. Free consultations and a team that actually returns your calls.',svcH:'Practice areas',
+    trust:['Free consultation','No hidden fees','Responsive team'],b1n:'500+',b1l:'cases handled',
+    svcs:[['📄','Estate planning','Wills, trusts, and protecting your family.'],['🤝','Business law','Formation, contracts, and disputes.'],['🛡️','Personal injury','We fight to get you what you’re owed.']],
+    revs:[['They made a stressful process simple and kept me informed the whole way.','— Robert P.'],['Honest, responsive, and genuinely on my side. Highly recommend.','— Dana W.']]},
+  auto:{name:'Apex Auto Care',em:'🚗',a:'#1f2937',a2:'#c79a1e',h:'Honest auto care, done right.',p:'Dealer‑quality service without the dealer price. ASE‑certified techs, clear estimates, and a warranty on every repair.',svcH:'Auto services',
+    trust:['ASE‑certified','Warranty on repairs','Free estimates'],b1n:'25+',b1l:'years under the hood',
+    svcs:[['🔧','Repairs','Brakes, engine, suspension — diagnosed right.'],['🛢️','Maintenance','Oil changes, tune‑ups, and inspections.'],['🚙','Tires','Sales, rotation, and alignment.']],
+    revs:[['Finally a shop I trust. They showed me the problem and didn’t upsell me.','— Carlos M.'],['Quick, fair, and honest. My family brings all our cars here now.','— Steph L.']]},
+  salon:{name:'Lumière Salon & Spa',em:'💅',a:'#7a2f55',a2:'#c79a1e',h:'Look good. Feel amazing.',p:'A full‑service salon and spa where you can relax and leave glowing. Easy online booking and a team that listens.',svcH:'Salon & spa services',
+    trust:['Online booking','Expert stylists','Relaxing space'],b1n:'10+',b1l:'years of pampering',
+    svcs:[['💇','Hair','Cuts, color, and styling by expert stylists.'],['💆','Spa','Facials, massage, and skin treatments.'],['💅','Nails','Manicures, pedicures, and nail art.']],
+    revs:[['I always leave feeling like the best version of myself. Love this place.','— Bianca R.'],['Booked online in seconds and my stylist nailed exactly what I wanted.','— Hannah J.']]}
+};
+function param(k){ try{return new URLSearchParams(location.search).get(k)||'';}catch(e){return '';} }
+var t=THEMES[(param('type')||'plumbing').toLowerCase()]||THEMES.plumbing;
+var R=document.documentElement.style;
+R.setProperty('--a',t.a); R.setProperty('--a2',t.a2);
+function set(id,v){ var e=document.getElementById(id); if(e) e.textContent=v; }
+document.title=t.name+' — Demo by Rank Rebels';
+set('brand-name',t.name); set('foot-name',t.name); document.getElementById('brand-em').textContent=t.em;
+document.getElementById('heroart').textContent=t.em;
+document.getElementById('heroart').style.background='linear-gradient(135deg,'+t.a+','+t.a2+')';
+set('hero-h',t.h); set('hero-p',t.p); set('svc-h',t.svcH); set('b1n',t.b1n); set('b1l',t.b1l);
+document.getElementById('trust').innerHTML=t.trust.map(function(x){return '<span>✓ '+x+'</span>';}).join('');
+document.getElementById('svcs').innerHTML=t.svcs.map(function(s){return '<div class="svc"><div class="i">'+s[0]+'</div><h3>'+s[1]+'</h3><p>'+s[2]+'</p></div>';}).join('');
+document.getElementById('revs').innerHTML=t.revs.map(function(r){return '<div class="rev"><div class="stars">★★★★★</div><p>"'+r[0]+'"</p><div class="who">'+r[1]+'</div></div>';}).join('');
+set('c-h','Ready to get started?');
+</script>
+</body>
+</html>
