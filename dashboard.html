@@ -646,6 +646,27 @@
   </div>
 </div>
 
+<div class="modal-bg" id="m-resched" onclick="if(event.target===this)closeModal('m-resched')">
+  <div class="modal" style="max-width:400px">
+    <h3>🕗 Reschedule send</h3>
+    <p class="sub" id="resched-who" style="margin:-4px 0 14px"></p>
+    <div class="grid2">
+      <div class="field"><label>Send date</label><input id="resched-date" type="date"></div>
+      <div class="field"><label>Time (Pacific)</label><input id="resched-time" type="time" value="08:30"></div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin:-2px 0 10px">
+      <button type="button" class="btn btn-ghost btn-sm" onclick="reschedPreset(1,'08:30')">Tomorrow 8:30am</button>
+      <button type="button" class="btn btn-ghost btn-sm" onclick="reschedPreset(1,'09:00')">Tomorrow 9:00am</button>
+      <button type="button" class="btn btn-ghost btn-sm" onclick="reschedPreset(0,'17:00')">Today 5:00pm</button>
+    </div>
+    <p style="font-size:12.5px;color:var(--muted);margin:0 0 12px">The Gmail draft stays as-is; only the auto-send time changes.</p>
+    <div class="modal-actions"><div></div><div style="display:flex;gap:10px">
+      <button class="btn btn-ghost" onclick="closeModal('m-resched')">Cancel</button>
+      <button class="btn btn-primary" id="resched-go" onclick="confirmResched()">Update time</button>
+    </div></div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <script>
@@ -861,29 +882,104 @@ async function confirmSchedSend(){
   finally{ btn.disabled=false; btn.textContent='Draft & schedule'; }
 }
 var scheduledEmails=[];
+var schedCollapsed=false;
+var schedSel={};            // id -> true for checkbox selection
 function clientName(cid){ var c=clients.find(function(x){return x.id===cid;}); return c?c.business_name:''; }
+function schedWhenLbl(iso){ return iso?new Date(iso).toLocaleString('en-US',{timeZone:'America/Los_Angeles',weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})+' PT':''; }
+function toggleSchedCollapse(){ schedCollapsed=!schedCollapsed; renderScheduledStrip(); }
+function pendingScheduled(){ return scheduledEmails.filter(function(s){return s.status==='scheduled';}); }
+function toggleSchedSel(id){ if(schedSel[id]) delete schedSel[id]; else schedSel[id]=true; renderScheduledStrip(); }
+function toggleSchedSelAll(){
+  var pend=pendingScheduled(); var allOn=pend.length && pend.every(function(s){return schedSel[s.id];});
+  schedSel={}; if(!allOn) pend.forEach(function(s){ schedSel[s.id]=true; });
+  renderScheduledStrip();
+}
+function selectedSchedIds(){ return pendingScheduled().filter(function(s){return schedSel[s.id];}).map(function(s){return s.id;}); }
 function renderScheduledStrip(){
   var box=el('sched-strip'); if(!box) return;
-  var pend=scheduledEmails.filter(function(s){return s.status==='scheduled';});
-  if(!pend.length){ box.style.display='none'; box.innerHTML=''; return; }
+  var pend=pendingScheduled();
+  if(!pend.length){ box.style.display='none'; box.innerHTML=''; schedSel={}; return; }
   box.style.display='';
-  box.innerHTML='<div class="panel" style="margin-bottom:12px"><div class="panel-h">📤 Scheduled sends <span style="font-weight:500;font-size:12.5px;color:var(--muted)">auto-send from your Gmail at the time shown</span></div>'+
-    '<div style="padding:6px 16px 14px">'+pend.map(function(s){
-      var when=s.send_at?new Date(s.send_at).toLocaleString('en-US',{timeZone:'America/Los_Angeles',weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})+' PT':'';
-      return '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding:8px 0">'+
-        '<b>'+esc(clientName(s.client_id)||s.to_email)+'</b>'+
-        '<span style="color:var(--muted);font-size:13px">'+esc(s.subject||'(no subject)')+'</span>'+
-        '<span style="color:var(--brand);font-size:12.5px;font-weight:600">🕗 '+when+'</span>'+
-        '<span style="margin-left:auto"><span class="reveal" onclick="cancelScheduled(\''+s.id+'\')">cancel</span></span>'+
-      '</div>';
-    }).join('')+'</div></div>';
+  // prune selection of any rows no longer pending
+  Object.keys(schedSel).forEach(function(id){ if(!pend.some(function(s){return s.id===id;})) delete schedSel[id]; });
+  var sel=selectedSchedIds();
+  var allOn=pend.every(function(s){return schedSel[s.id];});
+  var head='<div class="panel-h" style="cursor:pointer;user-select:none" onclick="toggleSchedCollapse()">'+
+      '<span>'+(schedCollapsed?'▸':'▾')+' 📤 Scheduled sends <span class="pill">'+pend.length+'</span></span>'+
+      '<span style="font-weight:500;font-size:12.5px;color:var(--muted)">auto-send from your Gmail at the time shown</span>'+
+    '</div>';
+  if(schedCollapsed){ box.innerHTML='<div class="panel" style="margin-bottom:12px">'+head+'</div>'; return; }
+  var bulkBar=
+    '<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:8px 16px;border-bottom:1px solid var(--line);background:var(--card-2,transparent)">'+
+      '<label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" '+(allOn?'checked':'')+' onclick="toggleSchedSelAll()"> Select all</label>'+
+      (sel.length?('<span style="font-size:13px;color:var(--muted)">'+sel.length+' selected</span>'+
+        '<span style="margin-left:auto;display:flex;gap:8px">'+
+          '<button class="btn btn-ghost btn-sm" onclick="openResched(null)">Reschedule selected…</button>'+
+          '<button class="btn btn-ghost btn-sm" onclick="cancelSelectedScheduled()">Cancel selected</button>'+
+        '</span>')
+        :'<span style="margin-left:auto;font-size:12.5px;color:var(--muted)">tick rows to bulk-reschedule or cancel</span>')+
+    '</div>';
+  var rows=pend.map(function(s){
+    return '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding:8px 0">'+
+      '<input type="checkbox" '+(schedSel[s.id]?'checked':'')+' onclick="toggleSchedSel(\''+s.id+'\')">'+
+      '<b>'+esc(clientName(s.client_id)||s.to_email)+'</b>'+
+      '<span style="color:var(--muted);font-size:13px">'+esc(s.subject||'(no subject)')+'</span>'+
+      '<span style="color:var(--brand);font-size:12.5px;font-weight:600">🕗 '+schedWhenLbl(s.send_at)+'</span>'+
+      '<span style="margin-left:auto;display:flex;gap:12px">'+
+        '<span class="reveal" onclick="openResched(\''+s.id+'\')">reschedule</span>'+
+        '<span class="reveal" onclick="cancelScheduled(\''+s.id+'\')">cancel</span>'+
+      '</span>'+
+    '</div>';
+  }).join('');
+  box.innerHTML='<div class="panel" style="margin-bottom:12px">'+head+bulkBar+'<div style="padding:2px 16px 14px">'+rows+'</div></div>';
 }
 async function cancelScheduled(id){
   if(!confirm('Cancel this scheduled send? (The draft stays in your Gmail; it just won’t auto-send.)')) return;
   var r=await sb.from('rr_scheduled_emails').update({status:'canceled'}).eq('id',id);
   if(r.error){ alert(r.error.message); return; }
   var s=scheduledEmails.find(function(x){return x.id===id;}); if(s) s.status='canceled';
+  delete schedSel[id]; renderScheduledStrip();
+}
+async function cancelSelectedScheduled(){
+  var ids=selectedSchedIds(); if(!ids.length) return;
+  if(!confirm('Cancel '+ids.length+' scheduled send'+(ids.length===1?'':'s')+'? (Drafts stay in Gmail; they just won’t auto-send.)')) return;
+  var r=await sb.from('rr_scheduled_emails').update({status:'canceled'}).in('id',ids);
+  if(r.error){ alert(r.error.message); return; }
+  ids.forEach(function(id){ var s=scheduledEmails.find(function(x){return x.id===id;}); if(s) s.status='canceled'; delete schedSel[id]; });
   renderScheduledStrip();
+}
+// Reschedule: id=single row; null=apply to current selection (bulk)
+var reschedIds=[];
+function openResched(id){
+  reschedIds = id ? [id] : selectedSchedIds();
+  if(!reschedIds.length){ alert('Select at least one scheduled send first.'); return; }
+  var first=scheduledEmails.find(function(x){return x.id===reschedIds[0];});
+  el('resched-who').textContent = reschedIds.length===1
+    ? ('“'+( (first&&(clientName(first.client_id)||first.to_email))||'email')+'” — currently '+schedWhenLbl(first&&first.send_at))
+    : (reschedIds.length+' sends selected — all will move to the new time');
+  // prefill from the first row's current send time (in Pacific)
+  if(first&&first.send_at){
+    var pac=new Date(new Date(first.send_at).toLocaleString('en-US',{timeZone:'America/Los_Angeles'}));
+    el('resched-date').value=[pac.getFullYear(),String(pac.getMonth()+1).padStart(2,'0'),String(pac.getDate()).padStart(2,'0')].join('-');
+    el('resched-time').value=String(pac.getHours()).padStart(2,'0')+':'+String(pac.getMinutes()).padStart(2,'0');
+  } else { el('resched-date').value=pacificYmd(1); el('resched-time').value='08:30'; }
+  el('m-resched').classList.add('open');
+}
+function reschedPreset(addDays, time){ el('resched-date').value=pacificYmd(addDays); el('resched-time').value=time; }
+async function confirmResched(){
+  var dateStr=el('resched-date').value, timeStr=el('resched-time').value||'08:30';
+  if(!dateStr){ alert('Pick a date.'); return; }
+  var sendAt=pacificDateTimeToUtc(dateStr,timeStr);
+  if(sendAt.getTime() < Date.now()+60000){ alert('Pick a time in the future.'); return; }
+  var btn=el('resched-go'); btn.disabled=true; btn.textContent='Saving…';
+  try{
+    var iso=sendAt.toISOString();
+    var r=await sb.from('rr_scheduled_emails').update({send_at:iso}).in('id',reschedIds);
+    if(r.error){ alert(r.error.message); return; }
+    reschedIds.forEach(function(id){ var s=scheduledEmails.find(function(x){return x.id===id;}); if(s) s.send_at=iso; });
+    closeModal('m-resched'); renderScheduledStrip();
+    alert('✅ '+(reschedIds.length===1?'Send':reschedIds.length+' sends')+' rescheduled to '+schedWhenLbl(iso)+'.');
+  } finally { btn.disabled=false; btn.textContent='Update time'; }
 }
 // From a card: set a follow-up reminder (days from now or a date), save it, optionally add to Calendar
 async function setReminder(id){
