@@ -48,6 +48,12 @@
 
   /* app shell */
   #app{display:none}
+  .worldclocks{display:flex;gap:0;background:var(--dark,#0c1f15);color:#fff;overflow-x:auto;border-bottom:1px solid rgba(255,255,255,.08)}
+  .worldclocks .wc{flex:1;min-width:96px;text-align:center;padding:7px 6px;border-right:1px solid rgba(255,255,255,.07)}
+  .worldclocks .wc:last-child{border-right:0}
+  .worldclocks .wc .city{font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#9fc1ab;font-weight:700}
+  .worldclocks .wc .tm{font-size:15px;font-weight:800;color:#fff;font-variant-numeric:tabular-nums;line-height:1.2}
+  .worldclocks .wc .zo{font-size:9.5px;color:#7c9a86}
   header.top{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.85);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
   .top-inner{display:flex;align-items:center;justify-content:space-between;height:60px;gap:16px}
   .logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:17px;letter-spacing:-.02em}
@@ -252,6 +258,7 @@
 
 <!-- ============ APP ============ -->
 <div id="app">
+  <div class="worldclocks" id="worldclocks"></div>
   <header class="top">
     <div class="wrap top-inner">
       <a class="logo" href="/" title="Back to the public site"><span class="mark"><img src="/brand/rr-mark.png" alt="Rank Rebels"></span> Rank<span class="grad-text">Rebels</span></a>
@@ -796,6 +803,27 @@ function setTab(t){
   if(t==='requests') renderRequests();
   if(t==='scoreboard') renderScoreboard();
 }
+
+/* ===== WORLD CLOCKS ===== */
+var WORLD_CLOCKS=[
+  {city:'Hawaii', tz:'Pacific/Honolulu'},
+  {city:'California', tz:'America/Los_Angeles'},
+  {city:'Utah', tz:'America/Denver'},
+  {city:'Texas', tz:'America/Chicago'},
+  {city:'New York', tz:'America/New_York'},
+  {city:'Puerto Rico', tz:'America/Puerto_Rico'}
+];
+function renderClocks(){
+  var box=el('worldclocks'); if(!box) return;
+  var now=new Date();
+  box.innerHTML=WORLD_CLOCKS.map(function(c){
+    var tm='', zo='';
+    try{ tm=now.toLocaleTimeString('en-US',{timeZone:c.tz,hour:'numeric',minute:'2-digit',hour12:true}); }catch(e){ tm='—'; }
+    try{ zo=(new Intl.DateTimeFormat('en-US',{timeZone:c.tz,timeZoneName:'short'}).formatToParts(now).find(function(p){return p.type==='timeZoneName';})||{}).value||''; }catch(e){}
+    return '<div class="wc"><div class="city">'+c.city+'</div><div class="tm">'+tm+'</div><div class="zo">'+zo+'</div></div>';
+  }).join('');
+}
+setInterval(renderClocks, 1000); renderClocks();
 
 /* ===== TIME CLOCK + SCOREBOARD ===== */
 var timeEntries=[];
