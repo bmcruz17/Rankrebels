@@ -295,10 +295,12 @@
           <button onclick="setPipeOwner('brandon')">Brandon</button>
           <button onclick="setPipeOwner('eric')">Eric</button>
         </div>
+        <button class="btn btn-ghost btn-sm" id="legend-btn" onclick="toggleLegend()" title="What does each icon mean?">❔ Legend</button>
         <button class="btn btn-primary" onclick="openClient()">+ Add customer</button>
       </div>
     </div>
     <div id="pipe-owner-sum" class="sub" style="margin:2px 0 10px"></div>
+    <div id="pipe-legend" class="panel" style="display:none;margin-bottom:12px"></div>
     <div class="board" id="board"></div>
   </div>
 
@@ -1558,6 +1560,46 @@ function followUpBadge(c){
   var cls=diff<0?'fu-over':(diff===0?'fu-today':'fu-up');
   var label=diff<0?('Follow up overdue '+(-diff)+'d'):(diff===0?'Follow up today':'Follow up in '+diff+'d');
   return '<div class="fu '+cls+'">📅 '+label+'</div>';
+}
+var LEGEND_GROUPS=[
+  {title:'Tile buttons (the action row)', items:[
+    ['📞','Call — opens your phone & logs a call'],
+    ['💬','Text — opens Messages & logs a text'],
+    ['✉️','Draft a normal email in Gmail'],
+    ['📅','AI email — drafts it in Gmail & auto-sends at a chosen time. Also moves the lead to Contacted and sets a 48h follow-up.'],
+    ['📋','Text-message template & call script (personalized)'],
+    ['⏰','Set a follow-up reminder date'],
+    ['⭐','Ask the customer for a Google review'],
+    ['📄','Send a personalized proposal'],
+    ['📝','Add a quick note'],
+    ['← →','Move the deal back / forward a stage']
+  ]},
+  {title:'Badges & markers on the tile', items:[
+    ['brandon / eric','Color tag — whose lead it is'],
+    ['🤝','Referred by a partner (e.g. Ryzen)'],
+    ['📝 Note','The most recent note left on this lead'],
+    ['🎯','Last activity was a pitch'],
+    ['📅 Follow up…','Follow-up reminder date (turns red when overdue)'],
+    ['💲 Owes…','Has an outstanding balance'],
+    ['faded tile','Stale — no activity in 7+ days']
+  ]}
+];
+function toggleLegend(){
+  var box=el('pipe-legend'); if(!box) return;
+  var btn=el('legend-btn');
+  if(box.style.display==='none'){
+    box.innerHTML='<div class="panel-h">❔ What the tile icons mean</div>'+
+      '<div style="padding:6px 16px 16px">'+LEGEND_GROUPS.map(function(g){
+        return '<div style="font-weight:600;font-size:12.5px;color:var(--muted);margin:10px 0 6px;text-transform:uppercase;letter-spacing:.04em">'+g.title+'</div>'+
+          '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px 18px">'+
+          g.items.map(function(it){
+            return '<div style="display:flex;gap:9px;align-items:baseline;font-size:13.5px">'+
+              '<span style="min-width:54px;font-size:15px">'+it[0]+'</span>'+
+              '<span style="color:var(--ink,inherit)">'+esc(it[1])+'</span></div>';
+          }).join('')+'</div>';
+      }).join('')+'</div>';
+    box.style.display=''; if(btn) btn.classList.add('on');
+  } else { box.style.display='none'; if(btn) btn.classList.remove('on'); }
 }
 function leadCard(c){
   var d=document.createElement('div'); d.className='lead'+(isStale(c)?' stale':''); d.draggable=true;
