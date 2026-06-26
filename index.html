@@ -291,6 +291,17 @@
   .col-us-head{display:inline-flex;align-items:center;gap:7px}
 
   /* CTA band */
+  .values-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:8px}
+  @media(max-width:880px){.values-grid{grid-template-columns:1fr 1fr}}
+  @media(max-width:560px){.values-grid{grid-template-columns:1fr}}
+  .value{border:1px solid var(--line);border-radius:16px;padding:24px;background:linear-gradient(180deg,var(--panel),var(--bg-soft));position:relative;overflow:hidden}
+  .value::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:linear-gradient(180deg,var(--brand),var(--accent))}
+  .value .vtag{font-size:13px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted-2);font-weight:700;margin-bottom:8px}
+  .value .vtag b{color:var(--brand);font-size:19px;letter-spacing:-.01em;display:block;text-transform:none;margin-top:2px}
+  .value p{margin:0;color:var(--muted);font-size:14.5px;line-height:1.6}
+  .manifesto{margin-top:22px;background:radial-gradient(600px 280px at 50% 0%,rgba(26,162,81,.25),transparent 60%),linear-gradient(160deg,#0c2417,#11241a);color:#fff;border:1px solid rgba(255,255,255,.08);border-radius:22px;padding:40px 34px;text-align:center}
+  .manifesto p{margin:0 auto;max-width:62ch;font-size:clamp(18px,2.4vw,22px);line-height:1.5;color:#dbeae0}
+  .manifesto p b{color:#ffe08a}
   .cta-band{background:radial-gradient(600px 300px at 50% 0%,rgba(26,162,81,.25),transparent 60%),linear-gradient(160deg,#0c2417,#11241a);border:1px solid rgba(255,255,255,.08);color:#fff;border-radius:24px;padding:54px 40px;text-align:center}
   .cta-band h2{font-size:clamp(28px,4vw,42px);margin:0 0 12px;letter-spacing:-.02em;color:#fff}
   .cta-band p{color:#c2d6c8;font-size:18px;max-width:52ch;margin:0 auto 26px}
@@ -436,6 +447,7 @@
       <a href="#services">Services</a>
       <a href="#work">Work</a>
       <a href="#process">Process</a>
+      <a href="#values">Our Why</a>
       <a href="#reviews">Reviews</a>
       <a href="#faq">FAQ</a>
     </nav>
@@ -654,6 +666,26 @@
     </div>
     <!-- Replace the href below with your Google review link (Business Profile → Ask for reviews → copy link, e.g. https://g.page/r/XXXX/review) -->
     <div style="text-align:center;margin-top:30px"><a class="btn btn-ghost" href="https://g.page/r/REPLACE_WITH_YOUR_REVIEW_LINK/review" target="_blank" rel="noopener">⭐ Leave us a Google review</a></div>
+  </div>
+</section>
+
+<section id="values">
+  <div class="wrap">
+    <div class="sec-head" style="text-align:center;max-width:760px;margin:0 auto">
+      <span class="eyebrow">Who we are</span>
+      <h2>We put small businesses where they belong: <span class="hl">on top.</span></h2>
+      <p>We don't just rank websites. We Rebel, with purpose, grit, honesty, ownership, and vision. It's how we fight for the underdogs, the overlooked, and the businesses that are better than their Google ranking shows.</p>
+    </div>
+    <div class="values-grid">
+      <div class="value"><div class="vtag">We Rebel with <b>Purpose</b></div><p>We don't break rules for the thrill of it. We break the ones that were never working for you in the first place. Every decision we make asks one question: does this move the needle, or does it just feel safe?</p></div>
+      <div class="value"><div class="vtag">We Rebel with <b>Grit</b></div><p>Rankings don't move overnight. Algorithms don't care about your timeline. We show up anyway, every week, every report, every client, because the businesses that win online are the ones that refused to quit.</p></div>
+      <div class="value"><div class="vtag">We Rebel with <b>Honesty</b></div><p>You hired us to grow your business, not to make ourselves look good. So we tell you the truth, even when it's uncomfortable. Especially when it's uncomfortable. That's the only way real progress gets made.</p></div>
+      <div class="value"><div class="vtag">We Rebel with <b>Ownership</b></div><p>We don't blame Google. We don't point at timelines. When you sign with us, your problem becomes our problem. We own the outcome like it's our own business on the line.</p></div>
+      <div class="value"><div class="vtag">We Rebel with <b>Vision</b></div><p>We believe every small business deserves a fighting chance online. Not just the ones with big budgets and agencies on retainer. The underdogs. The overlooked. The ones who are better than their Google ranking shows. That's exactly who we built this for.</p></div>
+    </div>
+    <div class="manifesto">
+      <p>We exist to Rebel against the agencies that over-promise, the algorithms that favor the big guys, and the belief that small businesses can't compete online. <b>We're here to prove all three of them wrong.</b></p>
+    </div>
   </div>
 </section>
 

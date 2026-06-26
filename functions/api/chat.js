@@ -65,7 +65,9 @@ const KNOWLEDGE = `
 ABOUT RANK REBELS
 - Rank Rebels is a digital marketing agency: custom website design & development, search engine optimization (SEO), and Google Business Profile (GMB) setup & management.
 - Website: rankrebels.ai. Based in Utah; works with clients remotely across the United States.
-- We partner with each client long-term (a two-year partnership) so we can compound results over time — framed as a real growth partnership, not a quick one-off.
+- Mission: we put small businesses where they belong, on top. We're here for the underdogs and the overlooked, the businesses that are better than their Google ranking shows.
+- Our values, "We Rebel with...": Purpose, Grit, Honesty, Ownership, and Vision. We tell clients the truth (even when it's uncomfortable), we own the outcome, and we show up every week.
+- Flexible terms: clients can go month-to-month, or save with a 1- or 2-year plan that includes a "bumper-to-bumper warranty" (unlimited support and adjustments). No surprise lock-in, and clients always own their site.
 - Contact: free consultation via the website; sales email sales@rankrebels.ai.
 
 SERVICES
