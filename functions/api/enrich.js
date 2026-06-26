@@ -27,6 +27,27 @@ function emailsFrom(text) {
   return Array.from(new Set(found.map(e => e.toLowerCase())))
     .filter(e => !/\.(png|jpg|jpeg|gif|webp|svg)$/.test(e) && !/example\.|sentry\.|wixpress\.|\.png/.test(e));
 }
+function decodeEntities(s) {
+  return String(s || '')
+    .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"').replace(/&#0?39;/g, "'").replace(/&#x27;/gi, "'").replace(/&nbsp;/g, ' ')
+    .replace(/&#(\d+);/g, (m, d) => { try { return String.fromCharCode(+d); } catch (e) { return m; } }).trim();
+}
+function phoneFrom(text) {
+  const m = (text || '').match(/\(?\b\d{3}\)?[\s.\-]?\d{3}[\s.\-]?\d{4}\b/);
+  return m ? m[0] : '';
+}
+// Best-effort read of a public Facebook page's Open Graph description (what FB's own link-preview bot sees).
+// Often blocked — wrapped by the caller; never throws fatally.
+async function facebookAbout(url) {
+  try {
+    const r = await fetch(url, { headers: { 'user-agent': 'facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)' } });
+    if (!r.ok) return {};
+    const h = await r.text();
+    const og = (h.match(/<meta[^>]+property=["']og:description["'][^>]+content=["']([^"']+)["']/i) || [])[1];
+    return { about: og ? decodeEntities(og) : '', emails: emailsFrom(h), phone: phoneFrom(h) };
+  } catch (e) { return {}; }
+}
 
 export async function onRequestPost({ request, env }) {
   try {
@@ -51,10 +72,23 @@ export async function onRequestPost({ request, env }) {
 
     const blob = JSON.stringify(d);
     let emails = emailsFrom(blob);
-    const linkOf = re => { const o = organic.find(x => re.test(x.link || '')); return o ? o.link : ''; };
-    const facebook = linkOf(/facebook\.com/i);
-    const instagram = linkOf(/instagram\.com/i);
-    const yelp = linkOf(/yelp\.com/i);
+    const resOf = re => organic.find(x => re.test(x.link || ''));
+    const fbR = resOf(/facebook\.com/i), igR = resOf(/instagram\.com/i), yelpR = resOf(/yelp\.com/i);
+    const facebook = fbR ? fbR.link : '', instagram = igR ? igR.link : '', yelp = yelpR ? yelpR.link : '';
+
+    // "About" the business — read Google's own snippet of the Facebook (or Yelp) page. No FB scraping needed.
+    let about = '', aboutSrc = '';
+    if (fbR && fbR.snippet) { about = fbR.snippet; aboutSrc = 'Facebook'; }
+    else if (yelpR && yelpR.snippet) { about = yelpR.snippet; aboutSrc = 'Yelp'; }
+
+    // Best-effort: pull more from the public FB page itself (og:description + any phone/email).
+    let fbPhone = '';
+    if (facebook) {
+      const fb = await facebookAbout(facebook);
+      if (fb.about && fb.about.length > about.length) { about = fb.about; aboutSrc = 'Facebook'; }
+      if (fb.emails && fb.emails.length) emails = Array.from(new Set(emails.concat(fb.emails)));
+      if (fb.phone) fbPhone = fb.phone;
+    }
 
     // Best-effort: fetch the top 1-2 non-social result pages and scrape any email/mailto.
     const pages = organic.filter(o => o.link && !/facebook|instagram|google\.com\/maps/i.test(o.link)).slice(0, 2);
@@ -68,6 +102,8 @@ export async function onRequestPost({ request, env }) {
     return json({
       emails: emails.slice(0, 5),
       facebook, instagram, yelp,
+      about: about ? decodeEntities(about).slice(0, 400) : '', aboutSrc,
+      fbPhone,
       links: organic.slice(0, 5).map(o => ({ title: o.title, link: o.link }))
     });
   } catch (err) {

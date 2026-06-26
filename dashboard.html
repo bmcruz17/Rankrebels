@@ -1342,10 +1342,13 @@ function enrichHTML(e){
   if(e.error) return '<span style="color:var(--muted-2)">no contact found</span>';
   var bits=[];
   if(e.emails && e.emails.length) bits.push('✉️ '+e.emails.map(esc).join(', '));
+  if(e.fbPhone) bits.push('📞 '+esc(e.fbPhone));
   if(e.facebook) bits.push('<a class="reveal" href="'+esc(e.facebook)+'" target="_blank">Facebook</a>');
   if(e.instagram) bits.push('<a class="reveal" href="'+esc(e.instagram)+'" target="_blank">Instagram</a>');
   if(e.yelp) bits.push('<a class="reveal" href="'+esc(e.yelp)+'" target="_blank">Yelp</a>');
-  return bits.length ? bits.join(' · ') : '<span style="color:var(--muted-2)">no email found — try their social links</span>';
+  var out = bits.length ? bits.join(' · ') : '<span style="color:var(--muted-2)">no email found — try their social links</span>';
+  if(e.about) out += '<div style="color:var(--muted-2);margin-top:3px;font-size:11.5px;line-height:1.4">📘 '+esc(e.about)+(e.aboutSrc?' <span style="opacity:.7">— '+esc(e.aboutSrc)+'</span>':'')+'</div>';
+  return out;
 }
 async function enrichLead(i){
   if(enrichOff){ renderLeads(); return; }
@@ -1365,8 +1368,10 @@ async function addLeadFromPlace(i){
   var p=lastLeads[i]; if(!p) return;
   var enr=p._enrich||{};
   var socials=[enr.facebook,enr.instagram,enr.yelp].filter(Boolean).join('  ');
-  var rec={ business_name:p.name, phone:p.phone||null, email:p.email||null, address:p.address||null, description:p.summary||null, stage:'lead', acquired_by:myPerson(),
-    notes:'Found via lead finder by '+myPerson()+' — ⭐'+p.rating+' ('+p.reviews+' reviews)'+(p.website?'':' · no website')+(p.mapsUri?'\n'+p.mapsUri:'')+(socials?('\nSocials: '+socials):'') };
+  var desc=p.summary || (enr.about||'') || null;
+  var phone=p.phone || (enr.fbPhone||'') || null;
+  var rec={ business_name:p.name, phone:phone, email:p.email||null, address:p.address||null, description:desc, stage:'lead', acquired_by:myPerson(),
+    notes:'Found via lead finder by '+myPerson()+' — ⭐'+p.rating+' ('+p.reviews+' reviews)'+(p.website?'':' · no website')+(enr.about?('\nAbout ('+(enr.aboutSrc||'web')+'): '+enr.about):'')+(p.mapsUri?'\n'+p.mapsUri:'')+(socials?('\nSocials: '+socials):'') };
   var r=await sb.from('rr_clients').insert(rec).select().single();
   if(r.error && /description|column|schema cache/i.test(r.error.message||'')){ delete rec.description; r=await sb.from('rr_clients').insert(rec).select().single(); }
   if(r.error){ alert(r.error.message); return; }
@@ -1380,13 +1385,15 @@ async function updateLeadFromPlace(i){
   var enr=p._enrich||{};
   var socials=[enr.facebook,enr.instagram,enr.yelp].filter(Boolean).join('  ');
   var foundEmail = p.email || (enr.emails && enr.emails[0]) || '';
+  var foundPhone = p.phone || (enr.fbPhone||'') || '';
+  var foundDesc = p.summary || (enr.about||'') || '';
   var patch={};
   if(foundEmail && !c.email) patch.email=foundEmail;
-  if(p.phone && !c.phone) patch.phone=p.phone;
+  if(foundPhone && !c.phone) patch.phone=foundPhone;
   if(p.address && !c.address) patch.address=p.address;
-  if(p.summary && !c.description) patch.description=p.summary;
+  if(foundDesc && !c.description) patch.description=foundDesc;
   var note='Updated from lead finder — ⭐'+p.rating+' ('+p.reviews+' reviews)'+(p.website?(' · site: '+p.website):' · no website')+
-    (foundEmail?('\nEmail: '+foundEmail):'')+(socials?('\nSocials: '+socials):'')+(p.mapsUri?('\n'+p.mapsUri):'');
+    (foundEmail?('\nEmail: '+foundEmail):'')+(enr.about?('\nAbout ('+(enr.aboutSrc||'web')+'): '+enr.about):'')+(socials?('\nSocials: '+socials):'')+(p.mapsUri?('\n'+p.mapsUri):'');
   patch.notes=(c.notes?(c.notes+'\n\n'):'')+note;
   var r=await sb.from('rr_clients').update(patch).eq('id',c.id).select().single();
   if(r.error && /description|column|schema cache/i.test(r.error.message||'')){ delete patch.description; r=await sb.from('rr_clients').update(patch).eq('id',c.id).select().single(); }
