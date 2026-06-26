@@ -792,15 +792,23 @@ function renderLeads(){
   var rows=lastLeads.map(function(p,i){
     var added=leadExists(p.name,p.phone);
     var contact = p._enrich ? ('<div id="enr-'+i+'" style="font-size:12px;color:var(--muted)">'+enrichHTML(p._enrich)+'</div>')
-      : ('<span class="reveal" id="enr-'+i+'" onclick="enrichLead('+i+')">🔍 find contact</span>');
-    return '<tr><td><b>'+esc(p.name)+'</b><div style="font-size:12px;color:var(--muted-2)">'+esc(p.address)+'</div>'+(p.email?'<div style="font-size:12.5px;color:var(--brand);font-weight:600">✉️ '+esc(p.email)+'</div>':'')+'</td>'+
+      : ('<span class="reveal" id="enr-'+i+'" onclick="enrichLead('+i+')">🔍 find email & socials</span>');
+    // Business name links to the Google Business profile (Maps) when available
+    var nameHtml = p.mapsUri
+      ? '<a href="'+esc(p.mapsUri)+'" target="_blank" rel="noopener" style="font-weight:700;color:var(--text);text-decoration:none">'+esc(p.name)+' <span style="color:var(--brand);font-size:11px">↗ Google</span></a>'
+      : '<b>'+esc(p.name)+'</b>';
+    // Website: real clickable link to visit, or the "no website" lead flag
+    var siteHtml = p.website
+      ? '<a class="reveal" href="'+esc(p.website)+'" target="_blank" rel="noopener">🌐 Visit website ↗</a>'
+      : '<span style="color:var(--brand);font-weight:700">★ no website</span>';
+    return '<tr><td>'+nameHtml+'<div style="font-size:12px;color:var(--muted-2)">'+esc(p.address)+'</div>'+(p.email?'<div style="font-size:12.5px;color:var(--brand);font-weight:600">✉️ '+esc(p.email)+'</div>':'')+'</td>'+
       '<td class="num" style="white-space:nowrap">⭐ '+p.rating+' · '+p.reviews+'</td>'+
-      '<td style="white-space:nowrap">'+(p.phone?'<a class="reveal" href="tel:'+telDigits(p.phone)+'">'+esc(p.phone)+'</a>':'—')+'</td>'+
-      '<td style="min-width:140px">'+(p.website?'<span style="color:var(--muted-2)">has site</span>':'<span style="color:var(--brand);font-weight:700">no website</span>')+'<br>'+contact+'</td>'+
-      '<td style="white-space:nowrap">'+(p.mapsUri?'<a class="reveal" href="'+esc(p.mapsUri)+'" target="_blank">map</a> · ':'')+
+      '<td style="white-space:nowrap">'+(p.phone?'<a class="reveal" href="tel:'+telDigits(p.phone)+'">📞 '+esc(p.phone)+'</a>':'<span style="color:var(--muted-2)">—</span>')+'</td>'+
+      '<td style="min-width:160px">'+siteHtml+'<br>'+contact+'</td>'+
+      '<td style="white-space:nowrap">'+(p.mapsUri?'<a class="reveal" href="'+esc(p.mapsUri)+'" target="_blank" rel="noopener" title="Open Google Business profile">profile</a> · ':'')+
         (added?'<span style="color:var(--muted-2)">added ✓</span>':'<span class="reveal" onclick="addLeadFromPlace('+i+')">+ pipeline</span>')+'</td></tr>';
   }).join('');
-  box.innerHTML='<div class="panel"><div class="panel-h">'+lastLeads.length+' result'+(lastLeads.length>1?'s':'')+' <span style="font-weight:500;font-size:12.5px;color:var(--muted)">sorted by review count</span></div>'+
+  box.innerHTML='<div class="panel"><div class="panel-h">'+lastLeads.length+' result'+(lastLeads.length>1?'s':'')+' <span style="font-weight:500;font-size:12.5px;color:var(--muted)">sorted by review count · tap a name to open its Google profile</span></div>'+
     '<table><thead><tr><th>Business</th><th class="num">Rating</th><th>Phone</th><th>Website / contact</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>';
 }
 function enrichHTML(e){
