@@ -9,7 +9,10 @@
 ## 🎯 Your open action items (do these to stay on track)
 Ordered roughly by priority.
 
-- [ ] **Run the new SQL** (GO-LIVE.md §2) — adds `ga4_property_id` + `search_console_site` columns so client reports can store config.
+- [ ] **Run the latest SQL** (GO-LIVE.md §2) — now also adds `quote`, `partner`/`partner_rep`, `rr_partners`, and **`rr_blog_posts`** (blog). Re-run the whole §2 block; it's idempotent.
+- [ ] **Turn on the daily blog** — add GitHub repo secrets `ANTHROPIC_API_KEY` + `SUPABASE_SERVICE_ROLE_KEY`, then run the **Daily blog post** Action once (Actions tab) to publish the first post.
+- [ ] **Send the Google review link** — still a placeholder on the homepage + ⭐ pipeline button; paste the link and I'll wire it everywhere.
+- [ ] **(If wanted) Instagram** — make the account, send me the handle, and I'll add the icon/link to the site footer + nav.
 - [ ] **Turn on live reports** — in Google Cloud enable **Analytics Data API** + **Search Console API**, add scopes `analytics.readonly` + `webmasters.readonly`, then **disconnect/reconnect Google** in the dashboard. Per client: Edit customer → fill GA4 property ID + Search Console site. (Until then, reports show labelled sample data.)
 - [ ] **Verify Google Business Profile** — Eric, in Utah, under the Rank Rebels Google account (remove the Heliode draft first so there's no duplicate).
 - [ ] **Send Claude your Google review link** (Business Profile → Ask for reviews) → it gets wired into the homepage + the ⭐ pipeline review button.
@@ -26,6 +29,12 @@ Ordered roughly by priority.
 - **Multilingual homepage** (top-6 US languages + Arabic & French) — scoped, not started; awaiting your language-set pick.
 
 ## ✅ Recently shipped (last few days)
+- **New axe-flag logo** wired into nav/footer/app icons; on-palette fixes (green/white/black/gold); "The problem" eyebrow; "Businesses that joined the Rebellion" testimonials
+- **Core Values + Mission section** ("We Rebel with Purpose/Grit/Honesty/Ownership/Vision") + bot taught the mission/values
+- **Blog** (`/blog`) + nav link + **daily Claude auto-poster** (GitHub Action → `rr_blog_posts`)
+- **À la carte package builder** (add-ons, discounts, sign-on fee, term/warranty) → **auto-filled agreement** (itemized Exhibit A)
+- **Issue partner API keys from the dashboard** (rr_partners) — no Cloudflare secret editing
+- **Find Leads**: clickable Google profile + website links, auto-enrich top 5, graceful "enrichment off" banner (no popup)
 - **Partner/reseller API + Ryzen kit** — `/api/partner/lead` + `/api/partner/leads` (key-gated, CORS); pipeline shows 🤝 partner attribution; paste-ready kit in `shareable/ryzen-partner-kit/` (rep guide, lead portal, API docs)
 - **AccessGrade ADA audit ecosystem** — `audit.html` free scanner → score/grade report → Rank Rebels referral; `/api/audit` (heuristic WCAG scan) + `/api/audit-lead` (tagged pipeline referral)
 - **Client reporting dashboard** (`report.html`) — live GA4 + Search Console via `/api/report`, demo fallback; 📊 buttons on customer tiles + modal
@@ -51,6 +60,7 @@ Ordered roughly by priority.
 - Point Supabase Auth SMTP at Resend (kills magic-link rate limits)
 
 ## 📓 Daily log
+- **2026-06-26** (eve) — New axe-flag logo across the site + icons; palette/copy cleanup (green/white/black/gold, "The problem", "joined the Rebellion"); added Core Values + Mission section; built the à la carte package builder → auto-filled itemized agreement with term/warranty; dashboard-issued partner API keys (rr_partners); shipped the Blog (`/blog`) with a daily Claude auto-poster Action; made Find Leads enrichment degrade gracefully (no popup). Open: run the latest SQL, add GitHub blog secrets, send the Google review link + (optional) IG handle.
 - **2026-06-26** (later) — Built the **Ryzen reseller program**: Partner API (`/api/partner/lead` + `/leads`, key-gated/CORS), pipeline 🤝 attribution, and a paste-ready kit (`shareable/ryzen-partner-kit/`: rep guide, lead portal, API docs). Also launched the **AccessGrade ADA audit ecosystem** — `audit.html` free accessibility scanner (`/api/audit`, heuristic WCAG scan via HTMLRewriter, score+grade+issues+industry disclosure check) that refers low scorers to Rank Rebels (`/api/audit-lead`, tagged partner lead). Open decisions: Ryzen commission %, AccessGrade brand name/pricing/domain.
 - **2026-06-26** — Took all three prototypes to production: client reporting dashboard (`report.html` + `/api/report` pulling GA4 & Search Console, demo fallback, per-client config + 📊 buttons), proposal tool (`proposal.html`, personalized link + Accept→lead, 📄 send-proposal on tiles), and the homepage animated hero search mock. Also fixed pipeline notes double-save. New setup to-dos: run the GA4/SC column SQL, enable the two Google APIs + reconnect for new scopes.
 - **2026-06-25** — Built lead enrichment + shareable lead-finder module; redesigned homepage with portfolio + real testimonials; added Google review features; wired Turnstile (site+secret) and disclosed it in privacy policy; resolved the GBP/Heliode ownership issue (recreate under Rank Rebels). Open: GBP verification (Eric), review link, SERPER key, email signatures, SPF/DKIM/DMARC.
