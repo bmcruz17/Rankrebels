@@ -9,6 +9,7 @@
 ## 🎯 Your open action items (do these to stay on track)
 Ordered roughly by priority.
 
+- [ ] **⏰ Get Eric's booking link (promised tomorrow, 6/27)** — Eric creates a Google Calendar **Appointment schedule** → Share → copy the `calendar.app.google/...` link. Paste it into `dashboard.html` `var BOOKING={…eric:'…'}` and deploy so AI emails/texts/call-scripts offer "Book with Eric" next to Brandon. (Brandon's is already wired in.)
 - [ ] **Run the latest SQL** (GO-LIVE.md §2) — now also adds `quote`, `partner`/`partner_rep`, `rr_partners`, and **`rr_blog_posts`** (blog). Re-run the whole §2 block; it's idempotent.
 - [ ] **Turn on the daily blog** — add GitHub repo secrets `ANTHROPIC_API_KEY` + `SUPABASE_SERVICE_ROLE_KEY`, then run the **Daily blog post** Action once (Actions tab) to publish the first post.
 - [ ] **Send the Google review link** — still a placeholder on the homepage + ⭐ pipeline button; paste the link and I'll wire it everywhere.
