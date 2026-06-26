@@ -144,6 +144,26 @@
   .svc input{width:16px;height:16px;accent-color:var(--brand);margin:0;cursor:pointer}
   .svc .sv-nm{font-weight:600}
   .svc .sv-pr{margin-left:auto;color:var(--muted);white-space:nowrap}
+  .svc-grouplbl{grid-column:1/-1;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--muted-2);margin-top:6px}
+  .svc .sv-disc{width:74px;margin-left:8px;padding:4px 6px;border:1px solid var(--line);border-radius:7px;font-size:12px}
+  .custom-row{display:flex;gap:8px;align-items:center;margin-top:8px}
+  .custom-row input{padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:13px}
+  .custom-row .cr-lbl{flex:1}.custom-row .cr-pr{width:90px}.custom-row .cr-disc{width:84px}
+  .custom-row select{padding:8px;border:1px solid var(--line);border-radius:8px;font-size:13px}
+  .custom-row button{border:none;background:none;color:var(--accent);font-size:18px;cursor:pointer;line-height:1}
+  .term-pick{display:flex;gap:8px;flex-wrap:wrap}
+  .term-opt{flex:1;min-width:150px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer;transition:.12s;background:var(--panel)}
+  .term-opt:hover{border-color:var(--brand)}
+  .term-opt.on{border-color:var(--brand);background:rgba(21,128,61,.07);box-shadow:0 0 0 1px var(--brand) inset}
+  .term-opt .to-t{font-weight:700;font-size:13.5px}
+  .term-opt .to-s{font-size:11.5px;color:var(--muted);margin-top:2px}
+  .term-note{font-size:12px;color:var(--muted);margin-top:8px}
+  .quote-summary{margin-top:6px}
+  .quote-summary table{width:100%;border-collapse:collapse;font-size:13px;background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .quote-summary td{padding:7px 11px;border-bottom:1px solid var(--line)}
+  .quote-summary td.num{text-align:right;white-space:nowrap}
+  .quote-summary tr.qt-tot td{font-weight:800;background:rgba(21,128,61,.06);border-bottom:none}
+  .quote-summary .qt-strike{color:var(--muted-2);text-decoration:line-through;font-size:11.5px;margin-right:5px}
   .contact-btns{display:flex;gap:6px;margin-top:4px}
   .cbtn{flex:1;text-align:center;font-size:12.5px;font-weight:600;padding:7px 10px;border-radius:8px;border:1px solid var(--line);text-decoration:none;color:var(--text);background:var(--panel);transition:.12s}
   .cbtn:hover{border-color:var(--brand);background:rgba(21,128,61,.08)}
@@ -421,13 +441,21 @@
       <div class="field"><label>Stage</label><select id="c-stage"></select></div>
       <div class="field"><label>Acquired by</label><select id="c-acq"><option value="brandon">Brandon</option><option value="eric">Eric</option><option value="website">Website / Inbound (65/35)</option><option value="partner">Partner / Reseller</option></select></div>
     </div>
-    <div class="field"><label>Services &amp; add-ons <span style="color:var(--muted-2)">(check what they're buying — auto-fills the fees below)</span></label>
+    <div class="field"><label>Package builder — à la carte add-ons <span style="color:var(--muted-2)">(check what they're buying; set a per-line discount if you're giving a deal)</span></label>
       <div id="svc-list" class="svc-list"></div>
+      <div id="custom-addons"></div>
+      <button type="button" class="btn btn-ghost btn-sm" onclick="addCustomAddon()" style="margin-top:8px">+ Add custom add-on</button>
+    </div>
+    <div class="field"><label>Service term</label>
+      <div id="term-pick" class="term-pick"></div>
+      <div id="term-note" class="term-note"></div>
     </div>
     <div class="grid2">
-      <div class="field"><label>Onboarding fee ($, one-time)</label><input id="c-onboard" type="number" min="0" placeholder="3500"></div>
-      <div class="field"><label>Monthly charge ($)</label><input id="c-monthly" type="number" min="0" placeholder="300"></div>
+      <div class="field"><label>Sign-on fee ($, one-time) <span style="color:var(--muted-2)">— adjust freely</span></label><input id="c-onboard" type="number" min="0" step="0.01" placeholder="2000" oninput="quoteManualEdit()"></div>
+      <div class="field"><label>Sign-on discount ($ off)</label><input id="c-setup-disc" type="number" min="0" step="0.01" placeholder="0" oninput="recalcQuote()"></div>
     </div>
+    <div class="field"><label>Monthly charge ($) <span style="color:var(--muted-2)">— after add-ons + term discount</span></label><input id="c-monthly" type="number" min="0" step="0.01" placeholder="300" oninput="quoteManualEdit()"></div>
+    <div id="quote-summary" class="quote-summary"></div>
     <div class="grid2">
       <div class="field"><label>Domain</label><input id="c-domain" placeholder="acme.com"></div>
       <div class="field"><label>Hosting</label><input id="c-hosting" placeholder="Cloudflare Pages"></div>
@@ -991,36 +1019,159 @@ function credRow(label, value){
 }
 function addCredRow(label,value){ el('cred-list').appendChild(credRow(label,value)); }
 
-/* service add-ons → auto-fill onboarding + monthly */
-var SERVICES=[
-  {key:'website', label:'Website Build', kind:'once', price:2000},
-  {key:'hosting', label:'Hosting', kind:'mo', price:49.99},
-  {key:'seo', label:'SEO', kind:'mo', price:269.99},
-  {key:'bundle', label:'Hosting + SEO bundle', kind:'mo', price:299.99}
+/* ===== à la carte PACKAGE BUILDER ===== */
+var ADDONS=[
+  {group:'Website & build (one-time)', items:[
+    {key:'website', label:'Website Build', kind:'once', price:2000},
+    {key:'landing', label:'Extra landing page', kind:'once', price:300},
+    {key:'ecom',    label:'E-commerce / booking setup', kind:'once', price:750},
+    {key:'branding',label:'Logo & branding kit', kind:'once', price:400},
+    {key:'copy',    label:'Pro copywriting (per page)', kind:'once', price:150}
+  ]},
+  {group:'Ongoing services (monthly)', items:[
+    {key:'hosting', label:'Hosting & maintenance', kind:'mo', price:49.99},
+    {key:'seo',     label:'SEO', kind:'mo', price:269.99},
+    {key:'bundle',  label:'Hosting + SEO bundle', kind:'mo', price:299.99},
+    {key:'gbp',     label:'Google Business management', kind:'mo', price:149},
+    {key:'content', label:'Content / blog (1 post/mo)', kind:'mo', price:199},
+    {key:'reviews', label:'Review generation', kind:'mo', price:99},
+    {key:'social',  label:'Social media posting', kind:'mo', price:149}
+  ]}
 ];
-function renderServices(selected){
-  selected=selected||[];
-  el('svc-list').innerHTML=SERVICES.map(function(s){
-    var on=selected.indexOf(s.key)>=0;
-    return '<label class="svc'+(on?' on':'')+'" data-key="'+s.key+'">'+
-      '<input type="checkbox" '+(on?'checked':'')+' onchange="onServiceToggle(this)">'+
-      '<span class="sv-nm">'+s.label+'</span>'+
-      '<span class="sv-pr">'+money(s.price)+(s.kind==='mo'?'/mo':' once')+'</span></label>';
-  }).join('');
+var TERMS={
+  m2m:{label:'Month-to-month', months:0, moPct:0, warranty:false, sub:'Full price · cancel anytime'},
+  '1yr':{label:'1-year', months:12, moPct:0.10, warranty:true, sub:'10% off monthly · bumper-to-bumper warranty'},
+  '2yr':{label:'2-year', months:24, moPct:0.20, warranty:true, sub:'20% off monthly · warranty + add-on discounts'}
+};
+function addonByKey(k){ for(var g=0;g<ADDONS.length;g++){ var it=ADDONS[g].items.find(function(i){return i.key===k;}); if(it) return it; } return null; }
+var customAddons=[];   // [{label,price,kind,discount}]
+var quoteTerm='2yr';
+var quoteManual={setup:false, monthly:false};
+
+function renderServices(selected, lineDiscounts){
+  selected=selected||[]; lineDiscounts=lineDiscounts||{};
+  var html='';
+  ADDONS.forEach(function(grp){
+    html+='<div class="svc-grouplbl">'+grp.group+'</div>';
+    grp.items.forEach(function(s){
+      var on=selected.indexOf(s.key)>=0, disc=lineDiscounts[s.key]||'';
+      html+='<label class="svc'+(on?' on':'')+'" data-key="'+s.key+'">'+
+        '<input type="checkbox" '+(on?'checked':'')+' onchange="onServiceToggle(this)">'+
+        '<span class="sv-nm">'+s.label+'</span>'+
+        '<span class="sv-pr">'+money(s.price)+(s.kind==='mo'?'/mo':' once')+'</span>'+
+        '<input class="sv-disc" type="number" min="0" step="0.01" placeholder="$ off" title="Discount off this line" value="'+disc+'" oninput="recalcQuote()" onclick="event.preventDefault();event.stopPropagation()" style="'+(on?'':'display:none')+'">'+
+        '</label>';
+    });
+  });
+  el('svc-list').innerHTML=html;
+  renderTermPick();
 }
-function setSvc(key,val){ var l=el('svc-list').querySelector('.svc[data-key="'+key+'"]'); if(l) l.querySelector('input').checked=val; }
-function selectedServices(){ var out=[]; el('svc-list').querySelectorAll('.svc').forEach(function(l){ if(l.querySelector('input').checked) out.push(l.dataset.key); }); return out; }
+function setSvc(key,val){ var l=el('svc-list').querySelector('.svc[data-key="'+key+'"]'); if(l){ l.querySelector('input[type=checkbox]').checked=val; } }
+function selectedServices(){ var out=[]; el('svc-list').querySelectorAll('.svc').forEach(function(l){ if(l.querySelector('input[type=checkbox]').checked) out.push(l.dataset.key); }); return out; }
+function lineDiscounts(){ var d={}; el('svc-list').querySelectorAll('.svc').forEach(function(l){ var v=Number(l.querySelector('.sv-disc').value)||0; if(v) d[l.dataset.key]=v; }); return d; }
 function onServiceToggle(box){
   if(box && box.checked){
     var key=box.closest('.svc').dataset.key;
     if(key==='bundle'){ setSvc('hosting',false); setSvc('seo',false); }
     if(key==='hosting'||key==='seo'){ setSvc('bundle',false); }
   }
-  el('svc-list').querySelectorAll('.svc').forEach(function(l){ l.classList.toggle('on', l.querySelector('input').checked); });
-  var keys=selectedServices(), once=0, mo=0;
-  SERVICES.forEach(function(s){ if(keys.indexOf(s.key)>=0){ if(s.kind==='once') once+=s.price; else mo+=s.price; } });
-  el('c-onboard').value = once ? once : '';
-  el('c-monthly').value = mo ? Number(mo.toFixed(2)) : '';
+  el('svc-list').querySelectorAll('.svc').forEach(function(l){ var on=l.querySelector('input[type=checkbox]').checked; l.classList.toggle('on', on); l.querySelector('.sv-disc').style.display=on?'':'none'; });
+  quoteManual.setup=false; quoteManual.monthly=false; // re-deriving from add-ons
+  recalcQuote();
+}
+function addCustomAddon(label,price,kind,discount){
+  customAddons.push({label:label||'', price:price||'', kind:kind||'mo', discount:discount||''});
+  renderCustomAddons(); recalcQuote();
+}
+function renderCustomAddons(){
+  el('custom-addons').innerHTML=customAddons.map(function(a,i){
+    return '<div class="custom-row">'+
+      '<input class="cr-lbl" placeholder="Custom add-on (e.g. Booking integration)" value="'+esc(a.label)+'" oninput="customAddons['+i+'].label=this.value">'+
+      '<input class="cr-pr" type="number" min="0" step="0.01" placeholder="$" value="'+(a.price||'')+'" oninput="customAddons['+i+'].price=this.value;recalcQuote()">'+
+      '<select onchange="customAddons['+i+'].kind=this.value;recalcQuote()"><option value="mo"'+(a.kind==='mo'?' selected':'')+'>/mo</option><option value="once"'+(a.kind==='once'?' selected':'')+'>once</option></select>'+
+      '<input class="cr-disc" type="number" min="0" step="0.01" placeholder="$ off" value="'+(a.discount||'')+'" oninput="customAddons['+i+'].discount=this.value;recalcQuote()" title="Discount">'+
+      '<button type="button" title="Remove" onclick="customAddons.splice('+i+',1);renderCustomAddons();recalcQuote()">×</button>'+
+    '</div>';
+  }).join('');
+}
+function renderTermPick(){
+  el('term-pick').innerHTML=Object.keys(TERMS).map(function(k){ var t=TERMS[k];
+    return '<div class="term-opt'+(quoteTerm===k?' on':'')+'" onclick="pickTerm(\''+k+'\')"><div class="to-t">'+t.label+'</div><div class="to-s">'+t.sub+'</div></div>';
+  }).join('');
+  var t=TERMS[quoteTerm];
+  el('term-note').textContent = t.warranty
+    ? '🛡️ Bumper-to-bumper warranty: unlimited support & adjustments for the '+t.label+' term'+(quoteTerm==='2yr'?', plus discounts on custom add-ons we can vertically integrate.':'.')
+    : 'No long-term commitment — full price, cancel anytime.';
+}
+function pickTerm(k){ quoteTerm=k; quoteManual.monthly=false; renderTermPick(); recalcQuote(); }
+
+// Compute setup + monthly from the builder and write the fee fields (unless manually overridden).
+function recalcQuote(){
+  var keys=selectedServices(), ld=lineDiscounts(), onceBase=0, moBase=0, lines=[];
+  ADDONS.forEach(function(g){ g.items.forEach(function(s){ if(keys.indexOf(s.key)>=0){
+    var disc=ld[s.key]||0, net=Math.max(0,s.price-disc);
+    if(s.kind==='once') onceBase+=net; else moBase+=net;
+    lines.push({key:s.key,label:s.label,kind:s.kind,price:s.price,discount:disc,net:net});
+  }});});
+  customAddons.forEach(function(a){ var p=Number(a.price)||0; if(!p&&!a.label) return; var disc=Number(a.discount)||0, net=Math.max(0,p-disc);
+    if(a.kind==='once') onceBase+=net; else moBase+=net;
+    lines.push({key:'custom',label:a.label||'Custom add-on',kind:a.kind,price:p,discount:disc,net:net,custom:true});
+  });
+  var setupDisc=Number(el('c-setup-disc').value)||0;
+  var term=TERMS[quoteTerm], moAfterTerm=moBase*(1-term.moPct);
+  var setupFinal=Math.max(0, onceBase-setupDisc);
+  if(!quoteManual.setup) el('c-onboard').value = setupFinal? Number(setupFinal.toFixed(2)) : '';
+  if(!quoteManual.monthly) el('c-monthly').value = moAfterTerm? Number(moAfterTerm.toFixed(2)) : '';
+  renderQuoteSummary(lines, onceBase, moBase, setupDisc, term);
+}
+function quoteManualEdit(){ // user typed directly in a fee field — respect it
+  if(document.activeElement && document.activeElement.id==='c-onboard') quoteManual.setup=true;
+  if(document.activeElement && document.activeElement.id==='c-monthly') quoteManual.monthly=true;
+  recalcQuote();
+}
+function renderQuoteSummary(lines, onceBase, moBase, setupDisc, term){
+  var setup=Number(el('c-onboard').value)||0, monthly=Number(el('c-monthly').value)||0;
+  if(!lines.length && !setup && !monthly){ el('quote-summary').innerHTML=''; return; }
+  var rows=lines.map(function(l){
+    return '<tr><td>'+esc(l.label)+(l.discount?'<span class="qt-strike" style="margin-left:6px">'+money(l.price)+'</span>':'')+'</td>'+
+      '<td class="num">'+money(l.net)+(l.kind==='mo'?'/mo':' once')+'</td></tr>';
+  }).join('');
+  var moDiscRow = term.moPct ? '<tr><td>'+term.label+' term discount ('+Math.round(term.moPct*100)+'% off monthly)</td><td class="num">−'+money(moBase*term.moPct)+'/mo</td></tr>' : '';
+  var setupDiscRow = setupDisc ? '<tr><td>Sign-on discount</td><td class="num">−'+money(setupDisc)+'</td></tr>' : '';
+  el('quote-summary').innerHTML='<table>'+rows+setupDiscRow+moDiscRow+
+    '<tr class="qt-tot"><td>Sign-on (one-time)</td><td class="num">'+money(setup)+'</td></tr>'+
+    '<tr class="qt-tot"><td>Monthly ('+term.label+')</td><td class="num">'+money(monthly)+'/mo</td></tr>'+
+    '</table>';
+}
+// Full quote object for saving + the agreement
+function buildQuote(){
+  var keys=selectedServices(), ld=lineDiscounts(), lines=[];
+  ADDONS.forEach(function(g){ g.items.forEach(function(s){ if(keys.indexOf(s.key)>=0){ var disc=ld[s.key]||0; lines.push({key:s.key,label:s.label,kind:s.kind,price:s.price,discount:disc,net:Math.max(0,s.price-disc)}); }});});
+  customAddons.forEach(function(a){ var p=Number(a.price)||0; if(!p&&!a.label) return; var disc=Number(a.discount)||0; lines.push({key:'custom',label:a.label||'Custom add-on',kind:a.kind,price:p,discount:disc,net:Math.max(0,p-disc),custom:true}); });
+  var term=TERMS[quoteTerm];
+  return { lines:lines, term:quoteTerm, term_months:term.months, term_label:term.label, warranty:term.warranty,
+    setup_discount:Number(el('c-setup-disc').value)||0,
+    setup_total:Number(el('c-onboard').value)||0, monthly_total:Number(el('c-monthly').value)||0 };
+}
+function loadQuote(c){
+  customAddons=[]; quoteManual={setup:false,monthly:false};
+  var q=(c&&c.quote)||null;
+  if(q){
+    quoteTerm=q.term||'2yr';
+    var keys=[], ld={};
+    (q.lines||[]).forEach(function(l){ if(l.custom){ customAddons.push({label:l.label,price:l.price,kind:l.kind,discount:l.discount||''}); } else { keys.push(l.key); if(l.discount) ld[l.key]=l.discount; } });
+    el('c-setup-disc').value=q.setup_discount||'';
+    renderServices(keys, ld); renderCustomAddons();
+    quoteManual.setup=true; quoteManual.monthly=true; // keep the saved totals
+    el('c-onboard').value=c.onboarding_fee||q.setup_total||''; el('c-monthly').value=c.monthly_charge||q.monthly_total||'';
+    renderQuoteSummary(q.lines||[], 0, 0, q.setup_discount||0, TERMS[quoteTerm]);
+  } else {
+    quoteTerm='2yr'; el('c-setup-disc').value='';
+    renderServices(c&&Array.isArray(c.services)?c.services:[], {}); renderCustomAddons();
+    el('c-onboard').value=c?(c.onboarding_fee||''):''; el('c-monthly').value=c?(c.monthly_charge||''):'';
+    if(c&&(c.onboarding_fee||c.monthly_charge)){ quoteManual.setup=true; quoteManual.monthly=true; }
+    recalcQuote();
+  }
 }
 function openClient(id, presetStage){
   fillStageSelect(); editingId=id||null;
@@ -1030,8 +1181,7 @@ function openClient(id, presetStage){
   el('c-email').value=c?(c.email||''):''; el('c-phone').value=c?(c.phone||''):'';
   el('c-address').value=c?(c.address||''):''; el('c-stage').value=c?c.stage:(presetStage||'lead');
   el('c-acq').value=c?c.acquired_by:(EMAIL_TO_ACQ[me]||'brandon');
-  el('c-onboard').value=c?(c.onboarding_fee||''):''; el('c-monthly').value=c?(c.monthly_charge||''):'';
-  renderServices(c&&Array.isArray(c.services)?c.services:[]);
+  loadQuote(c);
   el('c-domain').value=c?(c.domain||''):''; el('c-hosting').value=c?(c.hosting||''):'';
   el('c-ga4').value=c?(c.ga4_property_id||''):''; el('c-sc').value=c?(c.search_console_site||''):'';
   var rl=el('c-report-link'); if(id){ rl.style.display='inline-flex'; rl.href='report.html?client='+encodeURIComponent(id); } else { rl.style.display='none'; }
@@ -1058,21 +1208,26 @@ function agreementFor(c){
 function agreementLink(c){
   var p=new URLSearchParams({ cid:c.id||'', b:c.business_name||'', c:c.contact_name||'', e:c.email||'',
     setup:String(c.onboarding_fee||''), monthly:String(c.monthly_charge||'') });
+  // Encode the itemized quote so the agreement fills in Exhibit A + the term automatically.
+  if(c.quote){
+    try{ p.set('q', btoa(unescape(encodeURIComponent(JSON.stringify(c.quote))))); }catch(e){}
+  }
   return 'https://rankrebels.ai/agreement.html?'+p.toString();
 }
 function renderAgreementStatus(c){
   var box=el('agreement-status'); if(!box) return;
   var a=agreementFor(c);
   if(a){ box.innerHTML='<span style="color:var(--brand);font-weight:700">✅ Signed by '+esc(a.signer_name||'')+'</span> on '+(a.signed_at?new Date(a.signed_at).toLocaleDateString():'')+(a.monthly_fee?(' · '+money(a.monthly_fee)+'/mo'):''); }
-  else { box.innerHTML='<span style="color:var(--muted)">Not signed yet. Send the 24-month MSA for e-signature.</span>'; }
+  else { box.innerHTML='<span style="color:var(--muted)">Not signed yet. Send the '+clientTermLabel(c)+' agreement for e-signature.</span>'; }
 }
+function clientTermLabel(c){ var m=(c&&c.quote&&c.quote.term_months); return m===0?'month-to-month':((m||24)+'-month'); }
 async function sendAgreement(){
   var c=clients.find(function(x){return x.id===editingId;}); if(!c){ alert('Save the customer first.'); return; }
   if(!c.email){ alert("Add the customer's email first — that's where the agreement goes."); return; }
   var link=agreementLink(c);
   var t=await authToken();
   if(t){
-    var body='Hi '+(c.contact_name||'there')+',\n\nWe’re excited to work with '+(c.business_name||'you')+'! Please review and sign our service agreement here:\n\n'+link+'\n\nIt covers the scope, the 24-month term, and pricing'+(c.onboarding_fee?(' ('+money(c.onboarding_fee)+' setup + '+money(c.monthly_charge||0)+'/mo)'):'')+'. Reply with any questions.\n\n— The Rank Rebels Team';
+    var body='Hi '+(c.contact_name||'there')+',\n\nWe’re excited to work with '+(c.business_name||'you')+'! Please review and sign our service agreement here:\n\n'+link+'\n\nIt covers the scope, the '+clientTermLabel(c)+' term, and pricing'+(c.onboarding_fee?(' ('+money(c.onboarding_fee)+' setup + '+money(c.monthly_charge||0)+'/mo)'):'')+'. Reply with any questions.\n\n— The Rank Rebels Team';
     var r=await fetch('/api/google/draft',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t},body:JSON.stringify({to:c.email,subject:'Your Rank Rebels service agreement',body:body})});
     var d=await r.json().catch(function(){return {};});
     if(d.ok){ logActivity(editingId,'email','Sent service agreement'); if(confirm('Agreement email drafted in Gmail. Open Gmail to send?')) window.open(d.link,'_blank'); return; }
@@ -1263,20 +1418,21 @@ async function saveClient(){
     monthly_charge:Number(el('c-monthly').value)||null,
     domain:el('c-domain').value.trim(), hosting:el('c-hosting').value.trim(),
     ga4_property_id:el('c-ga4').value.trim()||null, search_console_site:el('c-sc').value.trim()||null,
-    credentials:collectCreds(), services:selectedServices(),
+    credentials:collectCreds(), services:selectedServices(), quote:buildQuote(),
     follow_up: el('c-followup').value || null
   };
   if(rec.stage==='published'){ var ex=editingId&&clients.find(function(x){return x.id===editingId;}); if(!ex||!ex.published_at) rec.published_at=new Date().toISOString().slice(0,10); }
   async function run(p){ return editingId ? sb.from('rr_clients').update(p).eq('id',editingId).select().single() : sb.from('rr_clients').insert(p).select().single(); }
   var r=await run(rec);
   // Degrade gracefully if optional columns haven't been added to the table yet
-  for(var i=0;i<3 && r.error && /services|follow_up|ga4_property_id|search_console_site|column|schema cache/i.test(r.error.message||'');i++){
+  for(var i=0;i<4 && r.error && /services|follow_up|ga4_property_id|search_console_site|quote|column|schema cache/i.test(r.error.message||'');i++){
     var m=r.error.message||'';
     if(/services/i.test(m)) delete rec.services;
     if(/follow_up/i.test(m)) delete rec.follow_up;
     if(/ga4_property_id/i.test(m)) delete rec.ga4_property_id;
     if(/search_console_site/i.test(m)) delete rec.search_console_site;
-    if(!/services|follow_up|ga4_property_id|search_console_site/i.test(m)){ delete rec.services; delete rec.follow_up; delete rec.ga4_property_id; delete rec.search_console_site; }
+    if(/quote/i.test(m)) delete rec.quote;
+    if(!/services|follow_up|ga4_property_id|search_console_site|quote/i.test(m)){ delete rec.services; delete rec.follow_up; delete rec.ga4_property_id; delete rec.search_console_site; delete rec.quote; }
     r=await run(rec);
   }
   if(r.error){ alert(r.error.message); return; }

@@ -141,6 +141,9 @@
   document.getElementById('y').textContent = new Date().getFullYear();
   var el = function(id){ return document.getElementById(id); };
   var last = {};
+  // AccessGrade can run on its own domain (e.g. accessgrade.com); the API lives on rankrebels.ai.
+  // Same-origin when hosted on rankrebels.ai; otherwise call rankrebels.ai (CORS is enabled).
+  var API_BASE = /(^|\.)rankrebels\.ai$/i.test(location.hostname) || location.protocol === 'file:' ? '' : 'https://rankrebels.ai';
   function gcolor(g){ return g==='A'||g==='B' ? 'var(--good)' : g==='C'||g==='D' ? 'var(--warn)' : 'var(--bad)'; }
 
   el('url').addEventListener('keydown', function(e){ if(e.key==='Enter') runScan(); });
@@ -151,7 +154,7 @@
     if(!url){ err.textContent='Enter your website address.'; err.style.display='block'; return; }
     var btn = el('scan'); btn.disabled=true; btn.innerHTML='<span class="spin"></span>';
     try{
-      var r = await fetch('/api/audit', {method:'POST',headers:{'Content-Type':'application/json'},
+      var r = await fetch(API_BASE+'/api/audit', {method:'POST',headers:{'Content-Type':'application/json'},
         body: JSON.stringify({ url:url, industry: el('industry').value })});
       var d = await r.json();
       if(d.error){ err.textContent=d.error; err.style.display='block'; }
@@ -200,7 +203,7 @@
     e.preventDefault();
     var btn = el('leadBtn'); btn.disabled=true; btn.innerHTML='<span class="spin"></span>';
     try{
-      await fetch('/api/audit-lead', {method:'POST',headers:{'Content-Type':'application/json'},
+      await fetch(API_BASE+'/api/audit-lead', {method:'POST',headers:{'Content-Type':'application/json'},
         body: JSON.stringify({ email: el('leadEmail').value.trim(), phone: el('leadPhone').value.trim(),
           url: last.url, score: last.score, grade: last.grade, industry: el('industry').value })});
     } catch(e){}

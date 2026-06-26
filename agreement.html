@@ -38,9 +38,11 @@
       <h2>Agreement summary</h2>
       <div class="sumrow"><span class="k">Client</span><span class="v" id="s-biz">—</span></div>
       <div class="sumrow"><span class="k">Contact</span><span class="v" id="s-contact">—</span></div>
+      <div id="s-items"></div>
       <div class="sumrow"><span class="k">One-time setup fee</span><span class="v" id="s-setup">—</span></div>
       <div class="sumrow"><span class="k">Monthly subscription</span><span class="v" id="s-monthly">—</span></div>
-      <div class="sumrow"><span class="k">Initial term</span><span class="v">24 months</span></div>
+      <div class="sumrow"><span class="k">Initial term</span><span class="v" id="s-term">24 months</span></div>
+      <div id="s-warranty"></div>
     </div>
     <p style="font-size:13px;color:var(--muted)">Please review the full agreement below, then sign at the bottom. Scroll through the terms to enable signing.</p>
     <div class="terms" id="terms"><h3 class="sec">MASTER SERVICE AGREEMENT</h3>
@@ -224,9 +226,12 @@
 <p>Date: ________________________________</p>
 <p>Client</p>
 <p>Signature: ___________________________</p>
-<p>Date: ________________________________</p></div>
+<p>Date: ________________________________</p>
+
+<h3 class="sec" id="exA-h">EXHIBIT A — STATEMENT OF WORK &amp; PRICING</h3>
+<div id="exhibit-a"></div></div>
     <div class="ack">
-      <label><input type="checkbox" id="ack1"> I have read and understood this Agreement, including the 24-month term, the non-refundable setup fee, and the SEO no-guarantee disclaimer in Section 5.</label>
+      <label><input type="checkbox" id="ack1"> <span id="ack1-text">I have read and understood this Agreement, including the 24-month term, the non-refundable setup fee, and the SEO no-guarantee disclaimer in Section 5.</span></label>
       <label><input type="checkbox" id="ack2"> I am authorized to sign on behalf of the Client, and I agree to the terms above.</label>
     </div>
     <div class="sign">
@@ -247,10 +252,60 @@ var sb=window.supabase.createClient(SB_URL,SB_KEY);
 function qp(n){ return new URLSearchParams(location.search).get(n)||''; }
 function money(n){ n=Number(n||0); return n?('$'+n.toLocaleString(undefined,{maximumFractionDigits:2})):'—'; }
 var P={ cid:qp('cid'), biz:qp('b'), contact:qp('c'), email:qp('e'), setup:qp('setup'), monthly:qp('monthly') };
+// Decode the itemized quote (Exhibit A) if present
+var Q=null;
+try{ var raw=qp('q'); if(raw) Q=JSON.parse(decodeURIComponent(escape(atob(raw)))); }catch(e){ Q=null; }
+var setupVal = Q&&Q.setup_total!=null ? Q.setup_total : Number(P.setup)||0;
+var monthlyVal = Q&&Q.monthly_total!=null ? Q.monthly_total : Number(P.monthly)||0;
+var termMonths = Q&&Q.term_months!=null ? Q.term_months : 24;
+var termLabel = termMonths===0 ? 'Month-to-month' : (termMonths+'-month');
+
 document.getElementById('s-biz').textContent=P.biz||'—';
 document.getElementById('s-contact').textContent=(P.contact||'')+(P.email?(' · '+P.email):'')||'—';
-document.getElementById('s-setup').textContent=money(P.setup);
-document.getElementById('s-monthly').textContent=P.monthly?(money(P.monthly)+'/mo'):'—';
+document.getElementById('s-setup').textContent=money(setupVal);
+document.getElementById('s-monthly').textContent=monthlyVal?(money(monthlyVal)+'/mo'):'—';
+document.getElementById('s-term').textContent = termMonths===0 ? 'Month-to-month' : (termMonths+' months');
+
+// itemized lines in the summary box
+function lineRows(){
+  if(!Q||!Q.lines||!Q.lines.length) return '';
+  return Q.lines.map(function(l){
+    var d = l.discount ? ' <span style="color:#9aa">('+money(l.price)+' − '+money(l.discount)+')</span>' : '';
+    return '<div class="sumrow"><span class="k">'+escTxt(l.label)+(l.kind==='mo'?' (monthly)':' (one-time)')+d+'</span><span class="v">'+money(l.net)+(l.kind==='mo'?'/mo':'')+'</span></div>';
+  }).join('');
+}
+document.getElementById('s-items').innerHTML=lineRows();
+
+// warranty note for term plans
+if(Q&&Q.warranty){
+  document.getElementById('s-warranty').innerHTML='<div class="sumrow"><span class="k">Included</span><span class="v" style="color:var(--brand)">🛡️ Bumper-to-bumper warranty</span></div>';
+}
+
+// Exhibit A (auto-filled SOW + pricing)
+(function(){
+  var ex=document.getElementById('exhibit-a'); if(!ex) return;
+  var rows = Q&&Q.lines&&Q.lines.length
+    ? Q.lines.map(function(l){ return '<tr><td>'+escTxt(l.label)+'</td><td>'+(l.kind==='mo'?'Monthly':'One-time')+'</td><td style="text-align:right">'+money(l.net)+(l.kind==='mo'?'/mo':'')+'</td></tr>'; }).join('')
+    : '<tr><td>Services as discussed</td><td>—</td><td style="text-align:right">—</td></tr>';
+  var warrantyClause = Q&&Q.warranty
+    ? '<p style="margin-top:12px"><b>Bumper-to-Bumper Warranty ('+termLabel+' term).</b> For the duration of the initial term, Client receives unlimited support and adjustments to the delivered website and services at no additional charge'+(termMonths>=24?', plus preferred discounts on custom add-on features that RankRebels can vertically integrate into the existing build.':'.')+' This warranty applies to maintenance, content updates, and reasonable adjustments; net-new scope outside the items below may be quoted separately.</p>'
+    : '<p style="margin-top:12px"><b>Month-to-month service.</b> No long-term commitment; either party may cancel with notice as described above. Standard support applies; the extended warranty benefits apply only to 1- or 2-year terms.</p>';
+  ex.innerHTML='<table style="width:100%;border-collapse:collapse;margin:10px 0;font-size:14px">'+
+    '<thead><tr><th style="text-align:left;border-bottom:1px solid #ccc;padding:6px">Item</th><th style="text-align:left;border-bottom:1px solid #ccc;padding:6px">Type</th><th style="text-align:right;border-bottom:1px solid #ccc;padding:6px">Price</th></tr></thead><tbody>'+
+    rows+
+    '<tr><td colspan="2" style="padding:6px;text-align:right;font-weight:700">One-time setup total</td><td style="padding:6px;text-align:right;font-weight:700">'+money(setupVal)+'</td></tr>'+
+    '<tr><td colspan="2" style="padding:6px;text-align:right;font-weight:700">Monthly subscription total</td><td style="padding:6px;text-align:right;font-weight:700">'+money(monthlyVal)+'/mo</td></tr>'+
+    '<tr><td colspan="2" style="padding:6px;text-align:right">Initial term</td><td style="padding:6px;text-align:right">'+(termMonths===0?'Month-to-month':termMonths+' months')+'</td></tr>'+
+    '</tbody></table>'+warrantyClause;
+})();
+
+// dynamic acknowledgement text
+(function(){
+  var t=document.getElementById('ack1-text'); if(!t) return;
+  var termPhrase = termMonths===0 ? 'the month-to-month term' : ('the '+termMonths+'-month term');
+  t.textContent='I have read and understood this Agreement, including '+termPhrase+', the non-refundable setup fee, and the SEO no-guarantee disclaimer in Section 5.';
+})();
+function escTxt(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
 function check(){ var ok=document.getElementById('ack1').checked&&document.getElementById('ack2').checked&&document.getElementById('signer').value.trim().length>1; document.getElementById('signbtn').disabled=!ok; }
 ['ack1','ack2'].forEach(function(id){document.getElementById(id).addEventListener('change',check);});
 document.getElementById('signer').addEventListener('input',check);
@@ -258,7 +313,7 @@ async function signAgreement(){
   var btn=document.getElementById('signbtn'); btn.disabled=true; var m=document.getElementById('msg'); m.style.display='none';
   var rec={ client_id:P.cid||null, client_email:P.email||null, business_name:P.biz||null,
     signer_name:document.getElementById('signer').value.trim(),
-    setup_fee:Number(P.setup)||null, monthly_fee:Number(P.monthly)||null, terms_version:'MSA-2024', user_agent:navigator.userAgent.slice(0,300) };
+    setup_fee:setupVal||null, monthly_fee:monthlyVal||null, terms_version:'MSA-2024 ('+(termMonths===0?'M2M':termMonths+'mo')+')', user_agent:navigator.userAgent.slice(0,300) };
   var r=await sb.from('rr_agreements').insert(rec);
   if(r.error){ m.textContent='Could not record signature: '+r.error.message+' — please contact sales@rankrebels.ai.'; m.style.display='block'; btn.disabled=false; return; }
   document.getElementById('form').style.display='none'; document.getElementById('done').style.display='block';
