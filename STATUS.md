@@ -18,12 +18,16 @@ Ordered roughly by priority.
 - [ ] **SPF / DKIM / DMARC** DNS records at Squarespace (see GO-LIVE.md §6) — keeps email out of spam.
 - [ ] **Swap testimonial quotes** to Atomic Steamers / Ryzen Recruit / Heliode's real words (+ add a contact name).
 - [ ] **(Optional) Stripe** — add `STRIPE_SECRET_KEY` to enable card-payable invoices.
+- [ ] **Launch Ryzen channel** — run the partner SQL, add `PARTNER_KEYS` secret in Cloudflare (`{"rrp_live_ryzen_…":"Ryzen Recruit"}`), send Ryzen the kit in `shareable/ryzen-partner-kit/` + their key. **Decide the referral commission %.**
+- [ ] **AccessGrade decisions** — confirm brand name (placeholder "AccessGrade"), pricing ($25/mo monitoring), and whether to put it on its own domain/subdomain. Works now at `/audit.html`.
 - [ ] **Redeploy Cloudflare** after any secret change, then run the smoke test in GO-LIVE.md.
 
 ## 🔨 In progress / building
-- _(nothing actively mid-build — add items here as you start them)_
+- **Multilingual homepage** (top-6 US languages + Arabic & French) — scoped, not started; awaiting your language-set pick.
 
 ## ✅ Recently shipped (last few days)
+- **Partner/reseller API + Ryzen kit** — `/api/partner/lead` + `/api/partner/leads` (key-gated, CORS); pipeline shows 🤝 partner attribution; paste-ready kit in `shareable/ryzen-partner-kit/` (rep guide, lead portal, API docs)
+- **AccessGrade ADA audit ecosystem** — `audit.html` free scanner → score/grade report → Rank Rebels referral; `/api/audit` (heuristic WCAG scan) + `/api/audit-lead` (tagged pipeline referral)
 - **Client reporting dashboard** (`report.html`) — live GA4 + Search Console via `/api/report`, demo fallback; 📊 buttons on customer tiles + modal
 - **Proposal tool** (`proposal.html`) — personalized, interactive plan picker, Accept→pipeline lead; 📄 "Send proposal" on pipeline tiles
 - **Homepage animated hero** — typing search + "your business ranks #1" result mock
@@ -47,5 +51,6 @@ Ordered roughly by priority.
 - Point Supabase Auth SMTP at Resend (kills magic-link rate limits)
 
 ## 📓 Daily log
+- **2026-06-26** (later) — Built the **Ryzen reseller program**: Partner API (`/api/partner/lead` + `/leads`, key-gated/CORS), pipeline 🤝 attribution, and a paste-ready kit (`shareable/ryzen-partner-kit/`: rep guide, lead portal, API docs). Also launched the **AccessGrade ADA audit ecosystem** — `audit.html` free accessibility scanner (`/api/audit`, heuristic WCAG scan via HTMLRewriter, score+grade+issues+industry disclosure check) that refers low scorers to Rank Rebels (`/api/audit-lead`, tagged partner lead). Open decisions: Ryzen commission %, AccessGrade brand name/pricing/domain.
 - **2026-06-26** — Took all three prototypes to production: client reporting dashboard (`report.html` + `/api/report` pulling GA4 & Search Console, demo fallback, per-client config + 📊 buttons), proposal tool (`proposal.html`, personalized link + Accept→lead, 📄 send-proposal on tiles), and the homepage animated hero search mock. Also fixed pipeline notes double-save. New setup to-dos: run the GA4/SC column SQL, enable the two Google APIs + reconnect for new scopes.
 - **2026-06-25** — Built lead enrichment + shareable lead-finder module; redesigned homepage with portfolio + real testimonials; added Google review features; wired Turnstile (site+secret) and disclosed it in privacy policy; resolved the GBP/Heliode ownership issue (recreate under Rank Rebels). Open: GBP verification (Eric), review link, SERPER key, email signatures, SPF/DKIM/DMARC.

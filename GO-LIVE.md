@@ -191,6 +191,8 @@ create policy rr_agree_sign on rr_agreements for insert to anon
 - [ ] Move a customer to **Accepted** → **Send agreement to sign** → open the link → sign → shows "✅ Signed" in the dashboard
 - [ ] Money tab → **Partner reimbursements** shows a balance
 - [ ] Customer portal (`/portal.html`) → sign in as a test customer → submit a request → it appears in the **Requests** tab
+- [ ] **AccessGrade** (`/audit.html`) → scan a real site → score + issues appear → submit "Get my fix plan" → a 🤝 partner lead shows in the pipeline
+- [ ] **Partner API** (after `PARTNER_KEYS` set) → `curl` a test lead (see `shareable/ryzen-partner-kit/INTEGRATION.md`) → it appears tagged "Ryzen Recruit"
 
 ---
 
@@ -234,3 +236,18 @@ Lets a partner's reps refer leads that land straight in your pipeline (`acquired
 - **Referral commission** — what Ryzen earns (e.g. 10–20% of MRR for N months, or a flat per-deal bounty). The system tags partner revenue so you can calculate it; once you set the %, track payouts as an expense. Tell me the terms and I'll wire automatic commission math into the Money tab.
 - **Reseller agreement** — a short partner contract (commission, term, who owns the client, non-circumvention). Have your attorney review; I can draft a starting template.
 - **Key security** — if reps use the included `partner-portal.html` as a public page, the key is visible in its source. Either host it behind Ryzen's own login, or have their Claude Code put the key in a tiny server-side proxy. (For internal rep use this is usually fine; the key can only *create* leads.)
+
+---
+
+## 8. AccessGrade — ADA accessibility audit (lead-gen brand → feeds the pipeline)
+A free accessibility scanner at **`/audit.html`** that scores any site (0–100 + A–F grade), lists the fixes, and refers low scorers to Rank Rebels. Works **out of the box** — it reuses `SUPABASE_SERVICE_ROLE_KEY` (already set) and the partner columns (§2 SQL). No new secret required.
+
+- **How it feeds you:** the "Get my fix plan" form posts to `/api/audit-lead`, which drops a pipeline lead tagged `partner: "AccessGrade (ADA Audit)"` with the score in the notes.
+- **The scan** (`/api/audit`) is heuristic (HTMLRewriter + regex) — alt text, form labels, page language, headings, link text, buttons, title, viewport, accessibility statement, plus an optional industry license-number check. It catches ~30–40% of WCAG and **says so** — it's a starting score, not a certification.
+- **Use it for outreach:** scan a prospect → screenshot/share the report → "your site scored a D — here's what's exposing you and how we'd fix it."
+
+**Decisions (yours to make — placeholders shipped):**
+- **Brand name** — currently "AccessGrade." Rename in `audit.html` (title/logo) if you prefer another.
+- **Pricing/model** — recommended: free scan → ~$25/mo monitoring → RR remediation referral. Monitoring dashboard not built yet; say the word.
+- **Domain** — lives at `rankrebels.ai/audit.html` now; can move to its own domain/subdomain later for the "neutral third party" feel.
+- **Don't over-claim** — never market it as "lawsuit-proof / fully compliant." Keep the "automated starting point" framing (already in the page). FTC referral disclosure ("AccessGrade and Rank Rebels are partner companies") is already shown.
