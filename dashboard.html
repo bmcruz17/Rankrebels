@@ -879,8 +879,40 @@ function contactIcons(c){
   if(c.email){ b+='<a class="ci" draggable="false" href="#" title="Draft email in Gmail" onclick="emailLead(\''+c.id+'\');event.stopPropagation();return false">✉️</a>'; }
   b+='<a class="ci" draggable="false" href="#" title="Set follow-up reminder" onclick="setReminder(\''+c.id+'\');event.stopPropagation();return false">⏰</a>';
   b+='<a class="ci" draggable="false" href="#" title="Ask for a Google review" onclick="askReview(\''+c.id+'\');event.stopPropagation();return false">⭐</a>';
+  b+='<a class="ci" draggable="false" href="#" title="Send a personalized proposal" onclick="sendProposal(\''+c.id+'\');event.stopPropagation();return false">📄</a>';
   b+='<a class="ci" draggable="false" href="#" title="Add note" onclick="quickNote(\''+c.id+'\');event.stopPropagation();return false">📝</a>';
   return b;
+}
+// Build a personalized proposal link (proposal.html) for a lead and copy it to share.
+function proposalLink(c){
+  var plan='growth';
+  if(c.monthly_charge){ var mc=Number(c.monthly_charge); plan = mc>=900?'pro':(mc<=350?'starter':'growth'); }
+  var q='biz='+encodeURIComponent(c.business_name||'')+'&plan='+plan;
+  if(c.contact_name) q+='&name='+encodeURIComponent(c.contact_name);
+  if(c.email) q+='&email='+encodeURIComponent(c.email);
+  if(c.phone) q+='&phone='+encodeURIComponent(c.phone);
+  return location.origin+'/proposal.html?'+q;
+}
+async function sendProposal(id){
+  var c=clients.find(function(x){return x.id===id;}); if(!c) return;
+  var link=proposalLink(c);
+  try{ await navigator.clipboard.writeText(link); }catch(e){}
+  logActivity(id,'note','Sent proposal link');
+  if(c.email){
+    var subject='Your Rank Rebels proposal';
+    var body='Hi '+(c.contact_name||'there')+',\n\nHere’s your personalized proposal — it lays out exactly what we’ll build for '+(c.business_name||'you')+', the plan, and pricing. You can accept right from the page:\n\n'+link+'\n\nQuestions? Just reply here.\n\n— The Rank Rebels Team';
+    var t=await authToken();
+    if(t){
+      var r=await fetch('/api/google/draft',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t},body:JSON.stringify({to:c.email,subject:subject,body:body})});
+      var d=await r.json().catch(function(){return {};});
+      if(d.ok){ if(confirm('Proposal link copied. Drafted an email in Gmail too — open it?')) window.open(d.link,'_blank'); return; }
+    }
+    if(confirm('Proposal link copied to clipboard:\n\n'+link+'\n\nOpen a pre-filled email to send it?')){
+      window.location.href='mailto:'+encodeURIComponent(c.email)+'?subject='+encodeURIComponent(subject)+'&body='+encodeURIComponent(body);
+    }
+    return;
+  }
+  prompt('Proposal link (copied to clipboard) — share it with the prospect:', link);
 }
 // Set this to your Google "leave a review" short link (Business Profile → Ask for reviews → copy link, e.g. https://g.page/r/XXXX/review)
 var GOOGLE_REVIEW_URL='';
