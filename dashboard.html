@@ -469,10 +469,13 @@
     <div class="row-between"><div><h2>🔮 Find Leads</h2><p class="sub">Your crystal ball. Surfaces high-rated local businesses with <b>no website</b> and a <b>phone you can call</b>, then scores each one so you know who to hit first.</p></div></div>
     <div class="panel">
       <div style="padding:16px 18px;display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap">
-        <div class="field" style="margin:0;flex:2 1 200px;min-width:160px"><label>Industry / type</label><input id="lf-industry" list="lf-industries" placeholder="auto repair" onkeydown="if(event.key==='Enter')findLeads()"></div>
-        <div class="field" style="margin:0;flex:2 1 160px;min-width:140px"><label>City</label><input id="lf-city" placeholder="El Monte" onkeydown="if(event.key==='Enter')findLeads()"></div>
-        <div class="field" style="margin:0;width:84px"><label>State</label><input id="lf-state" list="lf-states" placeholder="CA" maxlength="2" style="text-transform:uppercase" onkeydown="if(event.key==='Enter')findLeads()"></div>
-        <div class="field" style="margin:0;flex:1 1 140px;min-width:120px"><label>Keyword <span style="color:var(--muted-2)">(optional)</span></label><input id="lf-keyword" placeholder="family owned" onkeydown="if(event.key==='Enter')findLeads()"></div>
+        <div class="field" style="margin:0;flex:2 1 200px;min-width:160px"><label>Industry / type</label><input id="lf-industry" list="lf-industries" autocomplete="off" autocorrect="off" placeholder="auto repair" onkeydown="if(event.key==='Enter')findLeads()"></div>
+        <div class="field" style="margin:0;flex:2 1 160px;min-width:140px"><label>City</label><input id="lf-city" autocomplete="off" autocorrect="off" placeholder="El Monte" onkeydown="if(event.key==='Enter')findLeads()"></div>
+        <div class="field" style="margin:0;width:108px"><label>State</label><select id="lf-state">
+          <option value="">Any</option>
+          <option>AL</option><option>AK</option><option>AZ</option><option>AR</option><option>CA</option><option>CO</option><option>CT</option><option>DE</option><option>FL</option><option>GA</option><option>HI</option><option>ID</option><option>IL</option><option>IN</option><option>IA</option><option>KS</option><option>KY</option><option>LA</option><option>ME</option><option>MD</option><option>MA</option><option>MI</option><option>MN</option><option>MS</option><option>MO</option><option>MT</option><option>NE</option><option>NV</option><option>NH</option><option>NJ</option><option>NM</option><option>NY</option><option>NC</option><option>ND</option><option>OH</option><option>OK</option><option>OR</option><option>PA</option><option>PR</option><option>RI</option><option>SC</option><option>SD</option><option>TN</option><option>TX</option><option>UT</option><option>VT</option><option>VA</option><option>WA</option><option>WV</option><option>WI</option><option>WY</option>
+        </select></div>
+        <div class="field" style="margin:0;flex:1 1 140px;min-width:120px"><label>Keyword <span style="color:var(--muted-2)">(optional)</span></label><input id="lf-keyword" autocomplete="off" autocorrect="off" placeholder="family owned" onkeydown="if(event.key==='Enter')findLeads()"></div>
         <button class="btn btn-primary btn-sm" onclick="findLeads()" style="height:42px;margin:0">🔮 Search</button>
         <button class="btn btn-ghost btn-sm" onclick="rollDice()" style="height:42px;margin:0" title="20 random businesses anywhere in the USA — no website, but phone + good Google reviews">🎲 Roll the Dice</button>
       </div>
@@ -496,17 +499,6 @@
     <option>contractor</option><option>painter</option><option>flooring</option><option>locksmith</option>
     <option>catering</option><option>florist</option><option>bakery</option><option>coffee shop</option>
     <option>gym</option><option>pet grooming</option><option>veterinarian</option><option>daycare</option>
-  </datalist>
-  <datalist id="lf-states">
-    <option>AL</option><option>AK</option><option>AZ</option><option>AR</option><option>CA</option><option>CO</option>
-    <option>CT</option><option>DE</option><option>FL</option><option>GA</option><option>HI</option><option>ID</option>
-    <option>IL</option><option>IN</option><option>IA</option><option>KS</option><option>KY</option><option>LA</option>
-    <option>ME</option><option>MD</option><option>MA</option><option>MI</option><option>MN</option><option>MS</option>
-    <option>MO</option><option>MT</option><option>NE</option><option>NV</option><option>NH</option><option>NJ</option>
-    <option>NM</option><option>NY</option><option>NC</option><option>ND</option><option>OH</option><option>OK</option>
-    <option>OR</option><option>PA</option><option>PR</option><option>RI</option><option>SC</option><option>SD</option>
-    <option>TN</option><option>TX</option><option>UT</option><option>VT</option><option>VA</option><option>WA</option>
-    <option>WV</option><option>WI</option><option>WY</option>
   </datalist>
 
   <div class="view wrap hidden" id="view-scoreboard">
