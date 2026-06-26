@@ -485,7 +485,7 @@
         <label class="lf-chk"><input type="checkbox" id="lf-nosite" checked> No website only</label>
         <label class="lf-chk"><input type="checkbox" id="lf-phone" checked> Has phone</label>
         <label class="lf-chk"><input type="checkbox" id="lf-email" onchange="renderLeads()"> Email found only</label>
-        <span style="font-size:12px;color:var(--muted-2)">Pulls up to 60 businesses · auto-finds emails for the top results</span>
+        <span style="font-size:12px;color:var(--muted-2)">Pulls up to 60 businesses · auto-finds emails for the top results · <span class="reveal" onclick="checkIntegrations()">check API keys</span></span>
       </div>
     </div>
     <div id="leads-results"></div>
@@ -1255,6 +1255,21 @@ async function findLeads(){
     renderLeads();
     autoEnrichTop(); // automatically find emails for the top results (no click needed)
   }catch(e){ box.innerHTML='<div class="panel"><div class="empty" style="padding:18px">Could not reach the lead finder ('+esc(e.message||'network error')+').</div></div>'; }
+}
+// Confirm which API keys are configured in Cloudflare — no cost, no scraping.
+async function checkIntegrations(){
+  var t=await authToken(); if(!t){ alert('Please sign in again.'); return; }
+  try{
+    var r=await fetch('/api/fb-scrape?check=1',{headers:{'Authorization':'Bearer '+t}});
+    if(r.status===404){ alert('Not deployed yet — redeploy the site in Cloudflare, then try again.'); return; }
+    var d=await r.json().catch(function(){return {};});
+    if(d.error){ alert(d.error); return; }
+    var ok='✅', no='❌';
+    alert('Integration status\n\n'+
+      'Facebook deep-scrape (APIFY_TOKEN): '+(d.apify?ok+' detected':no+' not set')+'\n'+
+      'Email & social lookup (SERPER_API_KEY): '+(d.serper?ok+' detected':no+' not set')+'\n\n'+
+      (d.apify?'You’re good to go — tap 📘 on any lead to pull its full Facebook profile (~3¢ each).':'Add APIFY_TOKEN in Cloudflare (Pages → Settings → Environment variables, encrypted) and redeploy, then check again.'));
+  }catch(e){ alert('Could not reach the check ('+(e.message||'network error')+').'); }
 }
 // 🎲 Roll the Dice — 20 random no-website businesses anywhere in the USA with phone + good reviews.
 async function rollDice(){

@@ -39,6 +39,18 @@ function asText(v) {
   return String(v);
 }
 
+// GET /api/fb-scrape?check=1  → reports whether keys are present (no Apify call, no cost).
+export async function onRequestGet({ request, env }) {
+  const token = (request.headers.get('authorization') || '').replace(/^Bearer\s+/i, '').trim();
+  if (!await verifyTeam(token)) return json({ error: 'Not authorized.' }, 401);
+  return json({
+    ok: true,
+    apify: !!env.APIFY_TOKEN,
+    serper: !!env.SERPER_API_KEY,
+    actor: env.APIFY_FB_ACTOR || 'apify~facebook-pages-scraper'
+  });
+}
+
 export async function onRequestPost({ request, env }) {
   try {
     const token = (request.headers.get('authorization') || '').replace(/^Bearer\s+/i, '').trim();
