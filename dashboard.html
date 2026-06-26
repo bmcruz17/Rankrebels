@@ -427,8 +427,8 @@
     <div class="field" id="notes-section">
       <label>Notes <span style="color:var(--muted-2)">(each saved note is timestamped &amp; kept)</span></label>
       <div style="display:flex;gap:8px;align-items:flex-start">
-        <textarea id="c-note-new" rows="2" placeholder="Write a note…" style="flex:1"></textarea>
-        <button type="button" class="btn btn-ghost btn-sm" onclick="saveNote()" style="white-space:nowrap">Save note</button>
+        <textarea id="c-note-new" rows="2" placeholder="Write a note… (saved automatically when you hit Save below)" style="flex:1"></textarea>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="saveNote()" style="white-space:nowrap" title="Log this note now and keep the form open to add another">+ Add another</button>
       </div>
       <div id="notes-log" class="act-log" style="margin-top:10px"></div>
     </div>
@@ -1202,6 +1202,10 @@ function collectCreds(){
 async function saveClient(){
   var name=el('c-business').value.trim();
   if(!name){ alert('Business name is required.'); return; }
+  // Capture any note typed in the note box but not yet logged, so the bottom
+  // "Save" alone records it (no need to also click "Save note"). If "Save note"
+  // was already clicked the box is empty, so nothing is saved twice.
+  var pendNote=el('c-note-new').value.trim();
   var rec={
     business_name:name, contact_name:el('c-contact').value.trim(), email:el('c-email').value.trim(),
     phone:el('c-phone').value.trim(), address:el('c-address').value.trim(),
@@ -1223,6 +1227,15 @@ async function saveClient(){
     r=await run(rec);
   }
   if(r.error){ alert(r.error.message); return; }
+  // Flush the pending note now that we have a saved record to attach it to.
+  if(pendNote){
+    var savedId = editingId || (r.data && r.data.id);
+    if(savedId){
+      if(!editingId && r.data && !clients.some(function(x){return x.id===savedId;})) clients.push(r.data);
+      el('c-note-new').value='';
+      await logActivity(savedId, 'note', pendNote);
+    }
+  }
   closeModal('m-client'); await loadAll();
 }
 async function deleteClient(){
