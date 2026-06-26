@@ -9,7 +9,9 @@
 **Rank Rebels builds modern websites for local businesses and gets them found — on Google, Google Maps, and AI tools like ChatGPT.** No templates. The business owns their site. The goal is simple: when a customer searches, *their* business is the answer.
 
 **One-liner you can use on a call:**
-> "Rank Rebels builds you a fast, modern website and actually gets it ranking on Google and AI search — so you show up first when local customers are looking."
+> "Rank Rebels builds you a fast, modern website and works to get it ranking on Google and AI search — so local customers can actually find you when they're looking."
+
+> ⚠️ **Never promise a specific ranking or that they'll be "#1 on Google."** SEO has no guarantees and the agreement says so. Talk about getting *found*, getting *more visible*, and winning more calls — not guaranteed placement.
 
 ---
 
@@ -86,7 +88,7 @@ Rank Rebels works in monthly plans with a one-time setup fee. Rough ranges:
 >
 > I'm with Ryzen Recruit — we partner with Rank Rebels, a team that builds modern websites and gets local businesses found on Google, Maps, and AI search like ChatGPT.
 >
-> When people search for [their service] in [city], you want to be the one they find first. Rank Rebels does exactly that — and they'll put together a **free audit** of your current site and rankings, no obligation.
+> When people search for [their service] in [city], you want them to actually find you. That's what Rank Rebels works on — and they'll put together a **free audit** of your current site and search presence, no obligation.
 >
 > Want me to set that up? Just reply "yes" and I'll get it started.
 >
@@ -109,7 +111,7 @@ Rank Rebels works in monthly plans with a one-time setup fee. Rough ranges:
 - **"I'm too busy / not interested."** → "Totally fair. The audit is free and there's no commitment — want me to just send it over so you have it?"
 - **"How much does it cost?"** → "It depends on what you need — plans start around a few hundred a month. But the audit is free, and Rank Rebels will give you an exact quote. Want me to set it up?"
 - **"Is this a contract?"** → "Rank Rebels will walk you through the exact terms up front — nothing gets signed until you're comfortable. The audit costs nothing."
-- **"How do I know it works?"** → "They've got real local clients ranking #1–3 in their areas. The audit will show you what's possible for *your* business specifically."
+- **"How do I know it works?"** → "They build custom sites and dial in your Google profile to help local businesses get found and win more calls. The free audit will show you what's possible for *your* business specifically." *(Don't promise a specific ranking.)*
 
 ---
 
