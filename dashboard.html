@@ -601,6 +601,27 @@
   </div>
 </div>
 
+<div class="modal-bg" id="m-sched" onclick="if(event.target===this)closeModal('m-sched')">
+  <div class="modal" style="max-width:400px">
+    <h3>📅 Schedule AI email</h3>
+    <p class="sub" id="sched-who" style="margin:-4px 0 14px"></p>
+    <div class="grid2">
+      <div class="field"><label>Send date</label><input id="sched-date" type="date"></div>
+      <div class="field"><label>Time (Pacific)</label><input id="sched-time" type="time" value="08:30"></div>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin:-2px 0 10px">
+      <button type="button" class="btn btn-ghost btn-sm" onclick="schedPreset(1,'08:30')">Tomorrow 8:30am</button>
+      <button type="button" class="btn btn-ghost btn-sm" onclick="schedPreset(1,'09:00')">Tomorrow 9:00am</button>
+      <button type="button" class="btn btn-ghost btn-sm" onclick="schedPreset(0,'17:00')">Today 5:00pm</button>
+    </div>
+    <p style="font-size:12.5px;color:var(--muted);margin:0 0 12px">We'll AI-draft it in your Gmail now (review it anytime) and auto-send it from your account at the time above.</p>
+    <div class="modal-actions"><div></div><div style="display:flex;gap:10px">
+      <button class="btn btn-ghost" onclick="closeModal('m-sched')">Cancel</button>
+      <button class="btn btn-primary" id="sched-go" onclick="confirmSchedSend()">Draft &amp; schedule</button>
+    </div></div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <script>
@@ -735,32 +756,58 @@ async function aiDraft(id, kind){
   }catch(e){ alert('Could not reach the AI drafting service.'); }
   finally{ checkGoogle(); }
 }
-// Compute a UTC instant for [today+addDays] at hour:minute Pacific time.
-function pacificSendAt(hour, minute, addDays){
+// Convert a Pacific wall-clock date ('YYYY-MM-DD') + time ('HH:MM') to a UTC instant.
+function pacificDateTimeToUtc(dateStr, timeStr){
+  var dp=(dateStr||'').split('-'), tp=(timeStr||'08:30').split(':');
   var now=new Date();
   var la=new Date(now.toLocaleString('en-US',{timeZone:'America/Los_Angeles'}));
   var offset=now.getTime()-la.getTime();
-  la.setDate(la.getDate()+(addDays||0)); la.setHours(hour,minute,0,0);
-  return new Date(la.getTime()+offset);
+  var local=new Date(+dp[0], (+dp[1])-1, +dp[2], +tp[0]||0, +tp[1]||0, 0, 0);
+  return new Date(local.getTime()+offset);
 }
-// One button: AI-draft the email in Gmail now, and queue it to auto-send tomorrow 8:30am PT.
-async function scheduleAiEmail(id){
+function pacificYmd(addDays){
+  var now=new Date();
+  var la=new Date(now.toLocaleString('en-US',{timeZone:'America/Los_Angeles'}));
+  la.setDate(la.getDate()+(addDays||0));
+  var m=('0'+(la.getMonth()+1)).slice(-2), d=('0'+la.getDate()).slice(-2);
+  return la.getFullYear()+'-'+m+'-'+d;
+}
+var schedClientId=null;
+// 📅 button → open the time picker
+function scheduleAiEmail(id){
   var c=clients.find(function(x){return x.id===id;}); if(!c){ alert('Save the customer first.'); return; }
   if(!c.email){ alert('No email on file for this lead — add one first.'); return; }
-  var t=await authToken(); if(!t){ alert('Please sign in again.'); return; }
-  var noteText=clientNotes(c).map(function(n){return n.note;}).filter(Boolean).join(' | ');
-  var lead={ business_name:c.business_name, contact_name:c.contact_name, stage:stageName(c.stage),
-    interested_in:(Array.isArray(c.services)?c.services.join(', '):''), setup_fee:c.onboarding_fee, monthly_charge:c.monthly_charge, notes:noteText };
-  var r=await fetch('/api/google/draft-ai',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t},body:JSON.stringify({to:c.email,lead:lead,kind:'outreach'})});
-  var d=await r.json().catch(function(){return {};});
-  if(!d.ok || !d.draftId){ alert(d.error||'Could not create the draft. Connect Google first.'); return; }
-  var sendAt=pacificSendAt(8,30,1);
-  var ins=await sb.from('rr_scheduled_emails').insert({ client_id:id, sender_email:me, to_email:c.email, subject:d.subject||null, draft_id:d.draftId, send_at:sendAt.toISOString(), status:'scheduled' }).select().single();
-  if(ins.error){ if(/relation|does not exist|rr_scheduled/i.test(ins.error.message||'')){ alert('Run the rr_scheduled_emails SQL first.'); } else alert(ins.error.message); return; }
-  if(ins.data) scheduledEmails.unshift(ins.data);
-  logActivity(id,'email','Scheduled email for tomorrow 8:30am PT: '+(d.subject||''));
-  renderScheduledStrip();
-  alert('✅ Drafted “'+(d.subject||'email')+'” in Gmail and scheduled to send '+sendAt.toLocaleString('en-US',{timeZone:'America/Los_Angeles',weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})+' PT.\n\nIt’s in your Gmail Drafts now — review or edit it tonight. It sends automatically in the morning.');
+  schedClientId=id;
+  el('sched-who').textContent='To '+(c.contact_name?c.contact_name+' · ':'')+c.email+' ('+c.business_name+')';
+  el('sched-date').value=pacificYmd(1); el('sched-time').value='08:30';
+  el('m-sched').classList.add('open');
+}
+function schedPreset(addDays, time){ el('sched-date').value=pacificYmd(addDays); el('sched-time').value=time; }
+async function confirmSchedSend(){
+  var id=schedClientId; var c=clients.find(function(x){return x.id===id;}); if(!c) return;
+  var dateStr=el('sched-date').value, timeStr=el('sched-time').value||'08:30';
+  if(!dateStr){ alert('Pick a send date.'); return; }
+  var sendAt=pacificDateTimeToUtc(dateStr, timeStr);
+  if(sendAt.getTime() < Date.now()+60000){ alert('Pick a time in the future.'); return; }
+  var btn=el('sched-go'); btn.disabled=true; btn.textContent='Drafting…';
+  var t=await authToken();
+  try{
+    if(!t){ alert('Please sign in again.'); return; }
+    var noteText=clientNotes(c).map(function(n){return n.note;}).filter(Boolean).join(' | ');
+    var lead={ business_name:c.business_name, contact_name:c.contact_name, stage:stageName(c.stage),
+      interested_in:(Array.isArray(c.services)?c.services.join(', '):''), setup_fee:c.onboarding_fee, monthly_charge:c.monthly_charge, notes:noteText };
+    var r=await fetch('/api/google/draft-ai',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t},body:JSON.stringify({to:c.email,lead:lead,kind:'outreach'})});
+    var d=await r.json().catch(function(){return {};});
+    if(!d.ok || !d.draftId){ alert(d.error||'Could not create the draft. Connect Google first.'); return; }
+    var ins=await sb.from('rr_scheduled_emails').insert({ client_id:id, sender_email:me, to_email:c.email, subject:d.subject||null, draft_id:d.draftId, send_at:sendAt.toISOString(), status:'scheduled' }).select().single();
+    if(ins.error){ if(/relation|does not exist|rr_scheduled/i.test(ins.error.message||'')){ alert('Run the rr_scheduled_emails SQL first.'); } else alert(ins.error.message); return; }
+    if(ins.data) scheduledEmails.unshift(ins.data);
+    var whenLbl=sendAt.toLocaleString('en-US',{timeZone:'America/Los_Angeles',weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})+' PT';
+    logActivity(id,'email','Scheduled email for '+whenLbl+': '+(d.subject||''));
+    renderScheduledStrip(); closeModal('m-sched');
+    alert('✅ Drafted “'+(d.subject||'email')+'” in Gmail and scheduled to send '+whenLbl+'.\n\nIt’s in your Gmail Drafts now — review or edit it anytime before then.');
+  }catch(e){ alert('Could not reach the AI drafting service.'); }
+  finally{ btn.disabled=false; btn.textContent='Draft & schedule'; }
 }
 var scheduledEmails=[];
 function clientName(cid){ var c=clients.find(function(x){return x.id===cid;}); return c?c.business_name:''; }
