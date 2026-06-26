@@ -43,7 +43,7 @@ export async function onRequestPost({ request, env }) {
       headers: {
         'Content-Type': 'application/json',
         'X-Goog-Api-Key': env.GOOGLE_PLACES_API_KEY,
-        'X-Goog-FieldMask': 'places.id,places.displayName,places.formattedAddress,places.rating,places.userRatingCount,places.websiteUri,places.nationalPhoneNumber,places.googleMapsUri,places.businessStatus'
+        'X-Goog-FieldMask': 'places.id,places.displayName,places.formattedAddress,places.rating,places.userRatingCount,places.websiteUri,places.nationalPhoneNumber,places.googleMapsUri,places.businessStatus,places.editorialSummary,places.primaryTypeDisplayName'
       },
       body: JSON.stringify({ textQuery: textQuery, pageSize: 20 })
     });
@@ -61,7 +61,8 @@ export async function onRequestPost({ request, env }) {
       phone: p.nationalPhoneNumber || '',
       website: p.websiteUri || '',
       mapsUri: p.googleMapsUri || '',
-      status: p.businessStatus || ''
+      status: p.businessStatus || '',
+      summary: (p.editorialSummary && p.editorialSummary.text) || (p.primaryTypeDisplayName && p.primaryTypeDisplayName.text) || ''
     }));
     const base = places
       .filter(p => p.status !== 'CLOSED_PERMANENTLY')

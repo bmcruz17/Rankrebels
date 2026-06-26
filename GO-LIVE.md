@@ -47,6 +47,7 @@ alter table rr_clients  add column if not exists search_console_site text; -- li
 alter table rr_clients  add column if not exists partner     text; -- reseller name (e.g. Ryzen Recruit)
 alter table rr_clients  add column if not exists partner_rep text; -- the rep who referred the lead
 alter table rr_clients  add column if not exists quote       jsonb; -- à la carte package builder (line items, term, discounts)
+alter table rr_clients  add column if not exists description text;  -- business description shown on the tile
 -- allow partner-sourced leads through the acquired_by check constraint
 alter table rr_clients  drop constraint if exists rr_clients_acquired_by_check;
 alter table rr_clients  add  constraint rr_clients_acquired_by_check
