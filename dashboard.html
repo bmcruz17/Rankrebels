@@ -121,6 +121,14 @@
   .fu-over{background:rgba(220,38,38,.12);color:#c0392b}
   .fu-today{background:rgba(199,154,30,.16);color:#9a7b18}
   .fu-up{background:rgba(21,128,61,.1);color:var(--brand)}
+  /* lead finder */
+  .lf-chk{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);white-space:nowrap;cursor:pointer;user-select:none}
+  .lf-chk input{width:16px;height:16px;accent-color:var(--brand)}
+  .lf-score{display:inline-flex;align-items:center;gap:5px;font-weight:800;font-size:12.5px;padding:3px 9px;border-radius:999px;white-space:nowrap}
+  .lf-hot{background:rgba(220,38,38,.14);color:#c0392b}
+  .lf-strong{background:rgba(21,128,61,.14);color:var(--brand)}
+  .lf-warm{background:rgba(199,154,30,.16);color:#9a7b18}
+  .lf-cool{background:rgba(120,130,125,.14);color:var(--muted)}
   /* activity timeline in modal */
   .act-quick{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:10px}
   .act-log{display:flex;flex-direction:column;gap:8px;max-height:230px;overflow-y:auto}
@@ -291,7 +299,6 @@
       <div style="display:flex;gap:10px;align-items:center">
         <div class="seg" id="pipe-owner">
           <button class="on" onclick="setPipeOwner('all')">Combined</button>
-          <button onclick="setPipeOwner('mine')">Mine</button>
           <button onclick="setPipeOwner('brandon')">Brandon</button>
           <button onclick="setPipeOwner('eric')">Eric</button>
         </div>
@@ -459,18 +466,47 @@
 
   <!-- FIND LEADS -->
   <div class="view wrap hidden" id="view-leads">
-    <div class="row-between"><div><h2>Find Leads</h2><p class="sub">Find high-rated local businesses with <b>no website</b> — prime web-design targets. Powered by Google Places.</p></div></div>
+    <div class="row-between"><div><h2>🔮 Find Leads</h2><p class="sub">Your crystal ball. Surfaces high-rated local businesses with <b>no website</b> and a <b>phone you can call</b>, then scores each one so you know who to hit first.</p></div></div>
     <div class="panel">
       <div style="padding:16px 18px;display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap">
-        <div class="field" style="margin:0;flex:1 1 240px;min-width:200px"><label>Search (business type + city)</label><input id="lf-query" placeholder="restaurants in El Monte CA" onkeydown="if(event.key==='Enter')findLeads()"></div>
-        <div class="field" style="margin:0;width:100px"><label>Min rating</label><input id="lf-rating" type="number" step="0.1" min="0" max="5" value="4.0"></div>
-        <div class="field" style="margin:0;width:100px"><label>Min reviews</label><input id="lf-reviews" type="number" min="0" value="20"></div>
-        <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);white-space:nowrap;height:42px;margin:0"><input type="checkbox" id="lf-nosite" checked style="width:16px;height:16px;accent-color:var(--brand)"> No website only</label>
-        <button class="btn btn-primary btn-sm" onclick="findLeads()" style="height:42px;margin:0">Search</button>
+        <div class="field" style="margin:0;flex:2 1 200px;min-width:160px"><label>Industry / type</label><input id="lf-industry" list="lf-industries" placeholder="auto repair" onkeydown="if(event.key==='Enter')findLeads()"></div>
+        <div class="field" style="margin:0;flex:2 1 160px;min-width:140px"><label>City</label><input id="lf-city" placeholder="El Monte" onkeydown="if(event.key==='Enter')findLeads()"></div>
+        <div class="field" style="margin:0;width:84px"><label>State</label><input id="lf-state" list="lf-states" placeholder="CA" maxlength="2" style="text-transform:uppercase" onkeydown="if(event.key==='Enter')findLeads()"></div>
+        <div class="field" style="margin:0;flex:1 1 140px;min-width:120px"><label>Keyword <span style="color:var(--muted-2)">(optional)</span></label><input id="lf-keyword" placeholder="family owned" onkeydown="if(event.key==='Enter')findLeads()"></div>
+        <button class="btn btn-primary btn-sm" onclick="findLeads()" style="height:42px;margin:0">🔮 Search</button>
+      </div>
+      <div style="padding:0 18px 16px;display:flex;gap:18px;align-items:center;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:13px">
+        <div class="field" style="margin:0;width:96px"><label>Min rating</label><input id="lf-rating" type="number" step="0.1" min="0" max="5" value="4.0"></div>
+        <div class="field" style="margin:0;width:96px"><label>Min reviews</label><input id="lf-reviews" type="number" min="0" value="15"></div>
+        <label class="lf-chk"><input type="checkbox" id="lf-nosite" checked> No website only</label>
+        <label class="lf-chk"><input type="checkbox" id="lf-phone" checked> Has phone</label>
+        <label class="lf-chk"><input type="checkbox" id="lf-email" onchange="renderLeads()"> Email found only</label>
+        <span style="font-size:12px;color:var(--muted-2)">Pulls up to 60 businesses · auto-finds emails for the top results</span>
       </div>
     </div>
     <div id="leads-results"></div>
   </div>
+  <datalist id="lf-industries">
+    <option>auto repair</option><option>plumber</option><option>HVAC</option><option>roofing</option>
+    <option>electrician</option><option>landscaping</option><option>restaurant</option><option>dentist</option>
+    <option>chiropractor</option><option>hair salon</option><option>barber shop</option><option>nail salon</option>
+    <option>med spa</option><option>law firm</option><option>accountant</option><option>real estate agent</option>
+    <option>auto detailing</option><option>towing</option><option>pest control</option><option>pool service</option>
+    <option>contractor</option><option>painter</option><option>flooring</option><option>locksmith</option>
+    <option>catering</option><option>florist</option><option>bakery</option><option>coffee shop</option>
+    <option>gym</option><option>pet grooming</option><option>veterinarian</option><option>daycare</option>
+  </datalist>
+  <datalist id="lf-states">
+    <option>AL</option><option>AK</option><option>AZ</option><option>AR</option><option>CA</option><option>CO</option>
+    <option>CT</option><option>DE</option><option>FL</option><option>GA</option><option>HI</option><option>ID</option>
+    <option>IL</option><option>IN</option><option>IA</option><option>KS</option><option>KY</option><option>LA</option>
+    <option>ME</option><option>MD</option><option>MA</option><option>MI</option><option>MN</option><option>MS</option>
+    <option>MO</option><option>MT</option><option>NE</option><option>NV</option><option>NH</option><option>NJ</option>
+    <option>NM</option><option>NY</option><option>NC</option><option>ND</option><option>OH</option><option>OK</option>
+    <option>OR</option><option>PA</option><option>PR</option><option>RI</option><option>SC</option><option>SD</option>
+    <option>TN</option><option>TX</option><option>UT</option><option>VT</option><option>VA</option><option>WA</option>
+    <option>WV</option><option>WI</option><option>WY</option>
+  </datalist>
 
   <div class="view wrap hidden" id="view-scoreboard">
     <div class="row-between"><div><h2>🏆 Scoreboard</h2><p class="sub">Leads created, pitches given, deals closed, and revenue — head to head. Every action has a dollar value based on your actual close rate.</p></div></div>
@@ -537,6 +573,7 @@
         <button type="button" class="btn btn-ghost btn-sm" onclick="modalLog('text')">💬 Log text</button>
         <button type="button" class="btn btn-ghost btn-sm" onclick="modalLog('email')">✉️ Log email</button>
         <button type="button" class="btn btn-ghost btn-sm" onclick="modalLog('note')">📝 Add note</button>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="modalLog('rejected')">❌ Mark rejected</button>
       </div>
       <div id="act-log" class="act-log"></div>
     </div>
@@ -912,28 +949,28 @@ function renderScheduledStrip(){
     '</div>';
   if(schedCollapsed){ box.innerHTML='<div class="panel" style="margin-bottom:12px">'+head+'</div>'; return; }
   var bulkBar=
-    '<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:8px 16px;border-bottom:1px solid var(--line);background:var(--card-2,transparent)">'+
-      '<label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer"><input type="checkbox" '+(allOn?'checked':'')+' onclick="toggleSchedSelAll()"> Select all</label>'+
-      (sel.length?('<span style="font-size:13px;color:var(--muted)">'+sel.length+' selected</span>'+
-        '<span style="margin-left:auto;display:flex;gap:8px">'+
-          '<button class="btn btn-ghost btn-sm" onclick="openResched(null)">Reschedule selected…</button>'+
-          '<button class="btn btn-ghost btn-sm" onclick="cancelSelectedScheduled()">Cancel selected</button>'+
+    '<div style="display:flex;align-items:center;gap:10px;padding:5px 14px;border-bottom:1px solid var(--line);font-size:12px">'+
+      '<label style="display:flex;align-items:center;gap:5px;cursor:pointer"><input type="checkbox" style="width:13px;height:13px" '+(allOn?'checked':'')+' onclick="toggleSchedSelAll()"> Select all</label>'+
+      (sel.length?('<span style="color:var(--muted)">'+sel.length+' selected</span>'+
+        '<span style="margin-left:auto;display:flex;gap:14px">'+
+          '<span class="reveal" onclick="openResched(null)">reschedule selected</span>'+
+          '<span class="reveal" onclick="cancelSelectedScheduled()">cancel selected</span>'+
         '</span>')
-        :'<span style="margin-left:auto;font-size:12.5px;color:var(--muted)">tick rows to bulk-reschedule or cancel</span>')+
+        :'<span style="margin-left:auto;color:var(--muted-2)">tick rows to bulk-edit</span>')+
     '</div>';
   var rows=pend.map(function(s){
-    return '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding:8px 0">'+
-      '<input type="checkbox" '+(schedSel[s.id]?'checked':'')+' onclick="toggleSchedSel(\''+s.id+'\')">'+
-      '<b>'+esc(clientName(s.client_id)||s.to_email)+'</b>'+
-      '<span style="color:var(--muted);font-size:13px">'+esc(s.subject||'(no subject)')+'</span>'+
-      '<span style="color:var(--brand);font-size:12.5px;font-weight:600">🕗 '+schedWhenLbl(s.send_at)+'</span>'+
-      '<span style="margin-left:auto;display:flex;gap:12px">'+
-        '<span class="reveal" onclick="openResched(\''+s.id+'\')">reschedule</span>'+
+    return '<div style="display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--line);padding:4px 0;font-size:12px;line-height:1.3">'+
+      '<input type="checkbox" style="width:13px;height:13px;flex:0 0 auto" '+(schedSel[s.id]?'checked':'')+' onclick="toggleSchedSel(\''+s.id+'\')">'+
+      '<b style="flex:0 0 auto;max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(clientName(s.client_id)||s.to_email)+'</b>'+
+      '<span style="color:var(--muted-2);flex:1 1 auto;min-width:40px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(s.subject||'(no subject)')+'</span>'+
+      '<span style="color:var(--brand);font-weight:600;flex:0 0 auto;white-space:nowrap">🕗 '+schedWhenLbl(s.send_at)+'</span>'+
+      '<span style="flex:0 0 auto;display:flex;gap:10px;white-space:nowrap">'+
+        '<span class="reveal" onclick="openResched(\''+s.id+'\')">edit</span>'+
         '<span class="reveal" onclick="cancelScheduled(\''+s.id+'\')">cancel</span>'+
       '</span>'+
     '</div>';
   }).join('');
-  box.innerHTML='<div class="panel" style="margin-bottom:12px">'+head+bulkBar+'<div style="padding:2px 16px 14px">'+rows+'</div></div>';
+  box.innerHTML='<div class="panel" style="margin-bottom:12px">'+head+bulkBar+'<div style="padding:2px 14px 8px">'+rows+'</div></div>';
 }
 async function cancelScheduled(id){
   if(!confirm('Cancel this scheduled send? (The draft stays in your Gmail; it just won’t auto-send.)')) return;
@@ -1116,10 +1153,13 @@ setInterval(updateClockBtn, 30000); // keep the live timer fresh
 
 // Per-person stats from the pipeline
 var WON_STAGES=['accepted','in_build','finalized','published'];
+function hasActType(c, types){ return Array.isArray(c.activities) && c.activities.some(function(a){return types.indexOf(a.type)>=0;}); }
 function personStats(person){
   var mine=clients.filter(function(c){return c.acquired_by===person;});
   var leads=mine.length;
-  var pitched=mine.filter(function(c){ return Array.isArray(c.activities) && c.activities.some(function(a){return a.type==='pitch';}); }).length;
+  // A pitch counts when you've put an offer in front of them: a logged pitch OR any email sent.
+  var pitched=mine.filter(function(c){ return hasActType(c,['pitch','email']); }).length;
+  var rejected=mine.filter(function(c){ return hasActType(c,['rejected']); }).length;
   var won=mine.filter(function(c){ return WON_STAGES.indexOf(c.stage)>=0; });
   var closed=won.length;
   var onceRev=won.reduce(function(a,c){return a+Number(c.onboarding_fee||0);},0);
@@ -1127,9 +1167,10 @@ function personStats(person){
   var revenue=onceRev+moRev; // booked onboarding + live MRR
   var avgDeal=closed?revenue/closed:0;
   var convLead=leads?closed/leads:0, convPitch=pitched?closed/pitched:0;
+  var decided=closed+rejected, winRate=decided?closed/decided:0;
   var hrs=hoursWorked(person);
-  return { person:person, leads:leads, pitched:pitched, closed:closed, revenue:revenue, avgDeal:avgDeal,
-    convLead:convLead, convPitch:convPitch, valuePerLead:avgDeal*convLead, valuePerPitch:avgDeal*convPitch,
+  return { person:person, leads:leads, pitched:pitched, rejected:rejected, closed:closed, revenue:revenue, avgDeal:avgDeal,
+    convLead:convLead, convPitch:convPitch, winRate:winRate, valuePerLead:avgDeal*convLead, valuePerPitch:avgDeal*convPitch,
     hours:hrs, perHour: hrs?revenue/hrs:0 };
 }
 function renderScoreboard(){
@@ -1138,9 +1179,11 @@ function renderScoreboard(){
   var people=[{k:'brandon',name:'Brandon'},{k:'eric',name:'Eric'}];
   var stats=people.map(function(p){ var s=personStats(p.k); s.name=p.name; return s; });
   var lead=stats.slice().sort(function(a,b){return b.revenue-a.revenue;})[0];
-  function statRow(label, fn, fmt){
+  function statRow(label, fn, fmt, lowerBetter){
     return '<tr><td class="sb-l">'+label+'</td>'+stats.map(function(s){
-      var v=fn(s), win=stats.every(function(o){return fn(o)<=v;}) && v>0;
+      var v=fn(s);
+      var win = lowerBetter ? (stats.every(function(o){return fn(o)>=v;}) && v>0 && stats.some(function(o){return fn(o)!==v;}))
+                            : (stats.every(function(o){return fn(o)<=v;}) && v>0);
       return '<td class="sb-v'+(win?' sb-win':'')+'">'+fmt(v)+'</td>';
     }).join('')+'</tr>';
   }
@@ -1151,6 +1194,8 @@ function renderScoreboard(){
     statRow('Leads created', function(s){return s.leads;}, function(v){return v;})+
     statRow('Pitches given', function(s){return s.pitched;}, function(v){return v;})+
     statRow('Deals closed', function(s){return s.closed;}, function(v){return v;})+
+    statRow('Rejections', function(s){return s.rejected;}, function(v){return v;}, true)+
+    statRow('Win rate (closed of decided)', function(s){return s.winRate;}, function(v){return Math.round(v*100)+'%';})+
     statRow('Lead → close rate', function(s){return s.convLead;}, function(v){return Math.round(v*100)+'%';})+
     statRow('Revenue generated', function(s){return s.revenue;}, function(v){return money(v);})+
     statRow('Hours worked', function(s){return s.hours;}, function(v){return v.toFixed(1)+'h';})+
@@ -1167,21 +1212,31 @@ function renderScoreboard(){
 /* ===== FIND LEADS (Google Places) ===== */
 var lastLeads=[], lastLeadsMeta=null;
 async function findLeads(){
-  var q=el('lf-query').value.trim(); var box=el('leads-results');
-  if(!q){ box.innerHTML='<div class="panel"><div class="empty" style="padding:18px">Enter a search like "auto repair in El Monte CA".</div></div>'; return; }
-  box.innerHTML='<div class="panel"><div class="empty" style="padding:18px">Searching Google Places…</div></div>';
+  var industry=el('lf-industry').value.trim(), city=el('lf-city').value.trim(), state=el('lf-state').value.trim(), keyword=el('lf-keyword').value.trim();
+  var box=el('leads-results');
+  if(!industry && !keyword){ box.innerHTML='<div class="panel"><div class="empty" style="padding:18px">Enter an industry (e.g. "auto repair") and a city.</div></div>'; return; }
+  box.innerHTML='<div class="panel"><div class="empty" style="padding:18px">🔮 Gazing into the crystal ball…</div></div>';
   var t=await authToken(); if(!t){ alert('Please sign in again.'); return; }
   try{
     var r=await fetch('/api/places',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t},
-      body:JSON.stringify({textQuery:q, minRating:Number(el('lf-rating').value)||0, minReviews:Number(el('lf-reviews').value)||0, onlyNoWebsite:el('lf-nosite').checked})});
+      body:JSON.stringify({industry:industry, city:city, state:state, keyword:keyword,
+        minRating:Number(el('lf-rating').value)||0, minReviews:Number(el('lf-reviews').value)||0,
+        onlyNoWebsite:el('lf-nosite').checked, requirePhone:el('lf-phone').checked})});
     if(r.status===404){ box.innerHTML='<div class="panel"><div class="empty" style="padding:18px">Lead finder not deployed yet — redeploy the site in Cloudflare, then try again.</div></div>'; return; }
     var d=await r.json().catch(function(){return {error:'Unexpected response (HTTP '+r.status+').'};});
     if(d.error){ box.innerHTML='<div class="panel"><div class="empty" style="padding:18px;white-space:pre-wrap">'+esc(d.error)+'</div></div>'; return; }
     lastLeads=d.places||[];
-    lastLeadsMeta={totalFound:d.totalFound||0, withSite:d.withSite||0};
+    lastLeadsMeta={totalFound:d.totalFound||0, withSite:d.withSite||0, withPhone:d.withPhone||0, query:d.query||''};
     renderLeads();
     autoEnrichTop(); // automatically find emails for the top results (no click needed)
   }catch(e){ box.innerHTML='<div class="panel"><div class="empty" style="padding:18px">Could not reach the lead finder ('+esc(e.message||'network error')+').</div></div>'; }
+}
+function leadScoreBadge(p){
+  var s=Number(p.score||0);
+  var cls=s>=85?'lf-hot':(s>=70?'lf-strong':(s>=50?'lf-warm':'lf-cool'));
+  var icon=s>=85?'🔥':(s>=70?'⭐':(s>=50?'•':'·'));
+  var label=s>=85?'Hot':(s>=70?'Strong':(s>=50?'Warm':'Cool'));
+  return '<span class="lf-score '+cls+'" title="Crystal-ball opportunity score">'+icon+' '+s+' '+label+'</span>';
 }
 // Auto-enrich the top results so emails show without clicking. Capped to keep API usage sane.
 var AUTO_ENRICH_N=5;
@@ -1215,11 +1270,17 @@ function renderLeads(){
     if(lastLeadsMeta && lastLeadsMeta.withSite>0 && el('lf-nosite').checked){
       msg='Found '+lastLeadsMeta.totalFound+' matching businesses, but they all already have a website. Uncheck "No website only" to see them, or lower Min reviews to surface smaller shops that often have no site.';
     } else {
-      msg='No matches. Try lowering Min reviews/rating, unchecking "No website only", or a broader search (e.g. add the state: "restaurants in Henderson NV").';
+      msg='No matches. Try lowering Min reviews/rating, unchecking "No website only" or "Has phone", or a nearby city.';
     }
     box.innerHTML='<div class="panel"><div class="empty" style="padding:18px">'+esc(msg)+'</div></div>'; return;
   }
-  var rows=lastLeads.map(function(p,i){
+  var emailOnly = el('lf-email') && el('lf-email').checked;
+  var shown = emailOnly ? lastLeads.filter(function(p){ return p.email || (p._enrich && p._enrich.emails && p._enrich.emails.length); }) : lastLeads;
+  if(emailOnly && !shown.length){
+    box.innerHTML='<div class="panel"><div class="empty" style="padding:18px">No emails found yet for these leads. Emails auto-load for the top results — give it a moment, or click 🔍 on a row. Uncheck "Email found only" to see all '+lastLeads.length+'.</div></div>'; return;
+  }
+  var rows=shown.map(function(p){
+    var i=lastLeads.indexOf(p);
     var existing=findExistingLead(p.name,p.phone);
     var contact = p._enrich ? ('<div id="enr-'+i+'" style="font-size:12px;color:var(--muted)">'+enrichHTML(p._enrich)+'</div>')
       : enrichOff ? '<span id="enr-'+i+'" style="font-size:12px;color:var(--muted-2)">email lookup off</span>'
@@ -1232,18 +1293,19 @@ function renderLeads(){
     var siteHtml = p.website
       ? '<a class="reveal" href="'+esc(p.website)+'" target="_blank" rel="noopener">🌐 Visit website ↗</a>'
       : '<span style="color:var(--brand);font-weight:700">★ no website</span>';
-    return '<tr><td>'+nameHtml+'<div style="font-size:12px;color:var(--muted-2)">'+esc(p.address)+'</div>'+(p.email?'<div style="font-size:12.5px;color:var(--brand);font-weight:600">✉️ '+esc(p.email)+'</div>':'')+'</td>'+
+    return '<tr><td style="white-space:nowrap">'+leadScoreBadge(p)+'</td>'+
+      '<td>'+nameHtml+'<div style="font-size:12px;color:var(--muted-2)">'+esc(p.address)+'</div>'+(p.email?'<div style="font-size:12.5px;color:var(--brand);font-weight:600">✉️ '+esc(p.email)+'</div>':'')+'</td>'+
       '<td class="num" style="white-space:nowrap">⭐ '+p.rating+' · '+p.reviews+'</td>'+
       '<td style="white-space:nowrap">'+(p.phone?'<a class="reveal" href="tel:'+telDigits(p.phone)+'">📞 '+esc(p.phone)+'</a>':'<span style="color:var(--muted-2)">—</span>')+'</td>'+
       '<td style="min-width:160px">'+siteHtml+'<br>'+contact+'</td>'+
       '<td style="white-space:nowrap">'+(p.mapsUri?'<a class="reveal" href="'+esc(p.mapsUri)+'" target="_blank" rel="noopener" title="Open Google Business profile">profile</a> · ':'')+
         (existing?'<span class="reveal" title="Add the latest found details to the existing pipeline card" onclick="updateLeadFromPlace('+i+')">↻ update card</span>':'<span class="reveal" onclick="addLeadFromPlace('+i+')">+ pipeline</span>')+'</td></tr>';
   }).join('');
-  var hdrNote = enrichOff ? 'sorted by review count · tap a name to open its Google profile'
-    : 'sorted by review count · tap a name to open its Google profile · emails auto-found for the top 5';
+  var noSite = lastLeads.filter(function(p){return !p.website;}).length;
+  var hdrNote = (emailOnly?(shown.length+' of '+lastLeads.length+' with an email · '):'')+'ranked by opportunity score · '+noSite+' with no website'+(enrichOff?'':' · emails auto-found for the top 5');
   var banner = enrichOff ? '<div style="padding:10px 18px;font-size:12.5px;color:var(--muted);background:rgba(201,154,30,.10);border-bottom:1px solid var(--line)">💡 Email lookup is off. Add a free <b>SERPER_API_KEY</b> in Cloudflare (get one at serper.dev) to auto-find emails &amp; socials. Phone, website, and Google profile still work without it.</div>' : '';
-  box.innerHTML='<div class="panel"><div class="panel-h">'+lastLeads.length+' result'+(lastLeads.length>1?'s':'')+' <span style="font-weight:500;font-size:12.5px;color:var(--muted)">'+hdrNote+'</span></div>'+banner+
-    '<table><thead><tr><th>Business</th><th class="num">Rating</th><th>Phone</th><th>Website / contact</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+  box.innerHTML='<div class="panel"><div class="panel-h">'+shown.length+' lead'+(shown.length>1?'s':'')+' <span style="font-weight:500;font-size:12.5px;color:var(--muted)">'+hdrNote+'</span></div>'+banner+
+    '<table><thead><tr><th>Score</th><th>Business</th><th class="num">Rating</th><th>Phone</th><th>Website / contact</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>';
 }
 function enrichHTML(e){
   if(e.error) return '<span style="color:var(--muted-2)">no contact found</span>';
@@ -1306,12 +1368,12 @@ async function updateLeadFromPlace(i){
 
 /* ===== PIPELINE (kanban) ===== */
 var PIPE_OWNER='all';
-function pipeOwnerOf(){ return PIPE_OWNER==='mine' ? myPerson() : PIPE_OWNER; }
+function pipeOwnerOf(){ return PIPE_OWNER; }
 function setPipeOwner(o){
   PIPE_OWNER=o;
-  var who=pipeOwnerOf(), seg=el('pipe-owner');
+  var seg=el('pipe-owner');
   if(seg){ var btns=seg.querySelectorAll('button'); for(var i=0;i<btns.length;i++) btns[i].classList.remove('on');
-    var idx={all:0,mine:1,brandon:2,eric:3}[o]; if(btns[idx]) btns[idx].classList.add('on'); }
+    var idx={all:0,brandon:1,eric:2}[o]; if(btns[idx]) btns[idx].classList.add('on'); }
   renderBoard();
 }
 function pipeFiltered(){
@@ -1354,8 +1416,8 @@ function renderBoard(){
   });
 }
 /* ===== activity log + contact + stage helpers ===== */
-var ACT_ICON={call:'📞',text:'💬',email:'✉️',note:'📝',pitch:'🎯'};
-function actLabel(t){ return {call:'Call',text:'Text',email:'Email',note:'Note',pitch:'Pitch'}[t]||'Activity'; }
+var ACT_ICON={call:'📞',text:'💬',email:'✉️',note:'📝',pitch:'🎯',rejected:'❌'};
+function actLabel(t){ return {call:'Call',text:'Text',email:'Email',note:'Note',pitch:'Pitch',rejected:'Rejected'}[t]||'Activity'; }
 function relTime(iso){
   if(!iso) return '';
   var then=new Date(iso).getTime(); if(isNaN(then)) return '';
@@ -1579,6 +1641,7 @@ var LEGEND_GROUPS=[
     ['🤝','Referred by a partner (e.g. Ryzen)'],
     ['📝 Note','The most recent note left on this lead'],
     ['🎯','Last activity was a pitch'],
+    ['❌','Marked rejected — counts against win rate on the Scoreboard'],
     ['📅 Follow up…','Follow-up reminder date (turns red when overdue)'],
     ['💲 Owes…','Has an outstanding balance'],
     ['faded tile','Stale — no activity in 7+ days']
@@ -1589,13 +1652,13 @@ function toggleLegend(){
   var btn=el('legend-btn');
   if(box.style.display==='none'){
     box.innerHTML='<div class="panel-h">❔ What the tile icons mean</div>'+
-      '<div style="padding:6px 16px 16px">'+LEGEND_GROUPS.map(function(g){
-        return '<div style="font-weight:600;font-size:12.5px;color:var(--muted);margin:10px 0 6px;text-transform:uppercase;letter-spacing:.04em">'+g.title+'</div>'+
-          '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px 18px">'+
+      '<div style="padding:14px 20px 20px">'+LEGEND_GROUPS.map(function(g,gi){
+        return '<div style="'+(gi?'margin-top:22px;':'')+'font-weight:800;font-size:14px;color:var(--text);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--line)">'+esc(g.title)+'</div>'+
+          '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px 28px">'+
           g.items.map(function(it){
-            return '<div style="display:flex;gap:9px;align-items:baseline;font-size:13.5px">'+
-              '<span style="min-width:54px;font-size:15px">'+it[0]+'</span>'+
-              '<span style="color:var(--ink,inherit)">'+esc(it[1])+'</span></div>';
+            return '<div style="display:flex;gap:12px;align-items:center;line-height:1.4">'+
+              '<span style="flex:0 0 44px;text-align:center;font-size:17px">'+it[0]+'</span>'+
+              '<span style="font-size:13.5px;color:var(--muted)">'+esc(it[1])+'</span></div>';
           }).join('')+'</div>';
       }).join('')+'</div>';
     box.style.display=''; if(btn) btn.classList.add('on');
