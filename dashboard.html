@@ -423,6 +423,11 @@
       <div class="field"><label>Domain</label><input id="c-domain" placeholder="acme.com"></div>
       <div class="field"><label>Hosting</label><input id="c-hosting" placeholder="Cloudflare Pages"></div>
     </div>
+    <div class="grid2">
+      <div class="field"><label>GA4 property ID <span style="color:var(--muted-2)">(for live reports)</span></label><input id="c-ga4" placeholder="493812345"></div>
+      <div class="field"><label>Search Console site</label><input id="c-sc" placeholder="https://acme.com/ or sc-domain:acme.com"></div>
+    </div>
+    <div class="field"><a id="c-report-link" href="#" target="_blank" class="btn btn-ghost btn-sm" style="display:none;white-space:nowrap">📊 Open performance report</a></div>
     <div class="field"><label>Next follow-up date</label><input id="c-followup" type="date"></div>
     <div class="field" id="notes-section">
       <label>Notes <span style="color:var(--muted-2)">(each saved note is timestamped &amp; kept)</span></label>
@@ -986,6 +991,8 @@ function openClient(id, presetStage){
   el('c-onboard').value=c?(c.onboarding_fee||''):''; el('c-monthly').value=c?(c.monthly_charge||''):'';
   renderServices(c&&Array.isArray(c.services)?c.services:[]);
   el('c-domain').value=c?(c.domain||''):''; el('c-hosting').value=c?(c.hosting||''):'';
+  el('c-ga4').value=c?(c.ga4_property_id||''):''; el('c-sc').value=c?(c.search_console_site||''):'';
+  var rl=el('c-report-link'); if(id){ rl.style.display='inline-flex'; rl.href='report.html?client='+encodeURIComponent(id); } else { rl.style.display='none'; }
   el('c-note-new').value='';
   el('c-followup').value=c?(c.follow_up||''):'';
   renderActivityLog(c); renderNotesLog(c);
@@ -1213,17 +1220,21 @@ async function saveClient(){
     onboarding_fee:Number(el('c-onboard').value)||null, deal_value:Number(el('c-onboard').value)||null,
     monthly_charge:Number(el('c-monthly').value)||null,
     domain:el('c-domain').value.trim(), hosting:el('c-hosting').value.trim(),
+    ga4_property_id:el('c-ga4').value.trim()||null, search_console_site:el('c-sc').value.trim()||null,
     credentials:collectCreds(), services:selectedServices(),
     follow_up: el('c-followup').value || null
   };
   if(rec.stage==='published'){ var ex=editingId&&clients.find(function(x){return x.id===editingId;}); if(!ex||!ex.published_at) rec.published_at=new Date().toISOString().slice(0,10); }
   async function run(p){ return editingId ? sb.from('rr_clients').update(p).eq('id',editingId).select().single() : sb.from('rr_clients').insert(p).select().single(); }
   var r=await run(rec);
-  // Degrade gracefully if optional columns (services / follow_up) haven't been added to the table yet
-  for(var i=0;i<2 && r.error && /services|follow_up|column|schema cache/i.test(r.error.message||'');i++){
-    if(/services/i.test(r.error.message)) delete rec.services;
-    if(/follow_up/i.test(r.error.message)) delete rec.follow_up;
-    if(!/services|follow_up/i.test(r.error.message)){ delete rec.services; delete rec.follow_up; }
+  // Degrade gracefully if optional columns haven't been added to the table yet
+  for(var i=0;i<3 && r.error && /services|follow_up|ga4_property_id|search_console_site|column|schema cache/i.test(r.error.message||'');i++){
+    var m=r.error.message||'';
+    if(/services/i.test(m)) delete rec.services;
+    if(/follow_up/i.test(m)) delete rec.follow_up;
+    if(/ga4_property_id/i.test(m)) delete rec.ga4_property_id;
+    if(/search_console_site/i.test(m)) delete rec.search_console_site;
+    if(!/services|follow_up|ga4_property_id|search_console_site/i.test(m)){ delete rec.services; delete rec.follow_up; delete rec.ga4_property_id; delete rec.search_console_site; }
     r=await run(rec);
   }
   if(r.error){ alert(r.error.message); return; }
@@ -1267,10 +1278,11 @@ function renderCustomers(){
       (c.domain?'<div class="line"><span class="k">Domain</span>'+esc(c.domain)+'</div>':'')+
       (c.hosting?'<div class="line"><span class="k">Hosting</span>'+esc(c.hosting)+'</div>':'')+
       (creds.length?'<div class="line"><span class="k">Secrets</span><span class="key-chip">🔒 '+creds.length+' saved — tap to view</span></div>':'')+
-      ((c.phone||c.email)?'<div class="contact-btns">'+
+      '<div class="contact-btns">'+
         (c.phone?'<a class="cbtn call" href="tel:'+telDigits(c.phone)+'" onclick="logActivity(\''+c.id+'\',\'call\');event.stopPropagation()">📞 Call</a><a class="cbtn" href="sms:'+telDigits(c.phone)+'" onclick="logActivity(\''+c.id+'\',\'text\');event.stopPropagation()">💬 Text</a>':'')+
         (c.email?'<a class="cbtn" href="#" onclick="emailLead(\''+c.id+'\');event.stopPropagation();return false">✉️ Email</a>':'')+
-        '</div>':'')+
+        '<a class="cbtn" href="report.html?client='+c.id+'" target="_blank" onclick="event.stopPropagation()">📊 Report</a>'+
+        '</div>'+
       '<div class="foot"><span>Since '+(c.published_at||'—')+'</span><b>'+money(c.monthly_charge)+'/mo</b></div>';
     card.onclick=function(){ openClient(c.id); };
     g.appendChild(card);

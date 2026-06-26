@@ -7,7 +7,7 @@
 
 export const GOOGLE_CLIENT_ID = '80870826640-nr849c98cvnjie2s6fupi4levtdi3v4m.apps.googleusercontent.com';
 export const REDIRECT_URI = 'https://rankrebels.ai/api/google/callback';
-export const SCOPES = 'https://www.googleapis.com/auth/gmail.compose https://www.googleapis.com/auth/calendar.events';
+export const SCOPES = 'https://www.googleapis.com/auth/gmail.compose https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/analytics.readonly https://www.googleapis.com/auth/webmasters.readonly';
 
 const SUPABASE_URL = 'https://eejmocneacfleltspedl.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVlam1vY25lYWNmbGVsdHNwZWRsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyNDQ3MTMsImV4cCI6MjA5NzgyMDcxM30.dXJTMFp_d9JRlXkesVPCUj6tBi3qphxxOu3v-Cuw7_Y';

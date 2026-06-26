@@ -40,6 +40,8 @@ $$;
 alter table rr_clients  add column if not exists activities jsonb default '[]'::jsonb;
 alter table rr_clients  add column if not exists follow_up  date;
 alter table rr_clients  add column if not exists services   jsonb;
+alter table rr_clients  add column if not exists ga4_property_id     text; -- live reports (report.html)
+alter table rr_clients  add column if not exists search_console_site text; -- live reports (report.html)
 drop policy if exists rr_clients_team_all on rr_clients;
 create policy rr_clients_team_all on rr_clients for all to authenticated
   using (public.rr_is_team()) with check (public.rr_is_team());
@@ -155,11 +157,18 @@ create policy rr_agree_sign on rr_agreements for insert to anon
 
 ---
 
-## 4. Google Cloud (for Gmail/Calendar + Find Leads)
+## 4. Google Cloud (for Gmail/Calendar + Find Leads + Client Reports)
 - OAuth client created (Internal) ✅ · redirect `https://rankrebels.ai/api/google/callback`
-- **Enable APIs:** Gmail API, Google Calendar API, Places API (New)
-- **OAuth consent → Data access → add scopes:** `gmail.compose`, `calendar.events`
+- **Enable APIs:** Gmail API, Google Calendar API, Places API (New), **Google Analytics Data API**, **Search Console API**
+- **OAuth consent → Data access → add scopes:** `gmail.compose`, `calendar.events`, `analytics.readonly`, `webmasters.readonly`
 - In the dashboard, each teammate clicks **🔗 Connect Google** (with their `@rankrebels.ai` account).
+  - ⚠️ After adding the new scopes, **disconnect & reconnect Google** so the new read-only Analytics/Search-Console permissions are granted.
+
+### Client performance reports (`report.html`)
+- Per client: open **Edit customer** → fill **GA4 property ID** (Analytics → Admin → Property → Property ID, a number like `493812345`) and **Search Console site** (e.g. `https://theirsite.com/` or `sc-domain:theirsite.com`).
+- The connected Google account must have **access to that client's GA4 property & Search Console** (have the client grant Viewer access, or use a Rank Rebels account they've added).
+- Open a report from the **📊 Report** button on a customer tile, or **📊 Open performance report** in the customer modal.
+- Until a client is configured, the report shows clearly-labelled **sample data** (never blank).
 
 ---
 
