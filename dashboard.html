@@ -102,6 +102,13 @@
   .lead-desc{font-size:11.5px;color:var(--muted-2);margin-top:6px;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
   .lead-note{font-size:11.5px;color:var(--muted);margin-top:6px;background:rgba(21,128,61,.07);border-radius:6px;padding:5px 8px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
   .lead-note b{color:var(--brand);font-weight:700}
+  .sb-tbl{width:100%;border-collapse:collapse}
+  .sb-tbl th,.sb-tbl td{padding:12px 16px;border-bottom:1px solid var(--line);text-align:center}
+  .sb-tbl .sb-l{text-align:left;color:var(--muted);font-weight:600;font-size:13.5px}
+  .sb-tbl .sb-head{font-size:15px}
+  .sb-tbl .sb-leader{background:rgba(201,154,30,.10)}
+  .sb-tbl .sb-v{font-weight:800;font-size:17px}
+  .sb-tbl .sb-win{color:var(--brand)}
   .fu{font-size:11px;font-weight:700;margin-top:7px;padding:3px 8px;border-radius:6px;display:inline-block}
   .fu-over{background:rgba(220,38,38,.12);color:#c0392b}
   .fu-today{background:rgba(199,154,30,.16);color:#9a7b18}
@@ -246,7 +253,7 @@
   <header class="top">
     <div class="wrap top-inner">
       <a class="logo" href="/" title="Back to the public site"><span class="mark">⚡</span> Rank<span class="grad-text">Rebels</span></a>
-      <div class="who"><span id="who-email"></span><button id="gbtn" class="btn btn-ghost btn-sm" onclick="connectGoogle()">🔗 Connect Google</button><button class="btn btn-ghost btn-sm" onclick="reportBug()" title="Report a bug or request a fix">🐞 Bug</button><button class="btn btn-ghost btn-sm" onclick="signOut()">Sign out</button><button id="rrAskBtn" onclick="rrAskToggle()">✨ Ask AI</button></div>
+      <div class="who"><span id="who-email"></span><button id="gbtn" class="btn btn-ghost btn-sm" onclick="connectGoogle()">🔗 Connect Google</button><button class="btn btn-ghost btn-sm" onclick="reportBug()" title="Report a bug or request a fix">🐞 Bug</button><button id="clockBtn" class="btn btn-ghost btn-sm" onclick="toggleClock()" title="Track your time worked">⏱ Clock in</button><button class="btn btn-ghost btn-sm" onclick="signOut()">Sign out</button><button id="rrAskBtn" onclick="rrAskToggle()">✨ Ask AI</button></div>
     </div>
   </header>
   <div class="tabs wrap" style="max-width:1280px">
@@ -257,6 +264,7 @@
     <div class="tab" data-tab="goals" onclick="setTab('goals')">Goals</div>
     <div class="tab" data-tab="requests" onclick="setTab('requests')">Requests <span id="req-badge" class="req-badge" style="display:none"></span></div>
     <div class="tab" data-tab="leads" onclick="setTab('leads')">Find Leads</div>
+    <div class="tab" data-tab="scoreboard" onclick="setTab('scoreboard')">🏆 Scoreboard</div>
   </div>
 
   <!-- PIPELINE -->
@@ -434,6 +442,11 @@
       </div>
     </div>
     <div id="leads-results"></div>
+  </div>
+
+  <div class="view wrap hidden" id="view-scoreboard">
+    <div class="row-between"><div><h2>🏆 Scoreboard</h2><p class="sub">Leads created, pitches given, deals closed, and revenue — head to head. Every action has a dollar value based on your actual close rate.</p></div></div>
+    <div id="scoreboard-body"></div>
   </div>
 </div>
 
@@ -761,7 +774,10 @@ async function loadAll(){
   agreements = (ag && !ag.error && ag.data) ? ag.data : [];
   var pt = await sb.from('rr_partners').select('*').order('created_at',{ascending:false});
   partners = (pt && !pt.error && pt.data) ? pt.data : [];
+  var tm = await sb.from('rr_time').select('*').order('clock_in',{ascending:false});
+  timeEntries = (tm && !tm.error && tm.data) ? tm.data : [];
   renderAll();
+  updateClockBtn();
 }
 var partners = [];
 function renderAll(){ fillCatList(); renderBoard(); renderCustomers(); renderMoney(); renderBudget(); renderGoals(); renderRequests(); }
@@ -769,13 +785,96 @@ function fillCatList(){ var d=el('e-cat'); if(!d) return; var cats=EXPENSE_CATEG
 
 /* ===== tabs ===== */
 function setTab(t){
-  ['pipeline','customers','money','budget','goals','requests','leads'].forEach(function(v){
+  ['pipeline','customers','money','budget','goals','requests','leads','scoreboard'].forEach(function(v){
     el('view-'+v).classList.toggle('hidden', v!==t);
   });
   document.querySelectorAll('.tab').forEach(function(x){ x.classList.toggle('on', x.dataset.tab===t); });
   if(t==='goals') renderGoals();
   if(t==='budget') renderBudget();
   if(t==='requests') renderRequests();
+  if(t==='scoreboard') renderScoreboard();
+}
+
+/* ===== TIME CLOCK + SCOREBOARD ===== */
+var timeEntries=[];
+function myPerson(){ return EMAIL_TO_ACQ[me] || 'brandon'; }
+function myOpenEntry(){ var p=myPerson(); return timeEntries.find(function(e){ return e.person===p && !e.clock_out; }) || null; }
+function hms(ms){ var s=Math.max(0,Math.floor(ms/1000)); var h=Math.floor(s/3600), m=Math.floor((s%3600)/60); return h+'h '+(m<10?'0':'')+m+'m'; }
+function hoursWorked(person){
+  var ms=0; timeEntries.forEach(function(e){ if(e.person!==person) return; var a=new Date(e.clock_in).getTime(); var b=e.clock_out?new Date(e.clock_out).getTime():Date.now(); if(b>a) ms+=(b-a); });
+  return ms/3600000;
+}
+function updateClockBtn(){
+  var btn=el('clockBtn'); if(!btn) return;
+  var open=myOpenEntry();
+  if(open){ btn.textContent='🟢 Clock out · '+hms(Date.now()-new Date(open.clock_in).getTime()); btn.classList.add('btn-primary'); }
+  else { btn.textContent='⏱ Clock in'; btn.classList.remove('btn-primary'); }
+}
+async function toggleClock(){
+  var open=myOpenEntry();
+  if(open){
+    open.clock_out=new Date().toISOString();
+    var r=await sb.from('rr_time').update({clock_out:open.clock_out}).eq('id',open.id);
+    if(r.error && /relation|does not exist|rr_time|schema/i.test(r.error.message||'')){ alert('Run the rr_time SQL first (GO-LIVE.md §2).'); open.clock_out=null; return; }
+  } else {
+    var rec={ person:myPerson(), email:me||null, clock_in:new Date().toISOString() };
+    var r=await sb.from('rr_time').insert(rec).select().single();
+    if(r.error){ if(/relation|does not exist|rr_time|schema/i.test(r.error.message||'')) alert('Run the rr_time SQL first (GO-LIVE.md §2).'); else alert(r.error.message); return; }
+    if(r.data) timeEntries.unshift(r.data);
+  }
+  updateClockBtn(); if(!el('view-scoreboard').classList.contains('hidden')) renderScoreboard();
+}
+setInterval(updateClockBtn, 30000); // keep the live timer fresh
+
+// Per-person stats from the pipeline
+var WON_STAGES=['accepted','in_build','finalized','published'];
+function personStats(person){
+  var mine=clients.filter(function(c){return c.acquired_by===person;});
+  var leads=mine.length;
+  var pitched=mine.filter(function(c){ return Array.isArray(c.activities) && c.activities.some(function(a){return a.type==='pitch';}); }).length;
+  var won=mine.filter(function(c){ return WON_STAGES.indexOf(c.stage)>=0; });
+  var closed=won.length;
+  var onceRev=won.reduce(function(a,c){return a+Number(c.onboarding_fee||0);},0);
+  var moRev=mine.filter(function(c){return c.stage==='published';}).reduce(function(a,c){return a+Number(c.monthly_charge||0);},0);
+  var revenue=onceRev+moRev; // booked onboarding + live MRR
+  var avgDeal=closed?revenue/closed:0;
+  var convLead=leads?closed/leads:0, convPitch=pitched?closed/pitched:0;
+  var hrs=hoursWorked(person);
+  return { person:person, leads:leads, pitched:pitched, closed:closed, revenue:revenue, avgDeal:avgDeal,
+    convLead:convLead, convPitch:convPitch, valuePerLead:avgDeal*convLead, valuePerPitch:avgDeal*convPitch,
+    hours:hrs, perHour: hrs?revenue/hrs:0 };
+}
+function renderScoreboard(){
+  updateClockBtn();
+  var box=el('scoreboard-body'); if(!box) return;
+  var people=[{k:'brandon',name:'Brandon'},{k:'eric',name:'Eric'}];
+  var stats=people.map(function(p){ var s=personStats(p.k); s.name=p.name; return s; });
+  var lead=stats.slice().sort(function(a,b){return b.revenue-a.revenue;})[0];
+  function statRow(label, fn, fmt){
+    return '<tr><td class="sb-l">'+label+'</td>'+stats.map(function(s){
+      var v=fn(s), win=stats.every(function(o){return fn(o)<=v;}) && v>0;
+      return '<td class="sb-v'+(win?' sb-win':'')+'">'+fmt(v)+'</td>';
+    }).join('')+'</tr>';
+  }
+  var head='<tr><th></th>'+stats.map(function(s){
+    return '<th class="sb-head'+(lead && s.person===lead.person && s.revenue>0?' sb-leader':'')+'"><span class="badge '+s.person+'">'+s.name+'</span>'+(lead&&s.person===lead.person&&s.revenue>0?' 👑':'')+'</th>';
+  }).join('')+'</tr>';
+  box.innerHTML='<div class="panel"><table class="sb-tbl"><thead>'+head+'</thead><tbody>'+
+    statRow('Leads created', function(s){return s.leads;}, function(v){return v;})+
+    statRow('Pitches given', function(s){return s.pitched;}, function(v){return v;})+
+    statRow('Deals closed', function(s){return s.closed;}, function(v){return v;})+
+    statRow('Lead → close rate', function(s){return s.convLead;}, function(v){return Math.round(v*100)+'%';})+
+    statRow('Revenue generated', function(s){return s.revenue;}, function(v){return money(v);})+
+    statRow('Hours worked', function(s){return s.hours;}, function(v){return v.toFixed(1)+'h';})+
+    statRow('Revenue / hour', function(s){return s.perHour;}, function(v){return v?money(v):'—';})+
+    '</tbody></table></div>'+
+    '<div class="panel"><div class="panel-h">💰 What each action is worth <span style="font-weight:500;font-size:12.5px;color:var(--muted)">based on your real close rate &amp; average deal</span></div>'+
+    '<table class="sb-tbl"><tbody>'+
+    statRow('Avg. deal size', function(s){return s.avgDeal;}, function(v){return v?money(v):'—';})+
+    statRow('Value of each lead you create', function(s){return s.valuePerLead;}, function(v){return v?money(v):'—';})+
+    statRow('Value of each pitch you give', function(s){return s.valuePerPitch;}, function(v){return v?money(v):'—';})+
+    '</tbody></table>'+
+    '<div style="padding:10px 16px;font-size:12.5px;color:var(--muted)">Every lead and pitch has a dollar value: your closed revenue spread across the leads and pitches it took to get there. Create more, pitch more, close more.</div></div>';
 }
 /* ===== FIND LEADS (Google Places) ===== */
 var lastLeads=[], lastLeadsMeta=null;
@@ -885,8 +984,8 @@ async function addLeadFromPlace(i){
   var p=lastLeads[i]; if(!p) return;
   var enr=p._enrich||{};
   var socials=[enr.facebook,enr.instagram,enr.yelp].filter(Boolean).join('  ');
-  var rec={ business_name:p.name, phone:p.phone||null, email:p.email||null, address:p.address||null, description:p.summary||null, stage:'lead', acquired_by:'website',
-    notes:'Found via lead finder — ⭐'+p.rating+' ('+p.reviews+' reviews)'+(p.website?'':' · no website')+(p.mapsUri?'\n'+p.mapsUri:'')+(socials?('\nSocials: '+socials):'') };
+  var rec={ business_name:p.name, phone:p.phone||null, email:p.email||null, address:p.address||null, description:p.summary||null, stage:'lead', acquired_by:myPerson(),
+    notes:'Found via lead finder by '+myPerson()+' — ⭐'+p.rating+' ('+p.reviews+' reviews)'+(p.website?'':' · no website')+(p.mapsUri?'\n'+p.mapsUri:'')+(socials?('\nSocials: '+socials):'') };
   var r=await sb.from('rr_clients').insert(rec).select().single();
   if(r.error && /description|column|schema cache/i.test(r.error.message||'')){ delete rec.description; r=await sb.from('rr_clients').insert(rec).select().single(); }
   if(r.error){ alert(r.error.message); return; }
@@ -946,8 +1045,8 @@ function renderBoard(){
   });
 }
 /* ===== activity log + contact + stage helpers ===== */
-var ACT_ICON={call:'📞',text:'💬',email:'✉️',note:'📝'};
-function actLabel(t){ return {call:'Call',text:'Text',email:'Email',note:'Note'}[t]||'Activity'; }
+var ACT_ICON={call:'📞',text:'💬',email:'✉️',note:'📝',pitch:'🎯'};
+function actLabel(t){ return {call:'Call',text:'Text',email:'Email',note:'Note',pitch:'Pitch'}[t]||'Activity'; }
 function relTime(iso){
   if(!iso) return '';
   var then=new Date(iso).getTime(); if(isNaN(then)) return '';
@@ -1028,7 +1127,7 @@ async function sendProposal(id){
   var c=clients.find(function(x){return x.id===id;}); if(!c) return;
   var link=proposalLink(c);
   try{ await navigator.clipboard.writeText(link); }catch(e){}
-  logActivity(id,'note','Sent proposal link');
+  logActivity(id,'pitch','Sent proposal link');
   if(c.email){
     var subject='Your Rank Rebels proposal';
     var body='Hi '+(c.contact_name||'there')+',\n\nHere’s your personalized proposal — it lays out exactly what we’ll build for '+(c.business_name||'you')+', the plan, and pricing. You can accept right from the page:\n\n'+link+'\n\nQuestions? Just reply here.\n\n— The Rank Rebels Team';
@@ -1331,7 +1430,7 @@ async function sendAgreement(){
     var body='Hi '+(c.contact_name||'there')+',\n\nWe’re excited to work with '+(c.business_name||'you')+'! Please review and sign our service agreement here:\n\n'+link+'\n\nIt covers the scope, the '+clientTermLabel(c)+' term, and pricing'+(c.onboarding_fee?(' ('+money(c.onboarding_fee)+' setup + '+money(c.monthly_charge||0)+'/mo)'):'')+'. Reply with any questions.\n\n— The Rank Rebels Team';
     var r=await fetch('/api/google/draft',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t},body:JSON.stringify({to:c.email,subject:'Your Rank Rebels service agreement',body:body})});
     var d=await r.json().catch(function(){return {};});
-    if(d.ok){ logActivity(editingId,'email','Sent service agreement'); if(confirm('Agreement email drafted in Gmail. Open Gmail to send?')) window.open(d.link,'_blank'); return; }
+    if(d.ok){ logActivity(editingId,'pitch','Sent service agreement'); if(confirm('Agreement email drafted in Gmail. Open Gmail to send?')) window.open(d.link,'_blank'); return; }
     if(d.error && !/not connected/i.test(d.error)){ alert(d.error); return; }
   }
   // fallback: copy link

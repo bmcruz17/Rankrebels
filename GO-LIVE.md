@@ -75,6 +75,20 @@ drop policy if exists rr_blog_public_read on rr_blog_posts;
 create policy rr_blog_public_read on rr_blog_posts for select to anon using (published = true);
 -- (the daily bot inserts via the service-role key, which bypasses RLS)
 
+-- 2d) Time clock (scoreboard hours)
+create table if not exists rr_time (
+  id uuid primary key default gen_random_uuid(),
+  person text not null,
+  email text,
+  clock_in timestamptz not null default now(),
+  clock_out timestamptz,
+  created_at timestamptz default now()
+);
+alter table rr_time enable row level security;
+drop policy if exists rr_time_team on rr_time;
+create policy rr_time_team on rr_time for all to authenticated
+  using (public.rr_is_team()) with check (public.rr_is_team());
+
 -- 3) Expenses: extra columns
 alter table rr_expenses add column if not exists frequency text;
 alter table rr_expenses add column if not exists bill_date date;
