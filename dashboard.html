@@ -117,6 +117,8 @@
   .badge.brandon{background:rgba(21,128,61,.16);color:#15803d}
   .badge.eric{background:rgba(201,154,30,.18);color:#a8791a}
   .badge.website{background:rgba(80,99,90,.16);color:#50635a}
+  .badge.partner{background:rgba(124,58,237,.16);color:#6d28d9}
+  .partner-chip{font-size:10px;font-weight:700;color:#6d28d9;background:rgba(124,58,237,.10);border-radius:999px;padding:2px 7px;margin-left:4px}
   .add-card{width:100%;background:transparent;border:1px dashed var(--line);color:var(--muted);border-radius:9px;padding:8px;cursor:pointer;font-size:13px;font-weight:600}
   .add-card:hover{border-color:var(--brand);color:var(--text)}
 
@@ -410,7 +412,7 @@
     <div class="field"><label>Address</label><input id="c-address" placeholder="123 Main St, City ST"></div>
     <div class="grid2">
       <div class="field"><label>Stage</label><select id="c-stage"></select></div>
-      <div class="field"><label>Acquired by</label><select id="c-acq"><option value="brandon">Brandon</option><option value="eric">Eric</option><option value="website">Website / Inbound (65/35)</option></select></div>
+      <div class="field"><label>Acquired by</label><select id="c-acq"><option value="brandon">Brandon</option><option value="eric">Eric</option><option value="website">Website / Inbound (65/35)</option><option value="partner">Partner / Reseller</option></select></div>
     </div>
     <div class="field"><label>Services &amp; add-ons <span style="color:var(--muted-2)">(check what they're buying — auto-fills the fees below)</span></label>
       <div id="svc-list" class="svc-list"></div>
@@ -953,6 +955,7 @@ function leadCard(c){
     '<div class="nm">'+esc(c.business_name)+'</div>'+
     (c.contact_name?'<div class="sub-nm">'+esc(c.contact_name)+'</div>':'')+
     '<div class="meta"><span class="badge '+c.acquired_by+'">'+c.acquired_by+'</span>'+
+      (c.partner?'<span class="partner-chip" title="Referred by '+esc(c.partner)+(c.partner_rep?' · '+esc(c.partner_rep):'')+'">🤝 '+esc(c.partner)+'</span>':'')+
       (c.onboarding_fee?'<span class="money">'+money(c.onboarding_fee)+'</span>':'')+
       (c.monthly_charge?'<span>'+money(c.monthly_charge)+'/mo</span>':'')+
       (c.phone?'<span>'+esc(c.phone)+'</span>':'')+'</div>'+
@@ -1303,6 +1306,7 @@ function renderCustomers(){
     var card=document.createElement('div'); card.className='cust';
     card.innerHTML=
       '<div class="ch"><h3>'+esc(c.business_name)+'</h3><span class="badge '+c.acquired_by+'">'+c.acquired_by+'</span></div>'+
+      (c.partner?'<div class="line"><span class="k">Referred by</span>🤝 '+esc(c.partner)+(c.partner_rep?' ('+esc(c.partner_rep)+')':'')+'</div>':'')+
       (c.contact_name?'<div class="line"><span class="k">Contact</span>'+esc(c.contact_name)+'</div>':'')+
       (c.phone?'<div class="line"><span class="k">Phone</span>'+esc(c.phone)+'</div>':'')+
       (c.email?'<div class="line"><span class="k">Email</span>'+esc(c.email)+'</div>':'')+
@@ -1328,8 +1332,11 @@ function payout(){
   var booked = clients.filter(function(c){return ['accepted','in_build','finalized','published'].indexOf(c.stage)>=0;});
   function mrr(who){ return live.filter(function(c){return c.acquired_by===who;}).reduce(function(a,c){return a+Number(c.monthly_charge||0);},0); }
   function onb(who){ return booked.filter(function(c){return c.acquired_by===who;}).reduce(function(a,c){return a+Number(c.onboarding_fee||0);},0); }
-  var mrrBrandon=mrr('brandon'), mrrEric=mrr('eric'), mrrWeb=mrr('website');
-  var onbBrandon=onb('brandon'), onbEric=onb('eric'), onbWeb=onb('website');
+  // Partner/reseller-sourced revenue is folded into the inbound ("website") bucket so it's
+  // always counted in the split. NOTE: any referral commission owed to a partner (e.g. Ryzen)
+  // is a separate business decision — track it as an expense once you've set the terms.
+  var mrrBrandon=mrr('brandon'), mrrEric=mrr('eric'), mrrWeb=mrr('website')+mrr('partner');
+  var onbBrandon=onb('brandon'), onbEric=onb('eric'), onbWeb=onb('website')+onb('partner');
   var revBrandon=mrrBrandon+onbBrandon, revEric=mrrEric+onbEric, revWeb=mrrWeb+onbWeb;
   var total=revBrandon+revEric+revWeb;
   var floor=Number(settings.brandon_floor)||0, pct=Number(settings.eric_pct)||0;

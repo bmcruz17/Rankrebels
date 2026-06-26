@@ -16,6 +16,8 @@ Env vars only load on a *new* build, so always Retry Deployment after changing t
 | `GOOGLE_CLIENT_SECRET` | Google OAuth (Gmail drafts + Calendar) | ✅ added |
 | `TURNSTILE_SECRET_KEY` | Bot/abuse protection on the chat endpoint | ✅ added |
 | `STRIPE_SECRET_KEY` | Stripe invoices (customers pay by card/ACH) | ⬜ optional — needs a Stripe account |
+| `SERPER_API_KEY` | Lead enrichment (email/socials for no-website leads) | ⬜ optional — free at serper.dev |
+| `PARTNER_KEYS` | Partner/reseller lead API (e.g. Ryzen) | ⬜ add to launch the channel program |
 
 > The public **Turnstile site key** is wired into `index.html` + `dashboard.html` (`TURNSTILE_SITE_KEY`). ✅ done.
 > **Supabase SQL:** ✅ all run successfully.
@@ -42,6 +44,13 @@ alter table rr_clients  add column if not exists follow_up  date;
 alter table rr_clients  add column if not exists services   jsonb;
 alter table rr_clients  add column if not exists ga4_property_id     text; -- live reports (report.html)
 alter table rr_clients  add column if not exists search_console_site text; -- live reports (report.html)
+alter table rr_clients  add column if not exists partner     text; -- reseller name (e.g. Ryzen Recruit)
+alter table rr_clients  add column if not exists partner_rep text; -- the rep who referred the lead
+-- allow partner-sourced leads through the acquired_by check constraint
+alter table rr_clients  drop constraint if exists rr_clients_acquired_by_check;
+alter table rr_clients  add  constraint rr_clients_acquired_by_check
+  check (acquired_by is null or acquired_by in ('brandon','eric','website','partner'));
+create index if not exists rr_clients_partner_idx on rr_clients(partner);
 drop policy if exists rr_clients_team_all on rr_clients;
 create policy rr_clients_team_all on rr_clients for all to authenticated
   using (public.rr_is_team()) with check (public.rr_is_team());
@@ -204,3 +213,24 @@ Three DNS records that prove your email really comes from rankrebels.ai — they
 - **DKIM** — a signature proving the email wasn't tampered with. Generate in **Google Admin → Apps → Gmail → Authenticate email**, add the TXT record it gives you, then turn it on. (Resend's DKIM was added when you verified the domain in Resend.)
 - **DMARC** — tells inboxes what to do if SPF/DKIM fail. TXT record on `_dmarc.rankrebels.ai`:
   `v=DMARC1; p=none; rua=mailto:dmarc@rankrebels.ai`  (start with p=none to monitor, tighten later)
+
+---
+
+## 7. Partner / reseller program (channel sales — e.g. Ryzen Recruit)
+Lets a partner's reps refer leads that land straight in your pipeline (`acquired_by: partner`), tagged with the partner + rep, visible with a 🤝 chip.
+
+**To onboard a partner:**
+1. **Run the SQL** (§2 adds `partner`, `partner_rep`, and allows `partner` in the acquired_by constraint).
+2. **Make a key** — invent a long random string, prefix `rrp_live_`, e.g. `rrp_live_ryzen_9f83k2lQ…`.
+3. **Add the `PARTNER_KEYS` secret** in Cloudflare as JSON mapping key → partner name, then redeploy:
+   `{"rrp_live_ryzen_9f83k2lQ...":"Ryzen Recruit"}`  (add more partners as more comma-separated entries)
+4. **Hand the partner their kit** — everything in `/shareable/ryzen-partner-kit/` (rep guide + portal + API docs). Give them their key + the API base `https://rankrebels.ai`.
+
+**API surface (key sent as `X-Partner-Key`):**
+- `POST /api/partner/lead` → create a lead. Body: `{business_name, contact_name?, email?, phone?, rep?, plan?, notes?}`. Dedupes by email/phone.
+- `GET  /api/partner/leads` → the partner's own referred leads + current stage (so reps see status). Never exposes the rest of your pipeline or any credentials.
+
+**⚠️ Blanks for you to decide (business terms, not code):**
+- **Referral commission** — what Ryzen earns (e.g. 10–20% of MRR for N months, or a flat per-deal bounty). The system tags partner revenue so you can calculate it; once you set the %, track payouts as an expense. Tell me the terms and I'll wire automatic commission math into the Money tab.
+- **Reseller agreement** — a short partner contract (commission, term, who owns the client, non-circumvention). Have your attorney review; I can draft a starting template.
+- **Key security** — if reps use the included `partner-portal.html` as a public page, the key is visible in its source. Either host it behind Ryzen's own login, or have their Claude Code put the key in a tiny server-side proxy. (For internal rep use this is usually fine; the key can only *create* leads.)
