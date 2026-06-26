@@ -83,33 +83,42 @@
   .stat .sub2{font-size:12px;color:var(--muted-2);margin-top:2px}
 
   /* kanban */
-  .board{display:grid;grid-auto-flow:column;grid-auto-columns:262px;gap:12px;overflow-x:auto;padding-bottom:14px;align-items:start}
+  .board{display:grid;grid-auto-flow:column;grid-auto-columns:312px;gap:14px;overflow-x:auto;padding-bottom:14px;align-items:start}
   .col{background:var(--bg-soft);border:1px solid var(--line);border-radius:13px;padding:10px;min-height:120px}
   .col.drag-over{border-color:var(--brand);background:rgba(21,128,61,.06)}
   .col-head{display:flex;align-items:center;justify-content:space-between;padding:3px 5px 10px}
   .col-head .name{display:flex;align-items:center;gap:7px;font-weight:700;font-size:13.5px}
   .col-head .pill{font-size:11px;color:var(--muted);background:var(--panel);border:1px solid var(--line);padding:2px 7px;border-radius:999px}
   .swatch{width:8px;height:8px;border-radius:50%}
-  .lead{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:11px;margin-bottom:9px;cursor:grab;transition:.12s;position:relative}
+  .lead{background:var(--panel-2);border:1px solid var(--line);border-radius:11px;padding:13px 14px;margin-bottom:10px;cursor:grab;transition:.12s;position:relative}
   .lead:hover{border-color:rgba(21,128,61,.45)}
   .lead.dragging{opacity:.4}
-  .lead .nm{font-weight:700;font-size:14px;margin-bottom:4px;padding-right:14px}
-  .lead .meta{font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 10px}
-  .lead .money{color:var(--won);font-weight:700}
-  .lead .sub-nm{font-size:12px;color:var(--muted);margin:-1px 0 5px}
+  .lead .nm{font-weight:700;font-size:15px;margin-bottom:5px;padding-right:16px;line-height:1.25}
+  .lead .meta{font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;align-items:center;gap:5px 8px;margin-bottom:2px}
+  .lead .money{color:var(--won);font-weight:800;font-size:13px}
+  .lead .sub-nm{font-size:12.5px;color:var(--muted);margin:-1px 0 5px}
   .lead.stale{border-left:3px solid var(--accent)}
-  .card-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
-  .card-actions .ci{width:30px;height:30px;display:grid;place-items:center;border:1px solid var(--line);border-radius:8px;text-decoration:none;font-size:14px;background:var(--panel);transition:.12s}
+  /* info block */
+  .lead-contact{display:flex;flex-direction:column;gap:4px;font-size:12.5px;margin-top:9px}
+  .lead-contact a{color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:6px;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .lead-contact a .ci-ic{flex:0 0 auto;opacity:.7}
+  .lead-contact a:hover{color:var(--brand)}
+  .lead-desc{font-size:12.5px;color:var(--muted);margin-top:9px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .lead-note{font-size:12.5px;color:var(--muted);margin-top:9px;background:rgba(21,128,61,.07);border-radius:8px;padding:7px 10px;line-height:1.45;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .lead-note b{color:var(--brand);font-weight:700}
+  .last-act{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.45;display:flex;align-items:baseline;gap:6px}
+  .last-act .la-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted-2);font-weight:700;flex:0 0 auto}
+  /* primary call / text / email buttons */
+  .lead-cta{display:flex;gap:7px;margin-top:11px}
+  .lead-cta .cta{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:8px 6px;border:1px solid var(--line);border-radius:9px;font-size:12.5px;font-weight:700;text-decoration:none;background:var(--panel);color:var(--muted);white-space:nowrap;transition:.12s}
+  .lead-cta .cta:hover{border-color:var(--brand);color:var(--brand);background:rgba(21,128,61,.06)}
+  .lead-cta .cta.call{background:rgba(21,128,61,.1);border-color:rgba(21,128,61,.32);color:var(--brand)}
+  /* secondary action row */
+  .card-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px;padding-top:9px;border-top:1px solid var(--line)}
+  .card-actions .ci{width:31px;height:31px;display:grid;place-items:center;border:1px solid var(--line);border-radius:8px;text-decoration:none;font-size:14px;background:var(--panel);transition:.12s}
   .card-actions .ci:hover{border-color:var(--brand);background:rgba(21,128,61,.1)}
   .card-actions .ci.adv{border-color:var(--brand);color:var(--brand);font-weight:800}
   .stage-arrows{margin-left:auto;display:flex;gap:6px}
-  .last-act{font-size:11px;color:var(--muted-2);margin-top:8px;line-height:1.4}
-  .lead-contact{display:flex;flex-wrap:wrap;gap:3px 12px;font-size:11.5px;margin-top:5px}
-  .lead-contact a{color:var(--muted);text-decoration:none;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .lead-contact a:hover{color:var(--brand)}
-  .lead-desc{font-size:11.5px;color:var(--muted-2);margin-top:6px;line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-  .lead-note{font-size:11.5px;color:var(--muted);margin-top:6px;background:rgba(21,128,61,.07);border-radius:6px;padding:5px 8px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-  .lead-note b{color:var(--brand);font-weight:700}
   .sb-tbl{width:100%;border-collapse:collapse}
   .sb-tbl th,.sb-tbl td{padding:12px 16px;border-bottom:1px solid var(--line);text-align:center}
   .sb-tbl .sb-l{text-align:left;color:var(--muted);font-weight:600;font-size:13.5px}
@@ -1581,14 +1590,24 @@ async function scrapeDescription(){
     else { box.value=prev; alert(d.error||'No description found on that site.'); }
   }catch(e){ box.value=prev; alert('Could not reach that site.'); }
 }
-function contactIcons(c){
+// Primary contact buttons — the ones you reach for most. Kept big & labeled.
+function callTextButtons(c){
   var b='';
   if(c.phone){
-    b+='<a class="ci" draggable="false" href="tel:'+telDigits(c.phone)+'" title="Call" onclick="logActivity(\''+c.id+'\',\'call\');event.stopPropagation()">📞</a>';
-    b+='<a class="ci" draggable="false" href="sms:'+telDigits(c.phone)+'" title="Text" onclick="logActivity(\''+c.id+'\',\'text\');event.stopPropagation()">💬</a>';
+    b+='<a class="cta call" draggable="false" href="tel:'+telDigits(c.phone)+'" onclick="logActivity(\''+c.id+'\',\'call\');event.stopPropagation()">📞 Call</a>';
+    b+='<a class="cta" draggable="false" href="sms:'+telDigits(c.phone)+'" onclick="logActivity(\''+c.id+'\',\'text\');event.stopPropagation()">💬 Text</a>';
   }
-  if(c.email){ b+='<a class="ci" draggable="false" href="#" title="Draft email in Gmail" onclick="emailLead(\''+c.id+'\');event.stopPropagation();return false">✉️</a>'; }
-  if(c.email){ b+='<a class="ci" draggable="false" href="#" title="AI email · auto-send tomorrow 8:30am PT" onclick="scheduleAiEmail(\''+c.id+'\');event.stopPropagation();return false">📅</a>'; }
+  if(c.email){ b+='<a class="cta" draggable="false" href="#" onclick="emailLead(\''+c.id+'\');event.stopPropagation();return false">✉️ Email</a>'; }
+  return b?'<div class="lead-cta">'+b+'</div>':'';
+}
+// Strip raw URLs and the boilerplate finder prefix so note previews read cleanly on the tile.
+function cleanNote(s){
+  return String(s||'').replace(/https?:\/\/\S+/g,'').replace(/^Found via lead finder( by \w+)?\s*[—-]\s*/i,'').replace(/\s+/g,' ').trim();
+}
+// Secondary actions (call/text/email are the prominent buttons above).
+function contactIcons(c){
+  var b='';
+  if(c.email){ b+='<a class="ci" draggable="false" href="#" title="AI email · schedule auto-send" onclick="scheduleAiEmail(\''+c.id+'\');event.stopPropagation();return false">📅</a>'; }
   b+='<a class="ci" draggable="false" href="#" title="Text template & call script" onclick="openScripts(\''+c.id+'\');event.stopPropagation();return false">📋</a>';
   b+='<a class="ci" draggable="false" href="#" title="Set follow-up reminder" onclick="setReminder(\''+c.id+'\');event.stopPropagation();return false">⏰</a>';
   b+='<a class="ci" draggable="false" href="#" title="Ask for a Google review" onclick="askReview(\''+c.id+'\');event.stopPropagation();return false">⭐</a>';
@@ -1848,9 +1867,11 @@ function leadCard(c){
   var d=document.createElement('div'); d.className='lead'+(isStale(c)?' stale':''); d.draggable=true;
   var la=lastActivity(c), ln=lastNote(c);
   var contactLine = (c.phone||c.email) ? '<div class="lead-contact">'+
-      (c.phone?'<a href="tel:'+telDigits(c.phone)+'" title="Call" onclick="event.stopPropagation()">📞 '+esc(c.phone)+'</a>':'')+
-      (c.email?'<a href="#" title="'+esc(c.email)+'" onclick="emailLead(\''+c.id+'\');event.stopPropagation();return false">✉️ '+esc(c.email)+'</a>':'')+
+      (c.phone?'<a href="tel:'+telDigits(c.phone)+'" title="Call" onclick="event.stopPropagation()"><span class="ci-ic">📞</span>'+esc(c.phone)+'</a>':'')+
+      (c.email?'<a href="#" title="'+esc(c.email)+'" onclick="emailLead(\''+c.id+'\');event.stopPropagation();return false"><span class="ci-ic">✉️</span>'+esc(c.email)+'</a>':'')+
     '</div>' : '';
+  var noteTxt = ln ? cleanNote(ln.note) : '';
+  var actTxt = (la && la.type!=='note' && la.note) ? cleanNote(la.note) : '';
   d.innerHTML='<span class="del-x" title="Delete">×</span>'+
     '<div class="nm">'+esc(c.business_name)+'</div>'+
     (c.contact_name?'<div class="sub-nm">'+esc(c.contact_name)+'</div>':'')+
@@ -1860,9 +1881,10 @@ function leadCard(c){
       (c.monthly_charge?'<span>'+money(c.monthly_charge)+'/mo</span>':'')+'</div>'+
     contactLine+
     (c.description?'<div class="lead-desc" title="'+esc(c.description)+'">'+esc(c.description)+'</div>':'')+
+    (noteTxt?'<div class="lead-note"><b>📝 Note</b> '+(ln.at?'· '+relTime(ln.at)+' ':'')+'— '+esc(noteTxt)+'</div>':'')+
+    (la && la.type!=='note'?'<div class="last-act"><span class="la-lbl">Last</span><span>'+(ACT_ICON[la.type]||'•')+' '+actLabel(la.type)+' · '+relTime(la.at)+(actTxt?' — '+esc(actTxt):'')+'</span></div>':'')+
+    callTextButtons(c)+
     '<div class="card-actions">'+contactIcons(c)+stageArrows(c)+'</div>'+
-    (ln?'<div class="lead-note"><b>📝 Note</b> '+(ln.at?'· '+relTime(ln.at)+' ':'')+'— '+esc(ln.note)+'</div>':'')+
-    (la && la.type!=='note'?'<div class="last-act">'+(ACT_ICON[la.type]||'•')+' '+actLabel(la.type)+' · '+relTime(la.at)+(la.note?' — '+esc(la.note):'')+'</div>':'')+
     (chargeBalance(c.id)>0?'<div class="fu fu-over">💲 Owes '+money(chargeBalance(c.id))+'</div>':'')+
     followUpBadge(c);
   d.addEventListener('dragstart', function(ev){ ev.dataTransfer.setData('text/plain', c.id); d.classList.add('dragging'); });
