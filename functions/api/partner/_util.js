@@ -25,13 +25,22 @@ export function preflight() {
 }
 
 // Return the partner name for a presented key, or null. Accepts the key via the
-// X-Partner-Key header or a Bearer token.
-export function partnerFromKey(request, env) {
-  let map = {};
-  try { map = JSON.parse(env.PARTNER_KEYS || '{}'); } catch (e) { map = {}; }
+// X-Partner-Key header or a Bearer token. Checks two sources:
+//   1) the optional PARTNER_KEYS env map (static)
+//   2) keys issued from the dashboard, stored in the rr_partners table (active only)
+export async function partnerFromKey(request, env) {
   const key = (request.headers.get('x-partner-key') || (request.headers.get('authorization') || '').replace(/^Bearer\s+/i, '')).trim();
   if (!key) return null;
-  return map[key] || null;
+  // 1) static env map (optional)
+  try { const map = JSON.parse(env.PARTNER_KEYS || '{}'); if (map[key]) return map[key]; } catch (e) { /* ignore */ }
+  // 2) dashboard-issued keys (rr_partners)
+  if (env.SUPABASE_SERVICE_ROLE_KEY) {
+    try {
+      const r = await fetch(SUPABASE_URL + '/rest/v1/rr_partners?api_key=eq.' + encodeURIComponent(key) + '&active=eq.true&select=name&limit=1', { headers: sbHeaders(env) });
+      if (r.ok) { const rows = await r.json().catch(() => []); if (rows[0] && rows[0].name) return rows[0].name; }
+    } catch (e) { /* ignore */ }
+  }
+  return null;
 }
 
 export function sbHeaders(env, extra) {

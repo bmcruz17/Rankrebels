@@ -222,12 +222,25 @@ Three DNS records that prove your email really comes from rankrebels.ai — they
 ## 7. Partner / reseller program (channel sales — e.g. Ryzen Recruit)
 Lets a partner's reps refer leads that land straight in your pipeline (`acquired_by: partner`), tagged with the partner + rep, visible with a 🤝 chip.
 
-**To onboard a partner:**
-1. **Run the SQL** (§2 adds `partner`, `partner_rep`, and allows `partner` in the acquired_by constraint).
-2. **Make a key** — invent a long random string, prefix `rrp_live_`, e.g. `rrp_live_ryzen_9f83k2lQ…`.
-3. **Add the `PARTNER_KEYS` secret** in Cloudflare as JSON mapping key → partner name, then redeploy:
-   `{"rrp_live_ryzen_9f83k2lQ...":"Ryzen Recruit"}`  (add more partners as more comma-separated entries)
-4. **Hand the partner their kit** — everything in `/shareable/ryzen-partner-kit/` (rep guide + portal + API docs). Give them their key + the API base `https://rankrebels.ai`.
+**To onboard a partner (easy way — issue the key from the dashboard):**
+1. **Run the partner SQL once** (creates `rr_partners`):
+   ```sql
+   create table if not exists rr_partners (
+     id uuid primary key default gen_random_uuid(),
+     name text not null,
+     api_key text not null unique,
+     active boolean default true,
+     created_at timestamptz default now()
+   );
+   alter table rr_partners enable row level security;
+   drop policy if exists rr_partners_team on rr_partners;
+   create policy rr_partners_team on rr_partners for all to authenticated
+     using (public.rr_is_team()) with check (public.rr_is_team());
+   ```
+2. In the dashboard → **Money tab → Partners & API keys → "+ Issue partner key."** Type the partner's name (e.g. *Ryzen Recruit*). It generates a key, copies it, and stores it. **Send that key to the partner.** Revoke or reactivate anytime — no redeploy needed.
+3. **Hand the partner their kit** — everything in `/shareable/ryzen-partner-kit/` (rep guide + portal + API docs). They paste the key into the portal's `PARTNER_KEY` (or their app). API base is `https://rankrebels.ai`.
+
+> Optional fallback: you can also hard-code keys via a Cloudflare `PARTNER_KEYS` secret (JSON map `{"rrp_live_...":"Ryzen Recruit"}`), but the dashboard issuer is easier and revocable. The API accepts keys from either source.
 
 **API surface (key sent as `X-Partner-Key`):**
 - `POST /api/partner/lead` → create a lead. Body: `{business_name, contact_name?, email?, phone?, rep?, plan?, notes?}`. Dedupes by email/phone.

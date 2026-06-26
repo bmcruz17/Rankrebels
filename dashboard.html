@@ -295,6 +295,13 @@
       <table id="onboarding-tbl"></table>
     </div>
 
+    <div class="panel">
+      <div class="panel-h">Partners &amp; API keys
+        <button class="btn btn-ghost btn-sm" onclick="addPartner()">+ Issue partner key</button>
+      </div>
+      <div id="partners-list" style="padding:6px 18px 16px"></div>
+    </div>
+
     <div class="panel" id="partner-payout-panel" style="display:none">
       <div class="panel-h">Partner payouts (commission owed to resellers)
         <span style="font-weight:500;font-size:12.5px;color:var(--muted)">deduct as an expense when you pay them</span>
@@ -744,8 +751,11 @@ async function loadAll(){
   charges = (ch && !ch.error && ch.data) ? ch.data : [];
   var ag = await sb.from('rr_agreements').select('*').order('signed_at',{ascending:false});
   agreements = (ag && !ag.error && ag.data) ? ag.data : [];
+  var pt = await sb.from('rr_partners').select('*').order('created_at',{ascending:false});
+  partners = (pt && !pt.error && pt.data) ? pt.data : [];
   renderAll();
 }
+var partners = [];
 function renderAll(){ fillCatList(); renderBoard(); renderCustomers(); renderMoney(); renderBudget(); renderGoals(); renderRequests(); }
 function fillCatList(){ var d=el('e-cat'); if(!d) return; var cats=EXPENSE_CATEGORIES.slice(); expenses.forEach(function(e){ if(e.category && cats.indexOf(e.category)<0) cats.push(e.category); }); var cur=d.value; d.innerHTML='<option value="">— select —</option>'+cats.map(function(c){return '<option value="'+c.replace(/"/g,'&quot;')+'">'+c+'</option>';}).join(''); if(cur) d.value=cur; }
 
@@ -1589,6 +1599,55 @@ function renderMoney(){
   el('expense-tbl').innerHTML='<thead><tr><th>Label</th><th>Category</th><th>Type</th><th class="num">Amount</th><th></th></tr></thead><tbody>'+et+'</tbody>';
   renderReimbursements();
   renderPartnerPayouts();
+  renderPartners();
+}
+/* ===== PARTNER API KEYS (issue from the dashboard) ===== */
+function genPartnerKey(name){
+  var slug=(name||'partner').toLowerCase().replace(/[^a-z0-9]+/g,'').slice(0,10)||'partner';
+  var rnd='';
+  try{ var a=new Uint8Array(12); crypto.getRandomValues(a); a.forEach(function(b){ rnd+=('0'+b.toString(16)).slice(-2); }); }catch(e){}
+  if(!rnd){ for(var i=0;i<24;i++) rnd+='0123456789abcdef'[Math.floor(Math.random()*16)]; }
+  return 'rrp_live_'+slug+'_'+rnd;
+}
+async function addPartner(){
+  var name=prompt('Partner / company name (e.g. Ryzen Recruit):',''); if(!name||!name.trim()) return;
+  name=name.trim();
+  var key=genPartnerKey(name);
+  var r=await sb.from('rr_partners').insert({name:name, api_key:key, active:true}).select().single();
+  if(r.error){
+    if(/relation|does not exist|schema cache|rr_partners/i.test(r.error.message||'')){ alert('Run the rr_partners SQL first (see GO-LIVE.md §7), then try again.'); }
+    else alert(r.error.message);
+    return;
+  }
+  partners.unshift(r.data);
+  renderPartners();
+  try{ await navigator.clipboard.writeText(key); }catch(e){}
+  alert('Partner key issued for '+name+' (copied to clipboard):\n\n'+key+'\n\nGive this to them — they paste it into their rep portal / app. You can revoke it anytime.');
+}
+async function revokePartner(id, active){
+  if(!confirm(active?'Reactivate this partner key?':'Revoke this partner key? Their leads will stop coming in until reactivated.')) return;
+  var r=await sb.from('rr_partners').update({active:active}).eq('id',id);
+  if(r.error){ alert(r.error.message); return; }
+  var p=partners.find(function(x){return x.id===id;}); if(p) p.active=active; renderPartners();
+}
+async function copyPartnerKey(id){
+  var p=partners.find(function(x){return x.id===id;}); if(!p) return;
+  try{ await navigator.clipboard.writeText(p.api_key); alert('Copied:\n\n'+p.api_key); }catch(e){ prompt('Copy the key:', p.api_key); }
+}
+function renderPartners(){
+  var box=el('partners-list'); if(!box) return;
+  if(!partners.length){ box.innerHTML='<div style="color:var(--muted);font-size:13.5px">No partner keys yet. Click <b>+ Issue partner key</b> to create one for a reseller (e.g. Ryzen Recruit), then send it to them for their rep portal.</div>'; return; }
+  box.innerHTML=partners.map(function(p){
+    var masked=p.api_key.slice(0,14)+'••••••'+p.api_key.slice(-4);
+    return '<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px">'+
+      '<span class="partner-chip">🤝 '+esc(p.name)+'</span>'+
+      '<code style="font-size:12px;color:var(--muted);background:var(--panel);padding:3px 7px;border-radius:6px">'+esc(masked)+'</code>'+
+      (p.active?'':'<span style="color:var(--accent);font-size:12px;font-weight:700">revoked</span>')+
+      '<span style="margin-left:auto;display:flex;gap:8px">'+
+        '<span class="reveal" onclick="copyPartnerKey(\''+p.id+'\')">copy key</span>'+
+        '<span class="reveal" onclick="revokePartner(\''+p.id+'\','+(p.active?'false':'true')+')">'+(p.active?'revoke':'reactivate')+'</span>'+
+      '</span></div>';
+  }).join('');
 }
 function live_count(){ return clients.filter(function(c){return c.stage==='published';}).length; }
 

@@ -13,7 +13,7 @@ export async function onRequestOptions() { return preflight(); }
 
 export async function onRequestGet({ request, env }) {
   try {
-    const partner = partnerFromKey(request, env);
+    const partner = await partnerFromKey(request, env);
     if (!partner) return json({ error: 'Invalid or missing partner key.' }, 401);
     if (!env.SUPABASE_SERVICE_ROLE_KEY) return json({ error: 'Server not configured.' }, 503);
 

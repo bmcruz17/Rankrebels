@@ -17,7 +17,7 @@ This kit lets **Ryzen Recruit reps sell Rank Rebels**. Reps learn the pitch, cal
 ---
 
 ## Setup (10 minutes)
-1. **Get your Partner Key from Rank Rebels.** It looks like `rrp_live_ryzen_xxxxx`. (Rank Rebels adds it to their `PARTNER_KEYS` secret.)
+1. **Get your Partner Key from Rank Rebels.** It looks like `rrp_live_ryzen_xxxxx`. (Rank Rebels issues it from their dashboard — Money tab → Partners & API keys — and sends it to you. No Supabase or edge-function setup is needed on your end; the key just goes in the portal below.)
 2. **Open `partner-portal.html`** and set, in the CONFIG block near the bottom:
    ```js
    var CONFIG = {
