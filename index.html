@@ -330,8 +330,19 @@
   .hero-dark .hero-trust{color:#9fc1ab;margin-top:36px}
   .hero-dark .hero-trust b{color:#fff}
   .searchbar{max-width:540px;margin:32px auto 0;background:#fff;border-radius:14px;padding:8px 8px 8px 18px;display:flex;align-items:center;gap:12px;box-shadow:0 26px 56px -22px rgba(0,0,0,.6)}
-  .searchbar .q{flex:1;text-align:left;color:#11241a;font-size:16px;font-weight:600}
+  .searchbar .q{flex:1;text-align:left;color:#11241a;font-size:16px;font-weight:600;min-height:22px}
+  .searchbar .q .caret{display:inline-block;width:2px;height:18px;background:#11241a;margin-left:1px;vertical-align:middle;animation:rr-blink 1s steps(1) infinite}
+  @keyframes rr-blink{50%{opacity:0}}
   .searchbar .go{background:linear-gradient(100deg,var(--brand),var(--brand-2));color:#fff;border-radius:10px;padding:11px 18px;font-weight:700;font-size:14px;white-space:nowrap}
+  .results{max-width:540px;margin:12px auto 0;display:flex;flex-direction:column;gap:8px}
+  .result{border-radius:12px;padding:13px 15px;text-align:left;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04)}
+  .result.win{border:2px solid var(--brand);background:rgba(26,162,81,.14)}
+  .result .rtop{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .result .rname{font-weight:800;color:#fff;font-size:14px}
+  .result.dim{opacity:.45}
+  .result .rname.muted{color:#cdddd2;font-weight:600}
+  .result .rmeta{margin-top:3px;font-size:12px;color:rgba(255,255,255,.6)}
+  .result .pill{background:var(--brand);color:#fff;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:700;white-space:nowrap}
   .optfor{padding:28px 0;border-bottom:1px solid var(--line)}
   .optfor .lbl{text-align:center;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted-2);font-weight:700;margin-bottom:14px}
   .optfor .logos{display:flex;justify-content:center;gap:14px 36px;flex-wrap:wrap;align-items:center;font-weight:700;color:var(--muted);font-size:16px}
@@ -399,8 +410,16 @@
     <p class="sub">We build fast, custom websites and get local businesses found first — on Google, in the Map pack, and when people ask ChatGPT &amp; AI for a recommendation.</p>
     <div class="searchbar">
       <span style="font-size:18px">🔎</span>
-      <span class="q">best plumber near me</span>
+      <span class="q" id="rrq"><span id="rrtxt"></span><span class="caret"></span></span>
       <span class="go">Search</span>
+    </div>
+    <div class="results" id="rrResults">
+      <div class="result win">
+        <div class="rtop"><span class="rname">Your Business — #1 result</span><span class="pill">Top of page</span></div>
+        <div class="rmeta">⭐ 5.0 (128) · Open now · 2 mi away</div>
+      </div>
+      <div class="result dim"><div class="rtop"><span class="rname muted">A competitor with an old site</span></div><div class="rmeta">★ 4.1 · 12 mi</div></div>
+      <div class="result dim"><div class="rtop"><span class="rname muted">Another generic listing</span></div><div class="rmeta">★ 3.8 · 15 mi</div></div>
     </div>
     <div class="hero-actions" style="margin-top:28px">
       <a class="btn btn-primary" href="#contact">Get your free audit →</a>
@@ -625,6 +644,25 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
   document.getElementById('year').textContent = new Date().getFullYear();
+
+  /* Hero: rotating "search" queries with a typing effect. Purely decorative. */
+  (function(){
+    var el = document.getElementById('rrtxt'); if(!el) return;
+    var phrases = ['best plumber near me','steam cleaning near me','web design company','auto repair open now','top rated electrician'];
+    var pi = 0, ci = 0, deleting = false;
+    function tick(){
+      var w = phrases[pi];
+      el.textContent = w.slice(0, ci);
+      if(!deleting){
+        if(ci < w.length){ ci++; setTimeout(tick, 85); }
+        else { deleting = true; setTimeout(tick, 1400); }
+      } else {
+        if(ci > 0){ ci--; setTimeout(tick, 40); }
+        else { deleting = false; pi = (pi+1) % phrases.length; setTimeout(tick, 350); }
+      }
+    }
+    tick();
+  })();
 
   /* Public lead capture — drops form submissions straight into the pipeline as Leads.
      Uses the anon key + an INSERT-only RLS policy (rr_clients_public_lead_insert),
