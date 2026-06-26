@@ -840,8 +840,23 @@ async function confirmSchedSend(){
     if(ins.data) scheduledEmails.unshift(ins.data);
     var whenLbl=sendAt.toLocaleString('en-US',{timeZone:'America/Los_Angeles',weekday:'short',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})+' PT';
     logActivity(id,'email','Scheduled email for '+whenLbl+': '+(d.subject||''));
-    renderScheduledStrip(); closeModal('m-sched');
-    alert('✅ Drafted “'+(d.subject||'email')+'” in Gmail and scheduled to send '+whenLbl+'.\n\nIt’s in your Gmail Drafts now — review or edit it anytime before then.');
+    // Auto-advance Leads → Contacted (never move a deal backward)
+    var movedToContacted=false;
+    if(c.stage==='lead'){ c.stage='contacted'; movedToContacted=true; await sb.from('rr_clients').update({stage:'contacted'}).eq('id',id); }
+    // Set a follow-up reminder ≥48h after the send time, nudging a phone call
+    var p=dateStr.split('-'); var followUp=new Date(Date.UTC(+p[0],+p[1]-1,+p[2]+2)).toISOString().slice(0,10);
+    if(!c.follow_up || c.follow_up < followUp){
+      c.follow_up=followUp;
+      var fr=await sb.from('rr_clients').update({follow_up:followUp}).eq('id',id);
+      if(!(fr.error && /follow_up|column|schema cache/i.test(fr.error.message||''))){
+        logActivity(id,'note','⏰ Follow-up set for '+followUp+' (48h after send) — if no reply, call '+(c.phone?c.phone:'them')+'. A quick call converts far better than a second email.');
+      }
+    }
+    renderScheduledStrip(); renderAll(); closeModal('m-sched');
+    alert('✅ Drafted “'+(d.subject||'email')+'” in Gmail and scheduled to send '+whenLbl+'.\n\n'+
+      (movedToContacted?'→ Moved to Contacted.\n':'')+
+      '→ Follow-up reminder set for '+followUp+' (48h after send). If they haven’t replied, give them a call.\n\n'+
+      'It’s in your Gmail Drafts now — review or edit it anytime before then.');
   }catch(e){ alert('Could not reach the AI drafting service.'); }
   finally{ btn.disabled=false; btn.textContent='Draft & schedule'; }
 }
