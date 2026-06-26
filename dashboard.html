@@ -1328,7 +1328,7 @@ function renderLeads(){
       '<td>'+nameHtml+'<div style="font-size:12px;color:var(--muted-2)">'+esc(p.address)+'</div>'+(p.email?'<div style="font-size:12.5px;color:var(--brand);font-weight:600">✉️ '+esc(p.email)+'</div>':'')+'</td>'+
       '<td class="num" style="white-space:nowrap">⭐ '+p.rating+' · '+p.reviews+'</td>'+
       '<td style="white-space:nowrap">'+(p.phone?'<a class="reveal" href="tel:'+telDigits(p.phone)+'">📞 '+esc(p.phone)+'</a>':'<span style="color:var(--muted-2)">—</span>')+'</td>'+
-      '<td style="min-width:160px">'+siteHtml+'<br>'+contact+'</td>'+
+      '<td style="min-width:160px">'+siteHtml+'<br>'+contact+fbControlHTML(p,i)+'</td>'+
       '<td style="white-space:nowrap">'+(p.mapsUri?'<a class="reveal" href="'+esc(p.mapsUri)+'" target="_blank" rel="noopener" title="Open Google Business profile">profile</a> · ':'')+
         (existing?'<span class="reveal" title="Add the latest found details to the existing pipeline card" onclick="updateLeadFromPlace('+i+')">↻ update card</span>':'<span class="reveal" onclick="addLeadFromPlace('+i+')">+ pipeline</span>')+'</td></tr>';
   }).join('');
@@ -1337,6 +1337,51 @@ function renderLeads(){
   var banner = enrichOff ? '<div style="padding:10px 18px;font-size:12.5px;color:var(--muted);background:rgba(201,154,30,.10);border-bottom:1px solid var(--line)">💡 Email lookup is off. Add a free <b>SERPER_API_KEY</b> in Cloudflare (get one at serper.dev) to auto-find emails &amp; socials. Phone, website, and Google profile still work without it.</div>' : '';
   box.innerHTML='<div class="panel"><div class="panel-h">'+shown.length+' lead'+(shown.length>1?'s':'')+' <span style="font-weight:500;font-size:12.5px;color:var(--muted)">'+hdrNote+'</span></div>'+banner+
     '<table><thead><tr><th>Score</th><th>Business</th><th class="num">Rating</th><th>Phone</th><th>Website / contact</th><th></th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+}
+// On-demand full Facebook profile (Apify). Shows a control once a FB link is known; renders the profile once scraped.
+var fbScrapeOff=false; // set if APIFY_TOKEN isn't configured — then hide the control
+function fbControlHTML(p,i){
+  if(p._fbProfile) return '<div id="fbp-'+i+'" style="margin-top:5px">'+fbProfileHTML(p._fbProfile)+'</div>';
+  var fbUrl=p._enrich && p._enrich.facebook; if(!fbUrl || fbScrapeOff) return '';
+  return '<div id="fbp-'+i+'" style="margin-top:4px"><span class="reveal" onclick="fbDeepScrape('+i+')" title="Pull the full Facebook profile — about, hours, category, followers, rating, contact">📘 Full FB profile</span></div>';
+}
+function fbProfileHTML(f){
+  var rows=[];
+  function row(lbl,val){ if(val) rows.push('<div><b style="color:var(--text)">'+lbl+':</b> '+esc(val)+'</div>'); }
+  if(f.category) row('Category',f.category);
+  if(f.about) row('About',f.about);
+  if(f.followers||f.likes) row('Audience',[f.followers?(fmtNum(f.followers)+' followers'):'',f.likes?(fmtNum(f.likes)+' likes'):''].filter(Boolean).join(' · '));
+  if(f.rating) row('Rating',f.rating+(f.ratingCount?(' ('+f.ratingCount+')'):''));
+  if(f.phone) row('Phone',f.phone);
+  if(f.email) row('Email',f.email);
+  if(f.website) row('Website',f.website);
+  if(f.address) row('Address',f.address);
+  if(f.hours) row('Hours',f.hours);
+  if(f.priceRange) row('Price',f.priceRange);
+  if(f.services) row('Services',f.services);
+  return '<div style="font-size:11.5px;color:var(--muted);line-height:1.5;border-left:2px solid var(--brand);padding-left:8px">'+
+    '<div style="font-weight:700;color:var(--brand);margin-bottom:2px">📘 Facebook profile</div>'+(rows.join('')||'<i>No extra details found.</i>')+'</div>';
+}
+function fmtNum(n){ var x=Number(n); return isNaN(x)?String(n):x.toLocaleString(); }
+async function fbDeepScrape(i){
+  var p=lastLeads[i]; if(!p || !(p._enrich && p._enrich.facebook)) return;
+  var cell=el('fbp-'+i); if(cell) cell.innerHTML='<span style="color:var(--muted-2)">📘 scraping Facebook… (up to a minute)</span>';
+  var t=await authToken(); if(!t){ if(cell) cell.textContent=''; return; }
+  try{
+    var r=await fetch('/api/fb-scrape',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t},body:JSON.stringify({url:p._enrich.facebook})});
+    var d=await r.json().catch(function(){return {error:'failed'};});
+    if(d.error){
+      if(/not configured/i.test(d.error)){ fbScrapeOff=true; renderLeads(); return; }
+      if(cell) cell.innerHTML='<span style="color:var(--muted-2)">'+esc(d.error)+'</span>'; return;
+    }
+    p._fbProfile=d.profile||{};
+    // Merge useful fields so "+ pipeline" carries them
+    var f=p._fbProfile;
+    if(!p.email && f.email && /@/.test(f.email)) p.email=String(f.email).split(/[ ,]/)[0];
+    if(!p.phone && f.phone) p.phone=f.phone;
+    if(f.about && (!p._enrich.about || f.about.length>p._enrich.about.length)){ p._enrich.about=f.about; p._enrich.aboutSrc='Facebook'; }
+    renderLeads();
+  }catch(e){ if(cell) cell.innerHTML='<span style="color:var(--muted-2)">Could not reach the FB scraper.</span>'; }
 }
 function enrichHTML(e){
   if(e.error) return '<span style="color:var(--muted-2)">no contact found</span>';
