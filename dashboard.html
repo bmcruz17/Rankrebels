@@ -657,6 +657,18 @@
   </div>
 </div>
 
+<div class="modal-bg" id="m-fbprofile" onclick="if(event.target===this)closeModal('m-fbprofile')">
+  <div class="modal" style="max-width:460px">
+    <h3>📘 Facebook profile</h3>
+    <p class="sub" id="fbp-who" style="margin:-4px 0 12px"></p>
+    <div id="fbp-body" style="font-size:13px;line-height:1.55;min-height:60px"></div>
+    <div class="modal-actions" style="margin-top:14px"><div></div><div style="display:flex;gap:10px">
+      <button class="btn btn-ghost" onclick="closeModal('m-fbprofile')">Close</button>
+      <button class="btn btn-primary" id="fbp-save" onclick="saveFbToClient()" style="display:none">Save to lead</button>
+    </div></div>
+  </div>
+</div>
+
 <div class="modal-bg" id="m-sched" onclick="if(event.target===this)closeModal('m-sched')">
   <div class="modal" style="max-width:400px">
     <h3>📅 Schedule AI email</h3>
@@ -1566,8 +1578,70 @@ function contactIcons(c){
   b+='<a class="ci" draggable="false" href="#" title="Set follow-up reminder" onclick="setReminder(\''+c.id+'\');event.stopPropagation();return false">⏰</a>';
   b+='<a class="ci" draggable="false" href="#" title="Ask for a Google review" onclick="askReview(\''+c.id+'\');event.stopPropagation();return false">⭐</a>';
   b+='<a class="ci" draggable="false" href="#" title="Send a personalized proposal" onclick="sendProposal(\''+c.id+'\');event.stopPropagation();return false">📄</a>';
+  b+='<a class="ci" draggable="false" href="#" title="Pull full Facebook profile" onclick="openFbProfile(\''+c.id+'\');event.stopPropagation();return false">📘</a>';
   b+='<a class="ci" draggable="false" href="#" title="Add note" onclick="quickNote(\''+c.id+'\');event.stopPropagation();return false">📝</a>';
   return b;
+}
+// Pull a Facebook URL already saved on a client (from notes/description), if any.
+function fbUrlFromClient(c){
+  var hay=((c.notes||'')+' '+(c.description||''));
+  var m=hay.match(/https?:\/\/(?:www\.|m\.)?facebook\.com\/[^\s'")]+/i);
+  return m?m[0]:'';
+}
+var fbProfileClientId=null, fbProfilePending=null;
+async function openFbProfile(id){
+  var c=clients.find(function(x){return x.id===id;}); if(!c) return;
+  fbProfileClientId=id; fbProfilePending=null;
+  el('fbp-who').textContent=c.business_name||'';
+  el('fbp-save').style.display='none';
+  el('fbp-body').innerHTML='<span style="color:var(--muted)">📘 Finding their Facebook page…</span>';
+  el('m-fbprofile').classList.add('open');
+  var t=await authToken(); if(!t){ el('fbp-body').textContent='Please sign in again.'; return; }
+  // 1) Find a FB URL — from saved notes, else via enrich search.
+  var fbUrl=fbUrlFromClient(c);
+  if(!fbUrl){
+    var city=(c.address||'').split(',').slice(-3).join(',');
+    try{
+      var er=await fetch('/api/enrich',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t},body:JSON.stringify({name:c.business_name, city:city, phone:c.phone})});
+      var ed=await er.json().catch(function(){return {};});
+      if(ed.error && /not configured/i.test(ed.error)){ el('fbp-body').innerHTML='Email/social lookup is off — add a free <b>SERPER_API_KEY</b> in Cloudflare to find their Facebook page automatically.'; return; }
+      fbUrl=ed.facebook||'';
+    }catch(e){}
+  }
+  if(!fbUrl){ el('fbp-body').innerHTML='<span style="color:var(--muted)">No Facebook page found for this business.</span>'; return; }
+  // 2) Deep-scrape it.
+  el('fbp-body').innerHTML='<span style="color:var(--muted)">📘 Scraping <a href="'+esc(fbUrl)+'" target="_blank" class="reveal">their Facebook page</a>… (up to a minute)</span>';
+  try{
+    var r=await fetch('/api/fb-scrape',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t},body:JSON.stringify({url:fbUrl})});
+    var d=await r.json().catch(function(){return {error:'failed'};});
+    if(d.error){
+      var extra=/not configured/i.test(d.error)?' Add <b>APIFY_TOKEN</b> in Cloudflare to enable deep Facebook scraping.':'';
+      el('fbp-body').innerHTML='<span style="color:var(--muted)">'+esc(d.error)+extra+'</span>'; return;
+    }
+    fbProfilePending=Object.assign({facebookUrl:fbUrl}, d.profile||{});
+    el('fbp-body').innerHTML=fbProfileHTML(fbProfilePending);
+    el('fbp-save').style.display='';
+  }catch(e){ el('fbp-body').innerHTML='<span style="color:var(--muted)">Could not reach the Facebook scraper.</span>'; }
+}
+async function saveFbToClient(){
+  var c=clients.find(function(x){return x.id===fbProfileClientId;}); var f=fbProfilePending; if(!c||!f) return;
+  var patch={};
+  if(!c.description && f.about) patch.description=String(f.about).slice(0,400);
+  if(!c.phone && f.phone) patch.phone=f.phone;
+  if(!c.email && f.email && /@/.test(f.email)) patch.email=String(f.email).split(/[ ,]/)[0];
+  var lines=['📘 Facebook profile:'];
+  ['category','about','followers','likes','rating','phone','email','website','address','hours','priceRange','services'].forEach(function(k){
+    if(f[k]) lines.push('• '+k+': '+f[k]);
+  });
+  if(f.facebookUrl) lines.push('• '+f.facebookUrl);
+  patch.notes=(c.notes?(c.notes+'\n\n'):'')+lines.join('\n');
+  var r=await sb.from('rr_clients').update(patch).eq('id',c.id).select().single();
+  if(r.error && /description|column|schema cache/i.test(r.error.message||'')){ delete patch.description; r=await sb.from('rr_clients').update(patch).eq('id',c.id).select().single(); }
+  if(r.error){ alert(r.error.message); return; }
+  var idx=clients.findIndex(function(x){return x.id===c.id;}); if(idx>=0 && r.data) clients[idx]=r.data;
+  closeModal('m-fbprofile'); renderAll();
+  var got=[]; if(patch.description)got.push('description'); if(patch.phone)got.push('phone'); if(patch.email)got.push('email');
+  alert('Saved Facebook profile to "'+c.business_name+'"'+(got.length?(' — filled '+got.join(', ')):'')+'. Full profile is in its notes.');
 }
 // Build a personalized proposal link (proposal.html) for a lead and copy it to share.
 function proposalLink(c){
@@ -1716,6 +1790,7 @@ var LEGEND_GROUPS=[
     ['⏰','Set a follow-up reminder date'],
     ['⭐','Ask the customer for a Google review'],
     ['📄','Send a personalized proposal'],
+    ['📘','Pull their full Facebook profile (about, hours, rating, contact) and save it to the lead'],
     ['📝','Add a quick note'],
     ['← →','Move the deal back / forward a stage']
   ]},
