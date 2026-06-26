@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Rank Rebels — Rep Portal (Ryzen Recruit)</title>
+<!--
+  ╔══════════════════════════════════════════════════════════════════════╗
+  ║  SETUP — edit the two values in CONFIG below, then host this file       ║
+  ║  anywhere (or open it locally). Rank Rebels gives you the PARTNER_KEY.  ║
+  ║                                                                        ║
+  ║  ⚠️ SECURITY: this key can ONLY create/read leads you referred. Still,  ║
+  ║  prefer hosting this behind your team login rather than fully public.  ║
+  ╚══════════════════════════════════════════════════════════════════════╝
+-->
+<style>
+  :root{--brand:#15803d;--gold:#c79a1e;--dark:#0c1f15;--line:#e3ebe4;--muted:#5c6b62;--bg:#f5f8f5}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:#11241a}
+  header{background:var(--dark);color:#fff;padding:16px 20px;display:flex;align-items:center;gap:10px}
+  header .logo{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;font-weight:800;background:linear-gradient(135deg,var(--brand),var(--gold))}
+  header b{font-size:17px}
+  header .who{margin-left:auto;font-size:13px;color:#bcd}
+  .wrap{max-width:1000px;margin:22px auto;padding:0 18px;display:grid;gap:20px;grid-template-columns:1fr 1fr}
+  @media(max-width:760px){.wrap{grid-template-columns:1fr}}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px}
+  h2{margin:0 0 4px;font-size:18px}
+  .sub{color:var(--muted);font-size:13px;margin:0 0 16px}
+  label{display:block;font-size:12px;font-weight:700;color:#33473c;margin:12px 0 5px;text-transform:uppercase;letter-spacing:.03em}
+  input,textarea,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:9px;font-size:14px;font-family:inherit}
+  textarea{min-height:64px;resize:vertical}
+  .row{display:flex;gap:10px}.row>*{flex:1}
+  button{cursor:pointer;border:none;border-radius:9px;font-weight:700;font-size:14px}
+  .primary{background:var(--brand);color:#fff;padding:12px 18px;width:100%;margin-top:16px}
+  .primary:disabled{opacity:.55;cursor:not-allowed}
+  .msg{margin-top:12px;font-size:14px;padding:10px 12px;border-radius:9px;display:none}
+  .msg.ok{background:rgba(21,128,61,.1);color:var(--brand);display:block}
+  .msg.err{background:rgba(185,28,28,.08);color:#b91c1c;display:block}
+  .lead{border:1px solid var(--line);border-radius:10px;padding:11px 13px;margin-top:10px}
+  .lead .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .lead .nm{font-weight:700}
+  .pill{font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;text-transform:capitalize}
+  .lead .meta{color:var(--muted);font-size:12.5px;margin-top:3px}
+  .lead .acts{margin-top:8px;display:flex;gap:8px}
+  .lead .acts a{font-size:12px;text-decoration:none;color:var(--brand);border:1px solid var(--line);border-radius:7px;padding:4px 9px}
+  .empty{color:var(--muted);font-size:14px;padding:14px 0}
+  .setup{background:#fffbeb;border:1px solid #f2e2a8;color:#7a5b12;border-radius:10px;padding:12px 14px;font-size:13px;margin:16px auto;max-width:964px}
+  .stages{display:flex;gap:6px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-top:6px}
+</style>
+</head>
+<body>
+<header>
+  <span class="logo">⚡</span>
+  <b>Rank Rebels — Rep Portal</b>
+  <span class="who" id="who"></span>
+</header>
+
+<div id="setup" class="setup" style="display:none">
+  ⚙️ <b>Setup needed:</b> open this file and set <code>PARTNER_KEY</code> (and confirm <code>API_BASE</code>) in the CONFIG block near the bottom. Rank Rebels provides your key.
+</div>
+
+<div class="wrap">
+  <!-- Submit a lead -->
+  <div class="card">
+    <h2>Refer a lead</h2>
+    <p class="sub">Spark interest, capture the basics, and Rank Rebels takes it from there (reaches out within 1 business day).</p>
+
+    <label>Your name (rep)</label>
+    <input id="rep" placeholder="e.g. Sam from Ryzen" />
+
+    <label>Business name *</label>
+    <input id="business" placeholder="Acme Plumbing" />
+
+    <div class="row">
+      <div><label>Contact name</label><input id="contact" placeholder="Jane Doe" /></div>
+      <div><label>Phone</label><input id="phone" placeholder="(555) 123-4567" /></div>
+    </div>
+
+    <label>Email</label>
+    <input id="email" type="email" placeholder="jane@acme.com" />
+
+    <div class="row">
+      <div><label>Industry</label><input id="industry" placeholder="Plumbing" /></div>
+      <div><label>Interested in</label>
+        <select id="plan">
+          <option value="">Not sure yet</option>
+          <option>Starter (~$299/mo)</option>
+          <option>Growth (~$599/mo)</option>
+          <option>Pro (~$999/mo)</option>
+        </select>
+      </div>
+    </div>
+
+    <label>Notes (how the call went, what they want)</label>
+    <textarea id="notes" placeholder="Old site, not on Google maps, wants more calls…"></textarea>
+
+    <button class="primary" id="submit" onclick="submitLead()">Submit lead to Rank Rebels</button>
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <!-- My referred leads -->
+  <div class="card">
+    <h2>My referred leads</h2>
+    <p class="sub">Status updates as Rank Rebels works the deal. <a href="#" onclick="loadLeads();return false">↻ Refresh</a></p>
+    <div id="leads"><div class="empty">Loading…</div></div>
+  </div>
+</div>
+
+<script>
+/* ============================ CONFIG ============================ */
+var CONFIG = {
+  API_BASE: 'https://rankrebels.ai',          // Rank Rebels production domain
+  PARTNER_KEY: 'PASTE_YOUR_PARTNER_KEY_HERE'  // <-- Rank Rebels gives you this
+};
+/* =============================================================== */
+
+var STAGE_COLORS = {
+  lead:'#64748b', contacted:'#2563eb', accepted:'#15803d', in_build:'#c79a1e',
+  finalized:'#7c3aed', published:'#15803d', lost:'#b91c1c'
+};
+function el(id){ return document.getElementById(id); }
+function configured(){ return CONFIG.PARTNER_KEY && CONFIG.PARTNER_KEY !== 'PASTE_YOUR_PARTNER_KEY_HERE'; }
+
+// Remember the rep's name locally
+el('rep').value = localStorage.getItem('rr_rep') || '';
+el('rep').addEventListener('change', function(){ localStorage.setItem('rr_rep', el('rep').value.trim()); el('who').textContent = el('rep').value ? 'Rep: '+el('rep').value : ''; });
+el('who').textContent = el('rep').value ? 'Rep: '+el('rep').value : '';
+if(!configured()) el('setup').style.display='block';
+
+async function submitLead(){
+  var msg = el('msg'); msg.className='msg'; msg.style.display='none';
+  if(!configured()){ msg.className='msg err'; msg.textContent='Set your PARTNER_KEY in the CONFIG block first.'; return; }
+  var business = el('business').value.trim();
+  if(!business){ msg.className='msg err'; msg.textContent='Business name is required.'; return; }
+  if(!el('email').value.trim() && !el('phone').value.trim()){ msg.className='msg err'; msg.textContent='Add an email or phone so Rank Rebels can reach them.'; return; }
+
+  var body = {
+    business_name: business,
+    contact_name: el('contact').value.trim(),
+    email: el('email').value.trim(),
+    phone: el('phone').value.trim(),
+    rep: el('rep').value.trim(),
+    plan: el('plan').value,
+    notes: (el('industry').value.trim() ? 'Industry: '+el('industry').value.trim()+'. ' : '') + el('notes').value.trim()
+  };
+  var btn = el('submit'); btn.disabled = true; btn.textContent='Submitting…';
+  try{
+    var r = await fetch(CONFIG.API_BASE + '/api/partner/lead', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','X-Partner-Key':CONFIG.PARTNER_KEY},
+      body: JSON.stringify(body)
+    });
+    var d = await r.json();
+    if(d.ok){
+      msg.className='msg ok';
+      msg.textContent = d.duplicate ? '✓ Already in Rank Rebels’ pipeline — nice, it’s tracked.' : '✓ Sent! Rank Rebels will reach out within 1 business day.';
+      ['business','contact','phone','email','industry','notes'].forEach(function(i){ el(i).value=''; });
+      el('plan').value='';
+      loadLeads();
+    } else {
+      msg.className='msg err'; msg.textContent = d.error || 'Something went wrong — try again.';
+    }
+  } catch(e){ msg.className='msg err'; msg.textContent='Network error — check your connection and try again.'; }
+  btn.disabled=false; btn.textContent='Submit lead to Rank Rebels';
+}
+
+async function loadLeads(){
+  var box = el('leads');
+  if(!configured()){ box.innerHTML='<div class="empty">Set your PARTNER_KEY to see referred leads.</div>'; return; }
+  box.innerHTML='<div class="empty">Loading…</div>';
+  try{
+    var r = await fetch(CONFIG.API_BASE + '/api/partner/leads', { headers:{'X-Partner-Key':CONFIG.PARTNER_KEY} });
+    var d = await r.json();
+    var leads = d.leads || [];
+    if(!leads.length){ box.innerHTML='<div class="empty">No referred leads yet — submit your first one!</div>'; return; }
+    box.innerHTML = leads.map(function(l){
+      var color = STAGE_COLORS[l.stage] || '#64748b';
+      var when = l.created_at ? new Date(l.created_at).toLocaleDateString() : '';
+      return '<div class="lead"><div class="top"><span class="nm">'+esc(l.business_name||'')+'</span>'+
+        '<span class="pill" style="background:'+color+'1a;color:'+color+'">'+esc(l.stage||'lead')+'</span></div>'+
+        '<div class="meta">'+[esc(l.contact_name||''), esc(l.phone||''), esc(l.email||'')].filter(Boolean).join(' · ')+
+        (when?' · added '+when:'')+'</div>'+
+        '<div class="acts">'+
+          (l.phone?'<a href="tel:'+String(l.phone).replace(/[^0-9+]/g,'')+'">📞 Call</a>':'')+
+          (l.phone?'<a href="sms:'+String(l.phone).replace(/[^0-9+]/g,'')+'">💬 Text</a>':'')+
+          (l.email?'<a href="mailto:'+esc(l.email)+'">✉️ Email</a>':'')+
+        '</div></div>';
+    }).join('');
+  } catch(e){ box.innerHTML='<div class="empty">Couldn’t load leads — check your key / connection.</div>'; }
+}
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+
+loadLeads();
+</script>
+</body>
+</html>

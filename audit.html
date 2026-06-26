@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AccessGrade — Free ADA & Accessibility Website Scan</title>
+<meta name="description" content="Get a free instant accessibility (ADA / WCAG) score for your website. See where you stand and how to fix it." />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>♿</text></svg>" />
+<style>
+  :root{--ink:#0f1b2d;--brand:#1f6feb;--good:#15803d;--warn:#c79a1e;--bad:#dc2626;--muted:#5b6b7f;--line:#e4e9f0;--bg:#f6f8fb}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+  a{color:var(--brand)}
+  .wrap{max-width:920px;margin:0 auto;padding:0 20px}
+  header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+  .nav{display:flex;align-items:center;gap:10px;height:62px}
+  .logo{font-weight:800;font-size:19px;display:flex;align-items:center;gap:8px}
+  .logo .m{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;background:linear-gradient(135deg,#1f6feb,#15803d);color:#fff;font-size:16px}
+  .nav .by{margin-left:auto;font-size:12.5px;color:var(--muted)}
+  .hero{text-align:center;padding:54px 0 14px}
+  .hero h1{font-size:clamp(28px,5vw,42px);line-height:1.1;letter-spacing:-.02em;margin:0 0 12px}
+  .hero h1 span{background:linear-gradient(90deg,#1f6feb,#15803d);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero p{font-size:18px;color:var(--muted);max-width:60ch;margin:0 auto 22px}
+  .scanbox{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 20px 50px -30px rgba(15,27,45,.4);max-width:680px;margin:0 auto}
+  .scanrow{display:flex;gap:10px;flex-wrap:wrap}
+  .scanrow input{flex:1;min-width:200px;height:50px;padding:0 16px;border:1px solid var(--line);border-radius:11px;font-size:16px}
+  .scanrow select{height:50px;border:1px solid var(--line);border-radius:11px;padding:0 12px;font-size:15px;background:#fff}
+  .btn{height:50px;padding:0 24px;border:none;border-radius:11px;background:var(--brand);color:#fff;font-weight:700;font-size:16px;cursor:pointer;white-space:nowrap}
+  .btn:disabled{opacity:.6;cursor:not-allowed}
+  .hint{color:var(--muted);font-size:13px;margin-top:10px;text-align:left}
+  .err{color:var(--bad);font-size:14px;margin-top:10px;display:none}
+  /* results */
+  #results{display:none;padding:8px 0 70px}
+  .scorecard{background:#fff;border:1px solid var(--line);border-radius:16px;padding:26px;display:flex;gap:26px;align-items:center;flex-wrap:wrap}
+  .ring{--v:0;width:150px;height:150px;border-radius:50%;display:grid;place-items:center;flex:none;
+    background:conic-gradient(var(--rc) calc(var(--v)*1%), #eef2f7 0);transition:--v 1.1s ease}
+  .ring .inner{width:118px;height:118px;border-radius:50%;background:#fff;display:grid;place-items:center;text-align:center}
+  .ring .num{font-size:40px;font-weight:800;line-height:1}
+  .ring .lbl{font-size:12px;color:var(--muted)}
+  .grade{font-size:54px;font-weight:800;line-height:1}
+  .scoremeta{flex:1;min-width:240px}
+  .scoremeta h2{margin:0 0 4px;font-size:22px}
+  .scoremeta .u{color:var(--muted);font-size:14px;word-break:break-all}
+  .pillrow{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+  .pill{font-size:12.5px;font-weight:700;border-radius:999px;padding:5px 11px}
+  .pill.g{background:rgba(21,128,61,.12);color:var(--good)}
+  .pill.b{background:rgba(220,38,38,.1);color:var(--bad)}
+  .section-t{font-weight:800;margin:30px 0 12px;font-size:18px}
+  .issue{background:#fff;border:1px solid var(--line);border-left:4px solid var(--warn);border-radius:12px;padding:14px 16px;margin-bottom:10px}
+  .issue.fail{border-left-color:var(--bad)}
+  .issue .it{display:flex;justify-content:space-between;gap:10px;align-items:center}
+  .issue .nm{font-weight:700}
+  .issue .wc{font-size:11px;color:var(--muted);background:var(--bg);border-radius:6px;padding:2px 7px;white-space:nowrap}
+  .issue .d{color:#3a4a5d;font-size:14px;margin-top:4px}
+  .passed{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+  .passed span{font-size:13px;color:var(--good);background:rgba(21,128,61,.08);border-radius:8px;padding:5px 10px}
+  .industry{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;margin-top:10px}
+  .industry.miss{border-color:#f0c98a;background:#fffaf0}
+  .cta{margin-top:30px;background:linear-gradient(135deg,#0f1b2d,#1f6feb);color:#fff;border-radius:18px;padding:30px;text-align:center}
+  .cta h3{margin:0 0 8px;font-size:24px}
+  .cta p{color:rgba(255,255,255,.85);margin:0 auto 18px;max-width:50ch}
+  .cta form{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;max-width:520px;margin:0 auto}
+  .cta input{height:48px;padding:0 14px;border:none;border-radius:10px;font-size:15px;flex:1;min-width:180px}
+  .cta .btn{background:#fff;color:var(--ink)}
+  .cta .ok{display:none;font-size:17px;font-weight:700;margin-top:8px}
+  .disc{color:var(--muted);font-size:12.5px;margin-top:24px;border-top:1px solid var(--line);padding-top:16px}
+  .spin{display:inline-block;width:18px;height:18px;border:3px solid rgba(255,255,255,.5);border-top-color:#fff;border-radius:50%;animation:sp 1s linear infinite;vertical-align:-3px}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  footer{text-align:center;color:var(--muted);font-size:13px;padding:26px 0}
+  @property --v{syntax:'<number>';inherits:false;initial-value:0}
+</style>
+</head>
+<body>
+<header><div class="wrap nav">
+  <div class="logo"><span class="m">♿</span> Access<span style="color:var(--brand)">Grade</span></div>
+  <div class="by">An accessibility audit by <a href="https://rankrebels.ai" target="_blank" rel="noopener">Rank Rebels</a></div>
+</div></header>
+
+<section class="hero"><div class="wrap">
+  <h1>Is your website <span>accessible</span>?</h1>
+  <p>Get a free instant ADA / WCAG accessibility score. See exactly where you stand — and what to fix — in about 15 seconds.</p>
+  <div class="scanbox">
+    <div class="scanrow">
+      <input id="url" placeholder="yourwebsite.com" autocomplete="off" />
+      <select id="industry" title="Industry (optional — adds a disclosure check)">
+        <option value="">Industry (optional)</option>
+        <option value="electrician">Electrician</option>
+        <option value="contractor">Contractor</option>
+        <option value="plumber">Plumber</option>
+        <option value="hvac">HVAC</option>
+        <option value="roofer">Roofer</option>
+      </select>
+      <button class="btn" id="scan" onclick="runScan()">Scan free</button>
+    </div>
+    <div class="hint">We scan a single public page. No signup required. This is an automated starting score — not a legal compliance certification.</div>
+    <div class="err" id="err"></div>
+  </div>
+</div></section>
+
+<div class="wrap" id="results">
+  <div class="scorecard">
+    <div class="ring" id="ring"><div class="inner"><div><div class="num" id="scoreNum">0</div><div class="lbl">/ 100</div></div></div></div>
+    <div class="scoremeta">
+      <h2>Your accessibility score</h2>
+      <div class="u" id="scoreUrl"></div>
+      <div class="pillrow" id="pills"></div>
+      <div style="margin-top:12px;color:#3a4a5d" id="summary"></div>
+    </div>
+    <div style="text-align:center;flex:none">
+      <div class="grade" id="gradeLetter">–</div>
+      <div style="font-size:12px;color:var(--muted)">grade</div>
+    </div>
+  </div>
+
+  <div id="industryWrap"></div>
+
+  <div class="section-t">⚠️ What to fix (highest impact first)</div>
+  <div id="issues"></div>
+
+  <div class="section-t">✅ What's already working</div>
+  <div class="passed" id="passed"></div>
+
+  <div class="cta">
+    <h3>Want this fixed for you?</h3>
+    <p>Rank Rebels rebuilds and remediates websites to be fast, modern, and accessible. Get a free consult — they'll handle the fixes so you don't have to.</p>
+    <form onsubmit="return referToRR(event)">
+      <input id="leadEmail" type="email" placeholder="you@business.com" required />
+      <input id="leadPhone" type="tel" placeholder="Phone (optional)" />
+      <button class="btn" id="leadBtn" type="submit">Get my fix plan</button>
+    </form>
+    <div class="ok" id="leadOk">✓ Got it — Rank Rebels will reach out within one business day with your plan.</div>
+    <div style="font-size:12px;color:rgba(255,255,255,.7);margin-top:12px">AccessGrade and Rank Rebels are partner companies.</div>
+  </div>
+
+  <div class="disc" id="disc"></div>
+</div>
+
+<footer>© <span id="y"></span> AccessGrade · an accessibility audit by <a href="https://rankrebels.ai">Rank Rebels</a></footer>
+
+<script>
+  document.getElementById('y').textContent = new Date().getFullYear();
+  var el = function(id){ return document.getElementById(id); };
+  var last = {};
+  function gcolor(g){ return g==='A'||g==='B' ? 'var(--good)' : g==='C'||g==='D' ? 'var(--warn)' : 'var(--bad)'; }
+
+  el('url').addEventListener('keydown', function(e){ if(e.key==='Enter') runScan(); });
+
+  async function runScan(){
+    var url = el('url').value.trim();
+    var err = el('err'); err.style.display='none';
+    if(!url){ err.textContent='Enter your website address.'; err.style.display='block'; return; }
+    var btn = el('scan'); btn.disabled=true; btn.innerHTML='<span class="spin"></span>';
+    try{
+      var r = await fetch('/api/audit', {method:'POST',headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ url:url, industry: el('industry').value })});
+      var d = await r.json();
+      if(d.error){ err.textContent=d.error; err.style.display='block'; }
+      else { last = d; render(d); }
+    } catch(e){ err.textContent='Something went wrong scanning that site. Try again.'; err.style.display='block'; }
+    btn.disabled=false; btn.textContent='Scan free';
+  }
+
+  function render(d){
+    el('results').style.display='block';
+    el('scoreUrl').textContent = d.url;
+    el('gradeLetter').textContent = d.grade;
+    el('gradeLetter').style.color = gcolor(d.grade);
+    el('summary').textContent = d.summary;
+    // ring
+    var ring = el('ring'); ring.style.setProperty('--rc', gcolor(d.grade));
+    requestAnimationFrame(function(){ ring.style.setProperty('--v', d.score); });
+    // count up
+    var n=0, target=d.score, step=Math.max(1,Math.round(target/40));
+    var iv=setInterval(function(){ n=Math.min(target,n+step); el('scoreNum').textContent=n; if(n>=target) clearInterval(iv); }, 26);
+    // pills
+    el('pills').innerHTML = '<span class="pill g">'+d.passed+' checks passing</span>' +
+      (d.issues.length ? '<span class="pill b">'+d.issues.length+' to fix</span>' : '');
+    // issues
+    el('issues').innerHTML = d.issues.length ? d.issues.map(function(i){
+      var fail = i.score < 0.5;
+      return '<div class="issue'+(fail?' fail':'')+'"><div class="it"><span class="nm">'+esc(i.title)+'</span><span class="wc">'+esc(i.wcag)+'</span></div>'+
+        '<div class="d">'+esc(i.detail)+'</div></div>';
+    }).join('') : '<div class="issue" style="border-left-color:var(--good)"><div class="d">No automated issues found on this page — nice work. A manual review is still recommended for full conformance.</div></div>';
+    // passed
+    el('passed').innerHTML = d.categories.filter(function(c){return c.pass;}).map(function(c){ return '<span>✓ '+esc(c.title)+'</span>'; }).join('') || '<span style="color:var(--muted);background:none">—</span>';
+    // industry
+    var iw = el('industryWrap');
+    if(d.industryCheck){
+      var ic = d.industryCheck, miss = !ic.present;
+      iw.innerHTML = '<div class="section-t">🏷️ Industry disclosure ('+esc(ic.industry)+')</div>'+
+        '<div class="industry'+(miss?' miss':'')+'"><b>'+(miss?'⚠️ ':'✓ ')+esc(ic.message)+'</b>'+
+        '<div style="color:var(--muted);font-size:13px;margin-top:6px">'+esc(ic.why)+' This is informational, not legal advice — confirm your state\'s rule.</div></div>';
+    } else iw.innerHTML='';
+    // disclaimer
+    el('disc').textContent = d.disclaimer;
+    el('results').scrollIntoView({behavior:'smooth', block:'start'});
+  }
+
+  async function referToRR(e){
+    e.preventDefault();
+    var btn = el('leadBtn'); btn.disabled=true; btn.innerHTML='<span class="spin"></span>';
+    try{
+      await fetch('/api/audit-lead', {method:'POST',headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ email: el('leadEmail').value.trim(), phone: el('leadPhone').value.trim(),
+          url: last.url, score: last.score, grade: last.grade, industry: el('industry').value })});
+    } catch(e){}
+    el('leadOk').style.display='block';
+    e.target.style.display='none';
+    btn.disabled=false; btn.textContent='Get my fix plan';
+    return false;
+  }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+</script>
+</body>
+</html>
