@@ -288,8 +288,17 @@
     <div id="sched-strip" style="display:none"></div>
     <div class="row-between">
       <div><h2>Pipeline</h2><p class="sub">Drag deals across stages. Acquired deals flow into the build pipeline.</p></div>
-      <button class="btn btn-primary" onclick="openClient()">+ Add customer</button>
+      <div style="display:flex;gap:10px;align-items:center">
+        <div class="seg" id="pipe-owner">
+          <button class="on" onclick="setPipeOwner('all')">Combined</button>
+          <button onclick="setPipeOwner('mine')">Mine</button>
+          <button onclick="setPipeOwner('brandon')">Brandon</button>
+          <button onclick="setPipeOwner('eric')">Eric</button>
+        </div>
+        <button class="btn btn-primary" onclick="openClient()">+ Add customer</button>
+      </div>
     </div>
+    <div id="pipe-owner-sum" class="sub" style="margin:2px 0 10px"></div>
     <div class="board" id="board"></div>
   </div>
 
@@ -1183,10 +1192,31 @@ async function updateLeadFromPlace(i){
 }
 
 /* ===== PIPELINE (kanban) ===== */
+var PIPE_OWNER='all';
+function pipeOwnerOf(){ return PIPE_OWNER==='mine' ? myPerson() : PIPE_OWNER; }
+function setPipeOwner(o){
+  PIPE_OWNER=o;
+  var who=pipeOwnerOf(), seg=el('pipe-owner');
+  if(seg){ var btns=seg.querySelectorAll('button'); for(var i=0;i<btns.length;i++) btns[i].classList.remove('on');
+    var idx={all:0,mine:1,brandon:2,eric:3}[o]; if(btns[idx]) btns[idx].classList.add('on'); }
+  renderBoard();
+}
+function pipeFiltered(){
+  var who=pipeOwnerOf();
+  return who==='all' ? clients.slice() : clients.filter(function(c){return c.acquired_by===who;});
+}
 function renderBoard(){
   var b = el('board'); b.innerHTML='';
+  var list=pipeFiltered();
+  var sumEl=el('pipe-owner-sum');
+  if(sumEl){
+    var open=list.filter(function(c){return c.stage!=='archived';});
+    var onb=open.reduce(function(a,c){return a+Number(c.onboarding_fee||0);},0);
+    var label=PIPE_OWNER==='all'?'Combined — Brandon + Eric':(pipeOwnerOf().charAt(0).toUpperCase()+pipeOwnerOf().slice(1));
+    sumEl.textContent=label+': '+open.length+' active deal'+(open.length===1?'':'s')+' · $'+onb.toLocaleString()+' onboarding in pipeline';
+  }
   STAGES.forEach(function(stage){
-    var items = clients.filter(function(c){return c.stage===stage.id;});
+    var items = list.filter(function(c){return c.stage===stage.id;});
     var sum = items.reduce(function(a,c){return a+Number(c.onboarding_fee||0);},0);
     var col = document.createElement('div'); col.className='col'; col.dataset.stage=stage.id;
     col.innerHTML='<div class="col-head"><div class="name"><span class="swatch" style="background:'+stage.color+'"></span>'+stage.name+'</div><span class="pill">'+items.length+'</span></div>';
