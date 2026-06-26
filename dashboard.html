@@ -474,6 +474,7 @@
         <div class="field" style="margin:0;width:84px"><label>State</label><input id="lf-state" list="lf-states" placeholder="CA" maxlength="2" style="text-transform:uppercase" onkeydown="if(event.key==='Enter')findLeads()"></div>
         <div class="field" style="margin:0;flex:1 1 140px;min-width:120px"><label>Keyword <span style="color:var(--muted-2)">(optional)</span></label><input id="lf-keyword" placeholder="family owned" onkeydown="if(event.key==='Enter')findLeads()"></div>
         <button class="btn btn-primary btn-sm" onclick="findLeads()" style="height:42px;margin:0">🔮 Search</button>
+        <button class="btn btn-ghost btn-sm" onclick="rollDice()" style="height:42px;margin:0" title="20 random businesses anywhere in the USA — no website, but phone + good Google reviews">🎲 Roll the Dice</button>
       </div>
       <div style="padding:0 18px 16px;display:flex;gap:18px;align-items:center;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:13px">
         <div class="field" style="margin:0;width:96px"><label>Min rating</label><input id="lf-rating" type="number" step="0.1" min="0" max="5" value="4.0"></div>
@@ -953,6 +954,7 @@ function renderScheduledStrip(){
       '<label style="display:flex;align-items:center;gap:5px;cursor:pointer"><input type="checkbox" style="width:13px;height:13px" '+(allOn?'checked':'')+' onclick="toggleSchedSelAll()"> Select all</label>'+
       (sel.length?('<span style="color:var(--muted)">'+sel.length+' selected</span>'+
         '<span style="margin-left:auto;display:flex;gap:14px">'+
+          '<span class="reveal" onclick="markSelectedSent()">mark sent</span>'+
           '<span class="reveal" onclick="openResched(null)">reschedule selected</span>'+
           '<span class="reveal" onclick="cancelSelectedScheduled()">cancel selected</span>'+
         '</span>')
@@ -965,6 +967,7 @@ function renderScheduledStrip(){
       '<span style="color:var(--muted-2);flex:1 1 auto;min-width:40px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(s.subject||'(no subject)')+'</span>'+
       '<span style="color:var(--brand);font-weight:600;flex:0 0 auto;white-space:nowrap">🕗 '+schedWhenLbl(s.send_at)+'</span>'+
       '<span style="flex:0 0 auto;display:flex;gap:10px;white-space:nowrap">'+
+        '<span class="reveal" onclick="markScheduledSent(\''+s.id+'\')" title="Mark sent &amp; remove from the auto-send queue">sent</span>'+
         '<span class="reveal" onclick="openResched(\''+s.id+'\')">edit</span>'+
         '<span class="reveal" onclick="cancelScheduled(\''+s.id+'\')">cancel</span>'+
       '</span>'+
@@ -978,6 +981,24 @@ async function cancelScheduled(id){
   if(r.error){ alert(r.error.message); return; }
   var s=scheduledEmails.find(function(x){return x.id===id;}); if(s) s.status='canceled';
   delete schedSel[id]; renderScheduledStrip();
+}
+// Mark a scheduled send as already sent — removes it from the auto-send queue (cron skips status!=scheduled).
+// Use after you've sent it yourself, or to clear one you don't want auto-sending.
+async function markScheduledSent(id){
+  if(!confirm('Mark this as sent? It leaves the queue and will NOT auto-send. (Use this if you already sent it yourself.)')) return;
+  await applySent([id]);
+}
+async function markSelectedSent(){
+  var ids=selectedSchedIds(); if(!ids.length) return;
+  if(!confirm('Mark '+ids.length+' as sent? They leave the queue and will NOT auto-send. (Use this if you already sent them yourself.)')) return;
+  await applySent(ids);
+}
+async function applySent(ids){
+  var nowIso=new Date().toISOString();
+  var r=await sb.from('rr_scheduled_emails').update({status:'sent', sent_at:nowIso}).in('id',ids);
+  if(r.error){ alert(r.error.message); return; }
+  ids.forEach(function(id){ var s=scheduledEmails.find(function(x){return x.id===id;}); if(s){ s.status='sent'; s.sent_at=nowIso; } delete schedSel[id]; });
+  renderScheduledStrip();
 }
 async function cancelSelectedScheduled(){
   var ids=selectedSchedIds(); if(!ids.length) return;
@@ -1231,6 +1252,24 @@ async function findLeads(){
     autoEnrichTop(); // automatically find emails for the top results (no click needed)
   }catch(e){ box.innerHTML='<div class="panel"><div class="empty" style="padding:18px">Could not reach the lead finder ('+esc(e.message||'network error')+').</div></div>'; }
 }
+// 🎲 Roll the Dice — 20 random no-website businesses anywhere in the USA with phone + good reviews.
+async function rollDice(){
+  var box=el('leads-results');
+  box.innerHTML='<div class="panel"><div class="empty" style="padding:18px">🎲 Rolling the dice across the country…</div></div>';
+  var t=await authToken(); if(!t){ alert('Please sign in again.'); return; }
+  try{
+    var r=await fetch('/api/places',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t},
+      body:JSON.stringify({dice:true, minRating:Number(el('lf-rating').value)||4.0, minReviews:Number(el('lf-reviews').value)||10})});
+    if(r.status===404){ box.innerHTML='<div class="panel"><div class="empty" style="padding:18px">Lead finder not deployed yet — redeploy the site in Cloudflare, then try again.</div></div>'; return; }
+    var d=await r.json().catch(function(){return {error:'Unexpected response (HTTP '+r.status+').'};});
+    if(d.error){ box.innerHTML='<div class="panel"><div class="empty" style="padding:18px;white-space:pre-wrap">'+esc(d.error)+'</div></div>'; return; }
+    lastLeads=d.places||[];
+    lastLeadsMeta={totalFound:d.totalFound||0, withSite:0, withPhone:lastLeads.length, dice:true, citiesRolled:d.citiesRolled||0};
+    if(!lastLeads.length){ box.innerHTML='<div class="panel"><div class="empty" style="padding:18px">The dice came up empty this time — roll again (it samples random cities each time).</div></div>'; return; }
+    renderLeads();
+    autoEnrichTop(10); // dice leads want emails — find more of them automatically
+  }catch(e){ box.innerHTML='<div class="panel"><div class="empty" style="padding:18px">Could not reach the lead finder ('+esc(e.message||'network error')+').</div></div>'; }
+}
 function leadScoreBadge(p){
   var s=Number(p.score||0);
   var cls=s>=85?'lf-hot':(s>=70?'lf-strong':(s>=50?'lf-warm':'lf-cool'));
@@ -1241,10 +1280,10 @@ function leadScoreBadge(p){
 // Auto-enrich the top results so emails show without clicking. Capped to keep API usage sane.
 var AUTO_ENRICH_N=5;
 var enrichOff=false; // set once we learn SERPER_API_KEY isn't configured — then we stop trying (no popups)
-async function autoEnrichTop(){
+async function autoEnrichTop(count){
   if(enrichOff) return;
   var t=await authToken(); if(!t) return;
-  var n=Math.min(AUTO_ENRICH_N, lastLeads.length);
+  var n=Math.min(count||AUTO_ENRICH_N, lastLeads.length);
   for(var i=0;i<n;i++){
     var p=lastLeads[i];
     if(!p || p.email || p._enrich) continue;
@@ -1256,7 +1295,7 @@ async function autoEnrichTop(){
       var d=await r.json().catch(function(){return {error:'failed'};});
       if(d.error && /not configured/i.test(d.error)){ enrichOff=true; renderLeads(); return; } // not set up — stop quietly, show banner
       p._enrich=d;
-      if(d.emails && d.emails.length) p.email=d.emails[0];
+      if(d.emails && d.emails.length){ p.email=d.emails[0]; p.score=Math.min(100,(Number(p.score)||0)+8); } // a reachable email lifts the opportunity score
       renderLeads();
     }catch(e){ /* skip this one, keep going */ }
   }
@@ -1645,6 +1684,13 @@ var LEGEND_GROUPS=[
     ['📅 Follow up…','Follow-up reminder date (turns red when overdue)'],
     ['💲 Owes…','Has an outstanding balance'],
     ['faded tile','Stale — no activity in 7+ days']
+  ]},
+  {title:'Find Leads — opportunity score', items:[
+    ['🔥 85+','Hot — no website, strong reviews, reachable by phone. Call these first.'],
+    ['⭐ 70+','Strong lead'],
+    ['• 50+','Warm lead'],
+    ['· under 50','Cool — weaker fit'],
+    ['🔮 how','Weighs no-website heaviest, then a callable phone, then review count & rating. A found email adds points.']
   ]}
 ];
 function toggleLegend(){
