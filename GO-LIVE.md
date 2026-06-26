@@ -232,9 +232,10 @@ Lets a partner's reps refer leads that land straight in your pipeline (`acquired
 - `POST /api/partner/lead` → create a lead. Body: `{business_name, contact_name?, email?, phone?, rep?, plan?, notes?}`. Dedupes by email/phone.
 - `GET  /api/partner/leads` → the partner's own referred leads + current stage (so reps see status). Never exposes the rest of your pipeline or any credentials.
 
-**⚠️ Blanks for you to decide (business terms, not code):**
-- **Referral commission** — what Ryzen earns (e.g. 10–20% of MRR for N months, or a flat per-deal bounty). The system tags partner revenue so you can calculate it; once you set the %, track payouts as an expense. Tell me the terms and I'll wire automatic commission math into the Money tab.
-- **Reseller agreement** — a short partner contract (commission, term, who owns the client, non-circumvention). Have your attorney review; I can draft a starting template.
+**Commission (set — Ryzen Recruit):** Rank Rebels pays Ryzen **50% of onboarding** + **15% of monthly revenue**. Ryzen pays its rep **$500/deal + a 5% monthly override** out of that, and the rep owns the customer relationship (monthly check-ins). The Money tab now shows a **"Partner payouts"** panel with the commission owed per partner — pay it, then log it as an expense. To change terms or add another partner with different rates, edit `PARTNER_TERMS` in `dashboard.html`.
+
+**⚠️ Still to do (business terms, not code):**
+- **Reseller agreement** — a short partner contract (the commission above, term, who owns the client, non-circumvention). Have your attorney review; I can draft a starting template.
 - **Key security** — if reps use the included `partner-portal.html` as a public page, the key is visible in its source. Either host it behind Ryzen's own login, or have their Claude Code put the key in a tiny server-side proxy. (For internal rep use this is usually fine; the key can only *create* leads.)
 
 ---

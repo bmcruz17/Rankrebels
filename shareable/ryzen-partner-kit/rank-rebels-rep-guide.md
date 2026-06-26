@@ -113,6 +113,19 @@ Rank Rebels works in monthly plans with a one-time setup fee. Rough ranges:
 
 ---
 
+## 8.5 What you earn (rep commission)
+You **don't have to close** — Rank Rebels does the quote, contract, and build. You spark interest, refer, and then **own the relationship**.
+
+- **$500 per closed deal** (one-time, when the customer onboards).
+- **5% monthly override** on that customer's monthly bill — paid every month **for as long as they stay a customer**.
+- **Your ongoing job:** check in with your customers monthly. Happy customers stay, and your 5% override keeps paying. That's the whole game — refer good businesses, keep them happy.
+
+> Example: you refer a shop that signs a $2,000 onboarding + $599/mo plan. You earn **$500 up front** plus **~$30/mo** for as long as they stay. Refer 20 active customers and that monthly override adds up fast.
+
+*(Commissions are paid by Ryzen Recruit. Rank Rebels pays Ryzen 50% of onboarding + 15% of monthly; your $500 + 5% comes from that.)*
+
+---
+
 ## 9. How to refer a lead (2 ways)
 1. **The rep portal** (`partner-portal.html`) — fill in the lead and hit submit. It lands in Rank Rebels' pipeline instantly, tagged as referred by you.
 2. **Hand off by phone/email** if you don't have the portal handy — but the portal is faster and you get to see status.
@@ -123,7 +136,7 @@ Rank Rebels works in monthly plans with a one-time setup fee. Rough ranges:
 
 ## 10. FAQ
 - **Do I close the sale?** No — you spark interest and refer. Rank Rebels quotes, contracts, and builds.
-- **What do I earn?** Commission terms are set between Ryzen Recruit and Rank Rebels — confirm your rate with your manager. (See note in README.)
+- **What do I earn?** $500 per closed deal + a 5% monthly override for as long as the customer stays (see §8.5). Your job is to keep them happy with a monthly check-in.
 - **What happens after I submit?** Rank Rebels reaches out within one business day. You can watch the lead's status in the portal.
 - **Can I see if my lead closed?** Yes — the portal shows each referred lead's current stage.
 

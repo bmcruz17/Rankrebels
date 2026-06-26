@@ -275,6 +275,13 @@
       <table id="onboarding-tbl"></table>
     </div>
 
+    <div class="panel" id="partner-payout-panel" style="display:none">
+      <div class="panel-h">Partner payouts (commission owed to resellers)
+        <span style="font-weight:500;font-size:12.5px;color:var(--muted)">deduct as an expense when you pay them</span>
+      </div>
+      <table id="partner-payout-tbl"></table>
+    </div>
+
     <div class="panel">
       <div class="panel-h">Expenses
         <span style="display:flex;gap:8px;align-items:center">
@@ -1395,8 +1402,41 @@ function renderMoney(){
   if(!expenses.length) et='<tr><td colspan="5" class="empty">No expenses yet.</td></tr>';
   el('expense-tbl').innerHTML='<thead><tr><th>Label</th><th>Category</th><th>Type</th><th class="num">Amount</th><th></th></tr></thead><tbody>'+et+'</tbody>';
   renderReimbursements();
+  renderPartnerPayouts();
 }
 function live_count(){ return clients.filter(function(c){return c.stage==='published';}).length; }
+
+/* ===== PARTNER PAYOUTS (reseller commissions) =====
+   Terms per partner. onbPct = % of onboarding fee owed to the partner; mrrPct = % of monthly.
+   The rep's cut is INTERNAL to the partner (shown in the kit), so it's not deducted here.
+   In-house brands (e.g. AccessGrade) earn nothing — they're us. */
+var PARTNER_TERMS = {
+  'Ryzen Recruit':            { onbPct:0.50, mrrPct:0.15, repFlatOnb:500, repMrrPct:0.05 },
+  'AccessGrade (ADA Audit)':  { onbPct:0,    mrrPct:0 }, // in-house referral brand
+  '_default':                 { onbPct:0.50, mrrPct:0.15 }
+};
+function partnerTerms(name){ return PARTNER_TERMS[name] || PARTNER_TERMS._default; }
+function partnerPayouts(){
+  var booked = clients.filter(function(c){return c.partner && ['accepted','in_build','finalized','published'].indexOf(c.stage)>=0;});
+  var live   = clients.filter(function(c){return c.partner && c.stage==='published';});
+  var byP={};
+  function row(name){ if(!byP[name]) byP[name]={partner:name, onb:0, mrr:0, deals:0, terms:partnerTerms(name)}; return byP[name]; }
+  booked.forEach(function(c){ var r=row(c.partner); r.onb += Number(c.onboarding_fee||0)*r.terms.onbPct; r.deals++; });
+  live.forEach(function(c){ var r=row(c.partner); r.mrr += Number(c.monthly_charge||0)*r.terms.mrrPct; });
+  return Object.keys(byP).map(function(k){ var r=byP[k]; r.total=r.onb+r.mrr; return r; })
+    .filter(function(r){ return r.terms.onbPct||r.terms.mrrPct; }); // hide in-house (0%) brands
+}
+function renderPartnerPayouts(){
+  var rows=partnerPayouts();
+  var panel=el('partner-payout-panel'); if(!panel) return;
+  if(!rows.length){ panel.style.display='none'; return; }
+  panel.style.display='';
+  el('partner-payout-tbl').innerHTML='<thead><tr><th>Partner</th><th class="num">Onboarding cut</th><th class="num">Monthly cut</th><th class="num">Owed now</th></tr></thead><tbody>'+
+    rows.map(function(r){
+      return '<tr><td><span class="partner-chip">🤝 '+esc(r.partner)+'</span> <span style="color:var(--muted);font-size:12px">'+Math.round(r.terms.onbPct*100)+'% onb · '+Math.round(r.terms.mrrPct*100)+'% mo</span></td>'+
+        '<td class="num">'+money(r.onb)+'</td><td class="num">'+money(r.mrr)+'/mo</td><td class="num"><b>'+money(r.total)+'</b></td></tr>';
+    }).join('')+'</tbody>';
+}
 
 /* ===== BUDGET (month-by-month P&L, mirrors Eric's budget sheet) ===== */
 function monthIndexInYear(d, year){

@@ -31,9 +31,18 @@ This kit lets **Ryzen Recruit reps sell Rank Rebels**. Reps learn the pitch, cal
 
 ---
 
-## How the money works (confirm the details)
-- Reps **don't close** — they spark interest and refer. Rank Rebels quotes, contracts, and builds.
-- **Commission / revenue-share between Ryzen Recruit and Rank Rebels is a business agreement to finalize** (e.g. a % of monthly revenue for N months, or a flat per-closed-deal bounty). Rank Rebels tags every Ryzen-referred deal so payouts can be calculated cleanly. **Confirm your rate with Rank Rebels and put it in writing before launch.**
+## How the money works
+
+**Ryzen Recruit earns (paid by Rank Rebels):**
+- **50% of the onboarding fee.** On a standard **$2,000** onboarding, that's **$1,000 to Ryzen** (Rank Rebels keeps the other $1,000).
+- **15% of the customer's monthly revenue** — ongoing, for as long as that customer stays a client.
+
+**The rep earns (paid by Ryzen, out of Ryzen's share):**
+- **$500 per closed deal** (from Ryzen's $1,000 onboarding cut — Ryzen keeps the ~$500 spread, or splits it however they decide).
+- **5% monthly override** on the customer's monthly revenue (out of Ryzen's 15% — Ryzen keeps the other 10%).
+- In return, **the rep owns the customer relationship**: a monthly check-in to keep the customer happy and retained. The monthly override continues as long as the customer stays.
+
+> Rank Rebels tags every Ryzen-referred deal and shows the commission owed in its own dashboard, so payouts are clean and auditable. Put these terms in a short written partner agreement before launch.
 
 ---
 
