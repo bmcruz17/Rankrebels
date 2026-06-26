@@ -1,0 +1,30 @@
+name: Send scheduled emails
+
+# Triggers the scheduled-send processor. Each queued email carries an exact send_at
+# (e.g. tomorrow 8:30am Pacific); the processor only sends ones whose time has passed,
+# so the email goes out on the first run after its scheduled time.
+
+on:
+  schedule:
+    # every 20 min, 15:00–18:59 UTC = ~7:00–11:59 PT (covers 8:30 PST and PDT)
+    - cron: "*/20 15-18 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: send-scheduled
+  cancel-in-progress: false
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run processor
+        run: |
+          code=$(curl -sS -o /tmp/out.json -w "%{http_code}" -X POST \
+            "https://rankrebels.ai/api/google/run-scheduled" \
+            -H "X-Sched-Secret: ${{ secrets.SCHED_SECRET }}")
+          echo "HTTP $code"; cat /tmp/out.json || true
+          test "$code" = "200"

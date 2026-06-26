@@ -18,6 +18,7 @@ Env vars only load on a *new* build, so always Retry Deployment after changing t
 | `STRIPE_SECRET_KEY` | Stripe invoices (customers pay by card/ACH) | ⬜ optional — needs a Stripe account |
 | `SERPER_API_KEY` | Lead enrichment (email/socials for no-website leads) | ⬜ optional — free at serper.dev |
 | `PARTNER_KEYS` | Partner/reseller lead API (e.g. Ryzen) | ⬜ add to launch the channel program |
+| `SCHED_SECRET` | Auth for the scheduled-email send processor | ⬜ any long random string — also add as a GitHub repo secret |
 
 > The public **Turnstile site key** is wired into `index.html` + `dashboard.html` (`TURNSTILE_SITE_KEY`). ✅ done.
 > **Supabase SQL:** ✅ all run successfully.
@@ -74,6 +75,25 @@ alter table rr_blog_posts enable row level security;
 drop policy if exists rr_blog_public_read on rr_blog_posts;
 create policy rr_blog_public_read on rr_blog_posts for select to anon using (published = true);
 -- (the daily bot inserts via the service-role key, which bypasses RLS)
+
+-- 2c2) Scheduled emails (AI draft now, auto-send at a set time)
+create table if not exists rr_scheduled_emails (
+  id uuid primary key default gen_random_uuid(),
+  client_id uuid,
+  sender_email text not null,
+  to_email text not null,
+  subject text,
+  draft_id text,
+  send_at timestamptz not null,
+  status text default 'scheduled',
+  error text,
+  sent_at timestamptz,
+  created_at timestamptz default now()
+);
+alter table rr_scheduled_emails enable row level security;
+drop policy if exists rr_sched_team on rr_scheduled_emails;
+create policy rr_sched_team on rr_scheduled_emails for all to authenticated
+  using (public.rr_is_team()) with check (public.rr_is_team());
 
 -- 2d) Time clock (scoreboard hours)
 create table if not exists rr_time (
