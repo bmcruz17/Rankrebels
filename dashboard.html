@@ -811,7 +811,8 @@ async function autoEnrichTop(){
     }catch(e){ /* skip this one, keep going */ }
   }
 }
-function leadExists(name, phone){ return clients.some(function(c){ return (phone&&c.phone&&telDigits(c.phone)===telDigits(phone)) || (c.business_name||'').toLowerCase()===(name||'').toLowerCase(); }); }
+function findExistingLead(name, phone){ return clients.find(function(c){ return (phone&&c.phone&&telDigits(c.phone)===telDigits(phone)) || (c.business_name||'').toLowerCase()===(name||'').toLowerCase(); }) || null; }
+function leadExists(name, phone){ return !!findExistingLead(name, phone); }
 function renderLeads(){
   var box=el('leads-results');
   if(!lastLeads.length){
@@ -824,7 +825,7 @@ function renderLeads(){
     box.innerHTML='<div class="panel"><div class="empty" style="padding:18px">'+esc(msg)+'</div></div>'; return;
   }
   var rows=lastLeads.map(function(p,i){
-    var added=leadExists(p.name,p.phone);
+    var existing=findExistingLead(p.name,p.phone);
     var contact = p._enrich ? ('<div id="enr-'+i+'" style="font-size:12px;color:var(--muted)">'+enrichHTML(p._enrich)+'</div>')
       : enrichOff ? '<span id="enr-'+i+'" style="font-size:12px;color:var(--muted-2)">email lookup off</span>'
       : ('<span class="reveal" id="enr-'+i+'" onclick="enrichLead('+i+')">🔍 find email & socials</span>');
@@ -841,7 +842,7 @@ function renderLeads(){
       '<td style="white-space:nowrap">'+(p.phone?'<a class="reveal" href="tel:'+telDigits(p.phone)+'">📞 '+esc(p.phone)+'</a>':'<span style="color:var(--muted-2)">—</span>')+'</td>'+
       '<td style="min-width:160px">'+siteHtml+'<br>'+contact+'</td>'+
       '<td style="white-space:nowrap">'+(p.mapsUri?'<a class="reveal" href="'+esc(p.mapsUri)+'" target="_blank" rel="noopener" title="Open Google Business profile">profile</a> · ':'')+
-        (added?'<span style="color:var(--muted-2)">added ✓</span>':'<span class="reveal" onclick="addLeadFromPlace('+i+')">+ pipeline</span>')+'</td></tr>';
+        (existing?'<span class="reveal" title="Add the latest found details to the existing pipeline card" onclick="updateLeadFromPlace('+i+')">↻ update card</span>':'<span class="reveal" onclick="addLeadFromPlace('+i+')">+ pipeline</span>')+'</td></tr>';
   }).join('');
   var hdrNote = enrichOff ? 'sorted by review count · tap a name to open its Google profile'
     : 'sorted by review count · tap a name to open its Google profile · emails auto-found for the top 5';
@@ -882,6 +883,27 @@ async function addLeadFromPlace(i){
   if(r.error){ alert(r.error.message); return; }
   if(r.data) clients.push(r.data);
   renderLeads(); renderBoard();
+}
+// Merge the latest Find Leads details onto an existing pipeline card (fills blanks, never clobbers).
+async function updateLeadFromPlace(i){
+  var p=lastLeads[i]; if(!p) return;
+  var c=findExistingLead(p.name,p.phone); if(!c){ return addLeadFromPlace(i); }
+  var enr=p._enrich||{};
+  var socials=[enr.facebook,enr.instagram,enr.yelp].filter(Boolean).join('  ');
+  var foundEmail = p.email || (enr.emails && enr.emails[0]) || '';
+  var patch={};
+  if(foundEmail && !c.email) patch.email=foundEmail;
+  if(p.phone && !c.phone) patch.phone=p.phone;
+  if(p.address && !c.address) patch.address=p.address;
+  var note='Updated from lead finder — ⭐'+p.rating+' ('+p.reviews+' reviews)'+(p.website?(' · site: '+p.website):' · no website')+
+    (foundEmail?('\nEmail: '+foundEmail):'')+(socials?('\nSocials: '+socials):'')+(p.mapsUri?('\n'+p.mapsUri):'');
+  patch.notes=(c.notes?(c.notes+'\n\n'):'')+note;
+  var r=await sb.from('rr_clients').update(patch).eq('id',c.id).select().single();
+  if(r.error){ alert(r.error.message); return; }
+  var idx=clients.findIndex(function(x){return x.id===c.id;}); if(idx>=0 && r.data) clients[idx]=r.data;
+  renderLeads(); renderBoard();
+  var bits=[]; if(patch.email)bits.push('email'); if(patch.address)bits.push('address'); if(patch.phone)bits.push('phone');
+  alert('Updated "'+c.business_name+'"'+(bits.length?(' — added '+bits.join(', ')):'')+'. Full details saved to its notes.');
 }
 
 /* ===== PIPELINE (kanban) ===== */
