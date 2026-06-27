@@ -643,6 +643,44 @@ footer a{color:var(--aqua)}
   </div>
 </section>
 
+<!-- CONTACT -->
+<section id="contact" class="contact">
+  <div class="wrap">
+    <div class="contact-in">
+      <div>
+        <div class="kick" style="color:var(--aqua)">Get in touch</div>
+        <h2>Ready to claw your way to more bookings?</h2>
+        <p class="lead" style="color:#cdbfe8">Reach out to Island Claw Machine Co. and we'll get your event on the calendar.</p>
+        <div style="margin-top:24px">
+          <a class="cline" href="tel:+18088240348"><span class="ic">📞</span><span><b>Call or text</b>(808) 824-0348</span></a>
+          <a class="cline" href="mailto:islandclawmachineco@gmail.com"><span class="ic">✉️</span><span><b>Email</b>islandclawmachineco@gmail.com</span></a>
+          <a class="cline" href="https://instagram.com/islandclawmachineco" target="_blank" rel="noopener"><span class="ic">📸</span><span><b>Instagram</b>@islandclawmachineco</span></a>
+          <div class="cline"><span class="ic">📍</span><span><b>Based in</b>Honolulu, Hawai‘i</span></div>
+        </div>
+      </div>
+      <div class="form">
+        <h3>Quick custom quote</h3>
+        <div class="sub">Buying a machine, branding one, or franchising? Tell us what you're after.</div>
+        <form id="quoteForm" onsubmit="return submitQuote(event)">
+          <input type="text" name="company_url" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+          <div class="two">
+            <div><label>Name</label><input name="name" required placeholder="Your name"></div>
+            <div><label>Email</label><input type="email" name="email" required placeholder="you@email.com"></div>
+          </div>
+          <label>What are you interested in?</label>
+          <select name="interest" id="quoteInterest">
+            <option>Buying a machine</option><option>Custom / branded build</option><option>Corporate activation</option><option>Franchise / startup package</option><option>Content, reels &amp; social</option><option>Brand building</option><option>Hiring &amp; recruiting</option>
+          </select>
+          <label>Tell us more</label>
+          <textarea name="notes" rows="3" placeholder="Quantity, branding ideas, timeline, your city…"></textarea>
+          <button class="btn aqua" type="submit">Send my request →</button>
+          <div class="okmsg" id="quoteOk">✅ Got it — check your inbox! We just sent you a sample of the instant alert you'd get the moment a customer requests a quote. In your live site this lands in your pipeline and follows up automatically.</div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- PROPOSAL -->
 <section id="plan" class="prop">
   <div class="wrap center">
@@ -690,50 +728,12 @@ footer a{color:var(--aqua)}
       </div>
     </div>
     <div style="text-align:center;margin-top:40px">
-      <a class="btn sun" id="buildPay" href="#contact">Pay $500 &amp; let's build it →</a>
-      <div style="font-size:13px;color:#b9a9da;margin-top:12px">Secure $500 build fee today · then from $149/mo after you're live</div>
+      <a class="btn sun" id="buildPay" href="#contact">Let's build it →</a>
+      <div style="font-size:13px;color:#b9a9da;margin-top:12px">$500 build fee at checkout · then from $149/mo after you're live</div>
     </div>
     <div style="max-width:760px;margin:30px auto 0;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:22px 26px">
       <div style="font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--sun);font-weight:800;margin-bottom:10px">How billing works</div>
       <p style="font-size:14.5px;color:#e0d4f5;line-height:1.65;margin:0">Your <b>$500 build fee</b> is paid today to kick things off. Once your site is published and live, your <b>first monthly payment is due 30 days after the go-live date</b> — and we email your invoice <b>15 days before</b> each automatic payment is withdrawn, so there's never a surprise. Month-to-month — cancel anytime.</p>
-    </div>
-  </div>
-</section>
-
-<!-- CONTACT -->
-<section id="contact" class="contact">
-  <div class="wrap">
-    <div class="contact-in">
-      <div>
-        <div class="kick" style="color:var(--aqua)">Get in touch</div>
-        <h2>Ready to claw your way to more bookings?</h2>
-        <p class="lead" style="color:#cdbfe8">Reach out and we'll get your date — or your whole growth plan — rolling.</p>
-        <div style="margin-top:24px">
-          <a class="cline" href="tel:+18088240348"><span class="ic">📞</span><span><b>Call or text</b>(808) 824-0348</span></a>
-          <a class="cline" href="mailto:islandclawmachineco@gmail.com"><span class="ic">✉️</span><span><b>Email</b>islandclawmachineco@gmail.com</span></a>
-          <a class="cline" href="https://instagram.com/islandclawmachineco" target="_blank" rel="noopener"><span class="ic">📸</span><span><b>Instagram</b>@islandclawmachineco</span></a>
-          <div class="cline"><span class="ic">📍</span><span><b>Based in</b>Honolulu, Hawai‘i</span></div>
-        </div>
-      </div>
-      <div class="form">
-        <h3>Quick custom quote</h3>
-        <div class="sub">Buying a machine, branding one, or franchising? Tell us what you're after.</div>
-        <form id="quoteForm" onsubmit="return submitQuote(event)">
-          <input type="text" name="company_url" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
-          <div class="two">
-            <div><label>Name</label><input name="name" required placeholder="Your name"></div>
-            <div><label>Email</label><input type="email" name="email" required placeholder="you@email.com"></div>
-          </div>
-          <label>What are you interested in?</label>
-          <select name="interest" id="quoteInterest">
-            <option>Buying a machine</option><option>Custom / branded build</option><option>Corporate activation</option><option>Franchise / startup package</option><option>Content, reels &amp; social</option><option>Brand building</option><option>Hiring &amp; recruiting</option>
-          </select>
-          <label>Tell us more</label>
-          <textarea name="notes" rows="3" placeholder="Quantity, branding ideas, timeline, your city…"></textarea>
-          <button class="btn aqua" type="submit">Send my request →</button>
-          <div class="okmsg" id="quoteOk">✅ Got it — check your inbox! We just sent you a sample of the instant alert you'd get the moment a customer requests a quote. In your live site this lands in your pipeline and follows up automatically.</div>
-        </form>
-      </div>
     </div>
   </div>
 </section>
