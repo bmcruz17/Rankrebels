@@ -170,11 +170,13 @@
     background:#f3f2ec;
   }
   .logo .mark img{width:108%;height:108%;object-fit:contain;display:block}
-  .nav-links{display:flex;align-items:center;gap:28px}
-  .nav-links a{color:var(--muted);font-size:15px;font-weight:500;transition:.15s}
+  .nav-links{display:flex;align-items:center;gap:19px}
+  .nav-links a{color:var(--muted);font-size:14px;font-weight:500;transition:.15s;white-space:nowrap}
   .nav-links a:hover{color:var(--text)}
-  .nav-cta{display:flex;align-items:center;gap:14px}
-  @media(max-width:860px){.nav-links{display:none}}
+  .nav-cta{display:flex;align-items:center;gap:10px}
+  .nav-cta .btn{white-space:nowrap}
+  @media(max-width:1180px){.nav-links{gap:15px;font-size:13px}}
+  @media(max-width:1024px){.nav-links{display:none}}
 
   /* HERO */
   .hero{position:relative;padding:90px 0 70px;text-align:center;overflow:hidden}
@@ -746,9 +748,13 @@
   /* Hero: rotating "search" queries with a typing effect. Purely decorative. */
   (function(){
     var el = document.getElementById('rrtxt'); if(!el) return;
-    var phrases = ['best plumber near me','steam cleaning near me','web design company','auto repair open now','top rated electrician'];
+    var def = ['best plumber near me','steam cleaning near me','web design company','auto repair open now','top rated electrician'];
+    var phrases = (window.__rrPhrases && window.__rrPhrases.length) ? window.__rrPhrases : def;
     var pi = 0, ci = 0, deleting = false;
+    window.addEventListener('rr-lang', function(){ phrases = (window.__rrPhrases && window.__rrPhrases.length) ? window.__rrPhrases : def; pi = 0; ci = 0; deleting = false; el.textContent = ''; });
     function tick(){
+      if(!phrases.length) phrases = def;
+      pi = pi % phrases.length;
       var w = phrases[pi];
       el.textContent = w.slice(0, ci);
       if(!deleting){
