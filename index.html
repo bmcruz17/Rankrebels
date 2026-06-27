@@ -441,7 +441,26 @@
   .area-links{display:flex;flex-wrap:wrap;gap:8px 9px}
   .area-links a{font-size:13px;color:var(--brand);background:#fff;border:1px solid var(--line);padding:7px 12px;border-radius:999px;text-decoration:none;transition:.12s}
   .area-links a:hover{border-color:var(--brand);transform:translateY(-1px)}
+  /* language switcher */
+  .langpick{position:relative}
+  #rr-lang-btn{display:inline-flex;align-items:center;gap:5px;background:transparent;border:1px solid var(--line);color:var(--ink);font:inherit;font-size:13.5px;font-weight:600;padding:8px 12px;border-radius:10px;cursor:pointer}
+  #rr-lang-btn:hover{border-color:var(--brand)}
+  #rr-lang-menu{position:absolute;top:calc(100% + 6px);right:0;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 16px 40px -12px rgba(20,50,30,.25);padding:6px;display:none;z-index:80;min-width:150px}
+  #rr-lang-menu.open{display:block}
+  #rr-lang-menu button{display:block;width:100%;text-align:left;background:transparent;border:0;font:inherit;font-size:14px;padding:9px 12px;border-radius:8px;cursor:pointer;color:var(--ink)}
+  #rr-lang-menu button:hover{background:var(--bg-soft)}
+  #rr-lang-menu button[aria-current="true"]{background:rgba(21,128,61,.1);color:var(--brand);font-weight:700}
+  html[dir="rtl"] body{text-align:right}
+  html[dir="rtl"] #rr-lang-menu{right:auto;left:0;text-align:right}
 </style>
+<link rel="alternate" hreflang="es" href="https://rankrebels.ai/?lang=es">
+<link rel="alternate" hreflang="zh" href="https://rankrebels.ai/?lang=zh">
+<link rel="alternate" hreflang="vi" href="https://rankrebels.ai/?lang=vi">
+<link rel="alternate" hreflang="tl" href="https://rankrebels.ai/?lang=tl">
+<link rel="alternate" hreflang="fr" href="https://rankrebels.ai/?lang=fr">
+<link rel="alternate" hreflang="ar" href="https://rankrebels.ai/?lang=ar">
+<link rel="alternate" hreflang="en" href="https://rankrebels.ai/">
+<link rel="alternate" hreflang="x-default" href="https://rankrebels.ai/">
 </head>
 <body>
 
@@ -460,6 +479,7 @@
       <a href="#faq">FAQ</a>
     </nav>
     <div class="nav-cta">
+      <div id="langpick" class="langpick"></div>
       <a class="btn btn-ghost" href="/dashboard">Team login</a>
       <a class="btn btn-primary" href="#contact">Get a free audit</a>
     </div>
@@ -887,5 +907,6 @@
     btn.disabled=false; input.focus();
   }
 </script>
+<script src="/i18n.js" defer></script>
 </body>
 </html>
