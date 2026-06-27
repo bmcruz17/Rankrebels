@@ -66,68 +66,123 @@ function renderSite(row) {
   const d = row.data || {}; const c = d.copy || {};
   const accent = /^#[0-9a-f]{6}$/i.test(c.accent || '') ? c.accent : '#15803d';
   const photos = d.photos || [];
-  const hero = photos.length ? `linear-gradient(rgba(8,12,10,.45),rgba(8,12,10,.65)), url('?photo=0')` : `linear-gradient(135deg, ${accent}, #0f1512)`;
-  const services = (c.services || []).map(s => `<div class="svc"><h3>${esc(s.title)}</h3><p>${esc(s.desc)}</p></div>`).join('');
-  const highlights = (c.highlights || []).map(h => `<span class="hl">✓ ${esc(h)}</span>`).join('');
-  const gallery = photos.slice(1, 6).map((_, i) => `<div class="gphoto" style="background-image:url('?photo=${i + 1}')"></div>`).join('');
-  const hours = (d.hours || []).map(h => `<div>${esc(h)}</div>`).join('');
+  const heroBg = photos.length ? `linear-gradient(180deg,rgba(8,12,10,.30),rgba(8,12,10,.72)), url('?photo=0')` : `linear-gradient(140deg, ${accent} 0%, #0c1510 100%)`;
+  const tel = (d.phone || '').replace(/[^0-9+]/g, '');
+  const ratingBadge = d.rating ? `<a class="pill" href="#contact">★ ${d.rating} on Google${d.reviews ? ` · ${d.reviews} reviews` : ''}</a>` : '';
+  const services = (c.services || []).map((s, i) => `<div class="svc"><div class="svc-n">${String(i + 1).padStart(2, '0')}</div><h3>${esc(s.title)}</h3><p>${esc(s.desc)}</p></div>`).join('');
+  const highlights = (c.highlights || []).map(h => `<div class="hl"><span class="hl-c">✓</span>${esc(h)}</div>`).join('');
+  const hasAbout = !!c.about;
+  const aboutPhoto = photos.length > 1 ? `<div class="about-img" style="background-image:url('?photo=1')"></div>` : '';
+  const gallery = photos.slice(2, 8).map((_, i) => `<div class="gphoto" style="background-image:url('?photo=${i + 2}')"></div>`).join('');
+  const hours = (d.hours || []).map(h => { const p = String(h).split(/:\s(.+)/); return `<div class="hrow"><span>${esc(p[0])}</span><span>${esc(p[1] || '')}</span></div>`; }).join('');
   return `<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content=noindex>
-<title>${esc(d.business_name)} — Preview</title>
+<title>${esc(d.business_name)}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:#1a241e;line-height:1.55;background:#fff;-webkit-user-select:none;user-select:none}
 :root{--a:${accent}}
-a{color:inherit}
-.hero{min-height:78vh;background:${hero};background-size:cover;background-position:center;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;color:#fff;padding:40px 22px}
-.hero h1{font-size:clamp(30px,6vw,56px);font-weight:850;letter-spacing:-.02em;text-shadow:0 2px 20px rgba(0,0,0,.4);max-width:900px}
-.hero .biz{font-size:13px;letter-spacing:.25em;text-transform:uppercase;opacity:.9;margin-bottom:14px;font-weight:700}
-.hero p{font-size:clamp(15px,2.4vw,20px);margin-top:14px;max-width:640px;text-shadow:0 1px 12px rgba(0,0,0,.4)}
-.cta{display:inline-block;margin-top:26px;background:var(--a);color:#fff;font-weight:800;font-size:17px;padding:15px 34px;border-radius:999px;text-decoration:none;box-shadow:0 10px 30px rgba(0,0,0,.25)}
-.hls{display:flex;flex-wrap:wrap;gap:10px 18px;justify-content:center;background:#f4f7f5;padding:16px 22px;font-size:13.5px;color:#3a4a40;font-weight:600}
-.hl{white-space:nowrap}
-section{max-width:1000px;margin:0 auto;padding:48px 22px}
-.sec-t{font-size:13px;letter-spacing:.18em;text-transform:uppercase;color:var(--a);font-weight:800;text-align:center;margin-bottom:10px}
-.about{font-size:clamp(17px,2.6vw,22px);text-align:center;color:#2a352e;max-width:760px;margin:0 auto;line-height:1.6}
-.svcs{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:26px}
-.svc{border:1px solid #e6ece8;border-radius:14px;padding:20px 18px;background:#fbfdfc}
-.svc h3{font-size:17px;margin-bottom:6px;color:#15201a}
-.svc p{font-size:13.5px;color:#5f6f66}
-.gal{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
-.gphoto{padding-top:72%;background-size:cover;background-position:center;border-radius:12px}
-.info{display:flex;flex-wrap:wrap;gap:30px;justify-content:center;text-align:center;font-size:14px;color:#3a4a40}
-.info b{display:block;color:var(--a);font-size:12px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:6px}
-.foot-cta{background:#0f1512;color:#fff;text-align:center;padding:50px 22px}
-.foot-cta h2{font-size:clamp(22px,4vw,32px);max-width:700px;margin:0 auto 12px}
-.foot-cta p{color:#9fb3a8;max-width:600px;margin:0 auto 22px;font-size:15px}
-/* watermark */
-.wm{position:fixed;inset:0;pointer-events:none;z-index:9998;background-image:repeating-linear-gradient(-30deg,transparent 0 140px,rgba(21,128,61,.08) 140px 142px);}
-.wm:after{content:"PREVIEW · RANK REBELS · PREVIEW · RANK REBELS · ";position:absolute;inset:-20% -20%;color:rgba(20,40,30,.06);font-size:42px;font-weight:900;line-height:2.6;word-spacing:18px;transform:rotate(-30deg);white-space:pre-wrap}
-.bar{position:sticky;top:0;z-index:9999;background:var(--a);color:#fff;text-align:center;font-size:12.5px;font-weight:700;padding:7px 14px}
-@media print{.wm,.bar{display:none}}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;color:#16201b;line-height:1.6;background:#fff;-webkit-font-smoothing:antialiased;-webkit-user-select:none;user-select:none}
+a{color:inherit;text-decoration:none}
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--a);color:#fff;font-weight:700;font-size:16px;padding:15px 30px;border-radius:12px;box-shadow:0 14px 34px -12px rgba(0,0,0,.5);transition:transform .15s}
+.btn:hover{transform:translateY(-2px)}
+.btn-o{background:rgba(255,255,255,.12);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.35);box-shadow:none}
+/* top nav */
+.nav{position:sticky;top:0;z-index:9000;display:flex;align-items:center;justify-content:space-between;padding:13px 26px;background:rgba(255,255,255,.85);backdrop-filter:blur(12px);border-bottom:1px solid #eef2ef}
+.nav .brand{font-weight:800;font-size:18px;letter-spacing:-.01em}
+.nav .brand b{color:var(--a)}
+.nav .ncta{background:var(--a);color:#fff;font-weight:700;font-size:14px;padding:9px 18px;border-radius:10px}
+/* hero */
+.hero{position:relative;min-height:86vh;background:${heroBg};background-size:cover;background-position:center;display:flex;flex-direction:column;justify-content:center;padding:60px 26px;color:#fff}
+.hero-in{max-width:1080px;margin:0 auto;width:100%}
+.hero .eyebrow{font-size:13px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;opacity:.92;margin-bottom:16px}
+.hero h1{font-size:clamp(34px,6.2vw,68px);font-weight:800;letter-spacing:-.025em;line-height:1.05;max-width:14ch;text-shadow:0 2px 30px rgba(0,0,0,.35)}
+.hero .sub{font-size:clamp(16px,2.3vw,21px);margin-top:18px;max-width:52ch;opacity:.96;text-shadow:0 1px 16px rgba(0,0,0,.4)}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;margin-top:34px}
+.pillrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:30px}
+.pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);color:#fff;font-size:13.5px;font-weight:600;padding:8px 14px;border-radius:999px;backdrop-filter:blur(6px)}
+/* trust strip */
+.trust{background:#f5f8f6;border-bottom:1px solid #eef2ef}
+.trust-in{max-width:1080px;margin:0 auto;display:flex;flex-wrap:wrap;gap:14px 30px;justify-content:center;padding:18px 26px}
+.hl{display:flex;align-items:center;gap:9px;font-size:14.5px;font-weight:600;color:#2a352e}
+.hl-c{width:20px;height:20px;border-radius:50%;background:var(--a);color:#fff;display:grid;place-items:center;font-size:12px;flex:0 0 auto}
+/* sections */
+section{max-width:1080px;margin:0 auto;padding:74px 26px}
+.kick{font-size:12.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--a);font-weight:800;margin-bottom:12px}
+.about-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center}
+.about-grid h2{font-size:clamp(26px,3.6vw,40px);font-weight:800;letter-spacing:-.02em;line-height:1.12;margin-bottom:16px}
+.about-grid p{font-size:17px;color:#42514a}
+.about-img{border-radius:20px;min-height:340px;background-size:cover;background-position:center;box-shadow:0 30px 60px -24px rgba(0,0,0,.3)}
+.svc-head{text-align:center;max-width:640px;margin:0 auto 44px}
+.svc-head h2{font-size:clamp(26px,3.6vw,40px);font-weight:800;letter-spacing:-.02em}
+.svcs{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px}
+.svc{border:1px solid #e8ede9;border-radius:18px;padding:28px 24px;background:#fff;transition:transform .15s,box-shadow .15s}
+.svc:hover{transform:translateY(-4px);box-shadow:0 24px 50px -28px rgba(0,0,0,.35);border-color:transparent}
+.svc-n{font-size:13px;font-weight:800;color:var(--a);opacity:.5;margin-bottom:12px;letter-spacing:.05em}
+.svc h3{font-size:19px;font-weight:700;margin-bottom:8px}
+.svc p{font-size:14.5px;color:#5f6f66}
+.gal{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.gphoto{padding-top:74%;background-size:cover;background-position:center;border-radius:16px;box-shadow:0 16px 36px -22px rgba(0,0,0,.4)}
+/* contact */
+.contact{background:#0d1512;color:#fff}
+.contact-in{max-width:1080px;margin:0 auto;padding:74px 26px;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
+.contact h2{font-size:clamp(26px,3.6vw,40px);font-weight:800;letter-spacing:-.02em;margin-bottom:8px}
+.contact .lead{color:#9fb3a8;font-size:16px;margin-bottom:24px;max-width:40ch}
+.cline{display:flex;gap:13px;align-items:flex-start;padding:13px 0;border-bottom:1px solid #1c2a23;font-size:15px}
+.cline .ic{font-size:18px}
+.cline b{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--a);margin-bottom:3px;font-weight:700}
+.hours{background:#101c16;border:1px solid #1c2a23;border-radius:18px;padding:22px 24px}
+.hours h4{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--a);margin-bottom:12px}
+.hrow{display:flex;justify-content:space-between;gap:16px;font-size:14px;padding:6px 0;color:#cdd9d2;border-bottom:1px solid #18241d}
+.hrow:last-child{border:0}
+/* RR footer */
+.rr{background:#0a0f0c;color:#fff;text-align:center;padding:56px 26px}
+.rr h2{font-size:clamp(22px,3.4vw,32px);font-weight:800;max-width:18ch;margin:0 auto 14px;line-height:1.18}
+.rr p{color:#92a69b;max-width:54ch;margin:0 auto 24px;font-size:15.5px}
+.rr .fine{margin-top:26px;font-size:11px;color:#5d6f64}
+/* preview chrome */
+.wm{position:fixed;inset:0;pointer-events:none;z-index:9998;background:repeating-linear-gradient(-30deg,transparent 0 200px,rgba(0,0,0,.022) 200px 202px)}
+.wm:after{content:"PREVIEW · RANK REBELS · ";position:absolute;inset:-30%;color:rgba(0,0,0,.05);font-size:34px;font-weight:800;line-height:3.4;word-spacing:14px;transform:rotate(-30deg);white-space:pre-wrap;text-align:center}
+.ribbon{position:sticky;top:0;z-index:9999;background:#0d1512;color:#fff;text-align:center;font-size:12px;font-weight:600;padding:6px 14px;letter-spacing:.01em}
+.ribbon b{color:#7CFFB0}
+@media(max-width:760px){.about-grid{grid-template-columns:1fr;gap:26px}.about-img{min-height:240px}.contact-in{grid-template-columns:1fr;gap:28px}.nav .brand{font-size:16px}}
+@media print{.wm,.ribbon{display:none}}
 </style></head>
 <body oncontextmenu="return false">
-<div class="bar">🔒 PRIVATE PREVIEW for ${esc(d.business_name)} — built by Rank Rebels. This is a mock-up, not your live site.</div>
+<div class="ribbon">🔒 Private preview for <b>${esc(d.business_name)}</b> — a concept mock-up by Rank Rebels, not the live site.</div>
 <div class="wm"></div>
-<div class="hero">
-  <div class="biz">${esc(d.business_name)}</div>
+<div class="nav"><div class="brand">${esc(d.business_name)}</div><a class="ncta" href="#contact">${esc(c.cta_label || 'Contact')}</a></div>
+<header class="hero"><div class="hero-in">
+  <div class="eyebrow">${esc(d.type || d.business_name)}</div>
   <h1>${esc(c.headline || d.business_name)}</h1>
-  ${c.subhead ? `<p>${esc(c.subhead)}</p>` : ''}
-  <a class="cta" href="#contact">${esc(c.cta_label || 'Get Started')}</a>
-</div>
-${highlights ? `<div class="hls">${highlights}</div>` : ''}
-${c.about ? `<section><div class="sec-t">About</div><p class="about">${esc(c.about)}</p></section>` : ''}
-${services ? `<section><div class="sec-t">What we offer</div><div class="svcs">${services}</div></section>` : ''}
-${gallery ? `<section><div class="sec-t">A look inside</div><div class="gal">${gallery}</div></section>` : ''}
-<section id="contact"><div class="sec-t">Find us</div><div class="info">
-  ${d.phone ? `<div><b>Call</b>${esc(d.phone)}</div>` : ''}
-  ${d.address ? `<div><b>Visit</b>${esc(d.address)}</div>` : ''}
-  ${hours ? `<div><b>Hours</b>${hours}</div>` : ''}
-</div></section>
-<div class="foot-cta">
-  <h2>This is just a 5-minute preview. Imagine it built for <em>your</em> business.</h2>
-  <p>Online booking, ordering, quotes — fully customized to how you work. We also build custom apps and handle your hosting &amp; SEO so you get found on Google. Let’s build the real thing.</p>
-  <a class="cta" href="https://rankrebels.ai">Talk to Rank Rebels →</a>
-  <div style="margin-top:22px;font-size:11px;color:#6b7d72">© Rank Rebels · rankrebels.ai · Preview mock-up — not for distribution.</div>
+  ${c.subhead ? `<p class="sub">${esc(c.subhead)}</p>` : ''}
+  <div class="hero-btns">
+    <a class="btn" href="#contact">${esc(c.cta_label || 'Get Started')}</a>
+    ${tel ? `<a class="btn btn-o" href="tel:${tel}">📞 ${esc(d.phone)}</a>` : ''}
+  </div>
+  ${ratingBadge || highlights ? `<div class="pillrow">${ratingBadge}</div>` : ''}
+</div></header>
+${highlights ? `<div class="trust"><div class="trust-in">${highlights}</div></div>` : ''}
+${hasAbout ? `<section><div class="about-grid"><div><div class="kick">About us</div><h2>${esc(c.headline ? d.business_name : 'Who we are')}</h2><p>${esc(c.about)}</p></div>${aboutPhoto || `<div class="about-img" style="background:linear-gradient(135deg,${accent},#0c1510)"></div>`}</div></section>` : ''}
+${services ? `<section><div class="svc-head"><div class="kick">What we offer</div><h2>Services built around you</h2></div><div class="svcs">${services}</div></section>` : ''}
+${gallery ? `<section><div class="svc-head"><div class="kick">Gallery</div><h2>A look at our work</h2></div><div class="gal">${gallery}</div></section>` : ''}
+<div class="contact" id="contact"><div class="contact-in">
+  <div>
+    <div class="kick">Get in touch</div>
+    <h2>${esc(c.cta_label || 'Stop by or reach out')}</h2>
+    <p class="lead">We’d love to hear from you. Reach out and we’ll take care of the rest.</p>
+    ${d.phone ? `<a class="cline" href="tel:${tel}"><span class="ic">📞</span><span><b>Call</b>${esc(d.phone)}</span></a>` : ''}
+    ${d.address ? `<div class="cline"><span class="ic">📍</span><span><b>Visit</b>${esc(d.address)}</span></div>` : ''}
+    ${d.email ? `<a class="cline" href="mailto:${esc(d.email)}"><span class="ic">✉️</span><span><b>Email</b>${esc(d.email)}</span></a>` : ''}
+  </div>
+  ${hours ? `<div class="hours"><h4>Hours</h4>${hours}</div>` : ''}
+</div></div>
+<div class="rr">
+  <h2>Love it? This is just the start.</h2>
+  <p>This 5-minute mock-up is built from public info. Your real site is fully customized to how you work — online booking, ordering, quotes — plus custom apps, hosting, and SEO so you get found on Google.</p>
+  <a class="btn" href="https://rankrebels.ai" style="background:#15803d">Build the real thing →</a>
+  <div class="fine">© Rank Rebels · rankrebels.ai · Private concept mock-up — not for distribution or publication.</div>
 </div>
 </body></html>`;
 }
