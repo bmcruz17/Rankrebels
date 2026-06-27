@@ -4,6 +4,8 @@
 // pipeline, a language switcher, hreflang alternates, and RTL for Arabic.
 
 const SITE = 'https://rankrebels.ai';
+const RR_BOOK = 'https://calendar.app.google/DsZdKoocVMVg2JeA6';
+const RR_DEPOSIT = ''; // paste your Stripe deposit Payment Link to enable the "Start now" button
 
 const METROS = [
   ['New York', 'NY'], ['Los Angeles', 'CA'], ['Chicago', 'IL'], ['Houston', 'TX'], ['Phoenix', 'AZ'],
@@ -59,7 +61,15 @@ const LOC = {
   allStates: { en: 'All states', es: 'Todos los estados', zh: '所有州', vi: 'Tất cả các bang', tl: 'Lahat ng estado', fr: 'Tous les États', ar: 'كل الولايات' },
   footSuffix:{ en: 'Serving {place} and beyond.', es: 'Damos servicio en {place} y más allá.', zh: '服务于 {place} 及周边。', vi: 'Phục vụ {place} và hơn thế.', tl: 'Naglilingkod sa {place} at higit pa.', fr: 'Au service de {place} et au-delà.', ar: 'نخدم {place} وما حولها.' },
   fHome:     { en: 'Home', es: 'Inicio', zh: '首页', vi: 'Trang chủ', tl: 'Home', fr: 'Accueil', ar: 'الرئيسية' },
-  fPrivacy:  { en: 'Privacy', es: 'Privacidad', zh: '隐私', vi: 'Quyền riêng tư', tl: 'Privacy', fr: 'Confidentialité', ar: 'الخصوصية' }
+  fPrivacy:  { en: 'Privacy', es: 'Privacidad', zh: '隐私', vi: 'Quyền riêng tư', tl: 'Privacy', fr: 'Confidentialité', ar: 'الخصوصية' },
+  getStarted:{ en: 'Get started', es: 'Empieza', zh: '开始', vi: 'Bắt đầu', tl: 'Magsimula', fr: 'Commencer', ar: 'ابدأ' },
+  claimSpot: { en: 'Ready to claim your spot in {place}?', es: '¿Listo para reservar tu lugar en {place}?', zh: '准备好在 {place} 占据你的位置了吗？', vi: 'Sẵn sàng giữ chỗ của bạn tại {place}?', tl: 'Handa nang angkinin ang lugar mo sa {place}?', fr: 'Prêt à réserver votre place à {place} ?', ar: 'مستعدّ لحجز مكانك في {place}؟' },
+  bookTitle: { en: 'Book a free strategy call', es: 'Reserva una llamada estratégica gratis', zh: '预约免费策略通话', vi: 'Đặt lịch gọi tư vấn miễn phí', tl: 'Mag-book ng libreng strategy call', fr: 'Réservez un appel stratégique gratuit', ar: 'احجز مكالمة استراتيجية مجانية' },
+  bookP:     { en: 'Grab a time and we’ll map out a plan to get your {x} business more customers — no pressure.', es: 'Elige un horario y trazaremos un plan para conseguirle más clientes a tu negocio de {x}, sin compromiso.', zh: '选个时间，我们将为你在 {x} 的业务制定一个吸引更多客户的方案——毫无压力。', vi: 'Chọn một thời gian và chúng tôi sẽ lên kế hoạch để mang về nhiều khách hơn cho doanh nghiệp {x} của bạn — không áp lực.', tl: 'Pumili ng oras at gagawa kami ng plano para sa mas maraming customer ng negosyo mo sa {x} — walang presyur.', fr: 'Choisissez un créneau et nous établirons un plan pour amener plus de clients à votre entreprise de {x} — sans engagement.', ar: 'اختر وقتًا وسنضع خطة لجلب المزيد من العملاء لنشاطك في {x} — دون أي ضغط.' },
+  pickTime:  { en: 'Pick a time →', es: 'Elegir un horario →', zh: '选择时间 →', vi: 'Chọn thời gian →', tl: 'Pumili ng oras →', fr: 'Choisir un créneau →', ar: 'اختر وقتًا →' },
+  reserveT:  { en: 'Reserve your build', es: 'Reserva tu proyecto', zh: '预订你的项目', vi: 'Giữ chỗ dự án của bạn', tl: 'I-reserve ang iyong build', fr: 'Réservez votre projet', ar: 'احجز مشروعك' },
+  reserveP:  { en: 'Ready to roll? Put down your onboarding deposit and we’ll start this week — applied straight to your project.', es: '¿Listo para arrancar? Deja tu depósito de incorporación y empezamos esta semana, se aplica directo a tu proyecto.', zh: '准备好了吗？支付启动定金，我们本周就开始——定金直接抵扣到你的项目。', vi: 'Sẵn sàng chưa? Đặt cọc khởi tạo và chúng tôi bắt đầu trong tuần này — trừ thẳng vào dự án của bạn.', tl: 'Handa na? Maglagay ng onboarding deposit at magsisimula kami ngayong linggo — ibabawas mismo sa proyekto mo.', fr: 'Prêt à démarrer ? Versez votre acompte et nous commençons cette semaine — déduit directement de votre projet.', ar: 'مستعدّ للانطلاق؟ ادفع عربون البدء وسنبدأ هذا الأسبوع — يُحتسب مباشرة ضمن مشروعك.' },
+  startNow:  { en: 'Start now →', es: 'Empezar ahora →', zh: '立即开始 →', vi: 'Bắt đầu ngay →', tl: 'Magsimula na →', fr: 'Commencer maintenant →', ar: 'ابدأ الآن →' }
 };
 
 function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
@@ -151,6 +161,13 @@ h2{font-size:clamp(24px,3.4vw,36px);font-weight:800;letter-spacing:-.02em;line-h
 .form .row{display:flex;gap:12px;flex-wrap:wrap}
 .form input,.form textarea{flex:1;min-width:160px;width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:10px;font:inherit;margin-bottom:12px}
 .form button{width:100%;justify-content:center}
+.start-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:820px;margin:30px auto 0}
+.start-grid.solo{grid-template-columns:1fr;max-width:430px}
+.start-card{border:1px solid var(--line);border-radius:18px;padding:28px 24px;text-align:center;background:#fff}
+.start-card.hl-card{border-color:var(--brand);box-shadow:0 24px 50px -30px rgba(21,128,61,.4)}
+.start-card .e{font-size:32px}.start-card h3{font-size:19px;margin:10px 0 6px}.start-card p{font-size:14px;color:var(--muted);margin-bottom:18px}
+.btn.ob{background:transparent;border:1px solid var(--brand);color:var(--brand)}
+@media(max-width:560px){.start-grid{grid-template-columns:1fr}}
 footer{background:#0a0f0c;color:#9fb3a8;text-align:center;padding:40px 24px;font-size:13px}
 footer a{color:#7CFFB0}
 html[dir=rtl] .hero h1,html[dir=rtl] .lead{margin-left:auto}
@@ -174,6 +191,14 @@ html[dir=rtl] .hero h1,html[dir=rtl] .lead{margin-left:auto}
     <div class="svc"><div class="i">🛠️</div><h3>${esc(t('s1t'))}</h3><p>${esc(t('s1p'))}</p></div>
     <div class="svc"><div class="i">🔎</div><h3>${esc(t('s2t'))}</h3><p>${esc(t('s2p'))}</p></div>
     <div class="svc"><div class="i">📍</div><h3>${esc(t('s3t'))}</h3><p>${esc(t('s3p'))}</p></div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div style="text-align:center;margin-bottom:6px"><div class="kick">${esc(t('getStarted'))}</div><h2>${esc(t('claimSpot'))}</h2></div>
+  <div class="start-grid${RR_DEPOSIT ? '' : ' solo'}">
+    <div class="start-card"><div class="e">📅</div><h3>${esc(t('bookTitle'))}</h3><p>${esc(t('bookP'))}</p><a class="btn ob" href="${esc(RR_BOOK)}" target="_blank" rel="noopener">${esc(t('pickTime'))}</a></div>
+    ${RR_DEPOSIT ? `<div class="start-card hl-card"><div class="e">🚀</div><h3>${esc(t('reserveT'))}</h3><p>${esc(t('reserveP'))}</p><a class="btn" href="${esc(RR_DEPOSIT)}" target="_blank" rel="noopener">${esc(t('startNow'))}</a></div>` : ''}
   </div>
 </div></section>
 
