@@ -937,18 +937,12 @@
     else { if(card) card.style.display='none'; if(grid) grid.classList.add('solo'); }
   })();
 
-  /* Packages: buy online + start onboarding.
-     Paste a Stripe Payment Link into a plan/add-on below to send buyers straight to checkout.
-     Until then, the button starts onboarding: it prefills the form and scrolls to it. */
-  var RR_PLANS = {
-    'Starter': '', // e.g. 'https://buy.stripe.com/xxxx'
-    'Growth':  '',
-    'Pro':     ''
-  };
-  var RR_ADDONS = {
-    'Logo & brand identity':'', 'Social media launch kit':'', 'E-commerce & booking setup':'',
-    'SEO & AI search':'', 'Google Business management':'', 'Review generation':''
-  };
+  /* Packages — one deposit/checkout link for everything (Option A).
+     Paste your single Stripe Payment Link into RR_DEPOSIT (above) and it powers BOTH the
+     "Reserve your build" button AND every package + add-on button. The plan or add-on the
+     customer picked rides along as Stripe's client_reference_id, so you see exactly what
+     they chose in your Stripe dashboard. Until RR_DEPOSIT is set, the buttons start
+     onboarding instead: they prefill the lead form and scroll to it — no dead clicks. */
   (function(){
     function startOnboarding(label, kind){
       var msg = document.querySelector('.lead-form textarea[name="message"]');
@@ -957,16 +951,20 @@
       if(contact) contact.scrollIntoView({behavior:'smooth'});
       if(msg) setTimeout(function(){ try{ msg.focus(); }catch(e){} }, 600);
     }
+    function checkout(ref){
+      var sep = RR_DEPOSIT.indexOf('?') >= 0 ? '&' : '?';
+      window.open(RR_DEPOSIT + sep + 'client_reference_id=' + encodeURIComponent(ref), '_blank', 'noopener');
+    }
     document.querySelectorAll('[data-plan]').forEach(function(b){
       b.addEventListener('click', function(){
-        var p = b.getAttribute('data-plan'), link = RR_PLANS[p];
-        if(link){ window.open(link, '_blank', 'noopener'); } else { startOnboarding(p, 'plan'); }
+        var p = b.getAttribute('data-plan');
+        if(RR_DEPOSIT){ checkout('plan:' + p); } else { startOnboarding(p, 'plan'); }
       });
     });
     document.querySelectorAll('[data-addon]').forEach(function(b){
       b.addEventListener('click', function(){
-        var a = b.getAttribute('data-addon'), link = RR_ADDONS[a];
-        if(link){ window.open(link, '_blank', 'noopener'); } else { startOnboarding(a, 'addon'); }
+        var a = b.getAttribute('data-addon');
+        if(RR_DEPOSIT){ checkout('addon:' + a); } else { startOnboarding(a, 'addon'); }
       });
     });
   })();
