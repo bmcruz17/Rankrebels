@@ -688,6 +688,18 @@
   </div>
 </div>
 
+<div class="modal-bg" id="m-preview" onclick="if(event.target===this)closeModal('m-preview')">
+  <div class="modal" style="max-width:440px">
+    <h3>🌐 Preview website</h3>
+    <p class="sub" id="prev-who" style="margin:-4px 0 12px"></p>
+    <div id="prev-body" style="font-size:13px;line-height:1.55;min-height:60px"></div>
+    <div class="modal-actions" style="margin-top:14px"><div></div><div style="display:flex;gap:10px">
+      <button class="btn btn-ghost" onclick="closeModal('m-preview')">Close</button>
+      <button class="btn btn-primary" id="prev-gen" onclick="generatePreview()" style="display:none">Build preview</button>
+    </div></div>
+  </div>
+</div>
+
 <div class="modal-bg" id="m-fbprofile" onclick="if(event.target===this)closeModal('m-fbprofile')">
   <div class="modal" style="max-width:460px">
     <h3>📘 Facebook profile</h3>
@@ -1731,6 +1743,7 @@ function contactIcons(c){
   b+='<a class="ci" draggable="false" href="#" title="Ask for a Google review" onclick="askReview(\''+c.id+'\');event.stopPropagation();return false">⭐</a>';
   b+='<a class="ci" draggable="false" href="#" title="Send a personalized proposal" onclick="sendProposal(\''+c.id+'\');event.stopPropagation();return false">📄</a>';
   b+='<a class="ci" draggable="false" href="#" title="Pull full Facebook profile" onclick="openFbProfile(\''+c.id+'\');event.stopPropagation();return false">📘</a>';
+  b+='<a class="ci" draggable="false" href="#" title="Build a preview website (the hook)" onclick="openPreview(\''+c.id+'\');event.stopPropagation();return false">🌐</a>';
   b+='<a class="ci" draggable="false" href="#" title="Add note" onclick="quickNote(\''+c.id+'\');event.stopPropagation();return false">📝</a>';
   return b;
 }
@@ -1739,6 +1752,66 @@ function fbUrlFromClient(c){
   var hay=((c.notes||'')+' '+(c.description||''));
   var m=hay.match(/https?:\/\/(?:www\.|m\.)?facebook\.com\/[^\s'")]+/i);
   return m?m[0]:'';
+}
+/* ===== Preview website generator (the hook) ===== */
+var previewCache={};   // client_id -> {url, link_with_code, passcode, slug}
+var previewClientId=null;
+function openPreview(id){
+  var c=clients.find(function(x){return x.id===id;}); if(!c) return;
+  previewClientId=id;
+  el('prev-who').textContent=c.business_name||'';
+  if(previewCache[id]){ showPreviewResult(c, previewCache[id]); }
+  else {
+    el('prev-body').innerHTML='<div style="color:var(--muted)">We’ll build a one-page preview site from everything we know about <b>'+esc(c.business_name||'this business')+'</b> — their Google photos, Facebook info, hours &amp; reviews. It’s watermarked and locked with an access code so it’s a teaser, not a giveaway.<br><br>Takes about 20–40 seconds.</div>';
+    el('prev-gen').style.display=''; el('prev-gen').disabled=false; el('prev-gen').textContent='Build preview';
+  }
+  el('m-preview').classList.add('open');
+}
+async function generatePreview(){
+  var id=previewClientId; var c=clients.find(function(x){return x.id===id;}); if(!c) return;
+  var btn=el('prev-gen'); btn.disabled=true; btn.textContent='Building…';
+  el('prev-body').innerHTML='<div style="color:var(--muted)">🌐 Building the preview — fetching their Google photos and writing the copy… (20–40s)</div>';
+  var t=await authToken(); if(!t){ el('prev-body').textContent='Please sign in again.'; btn.disabled=false; return; }
+  try{
+    var payload={ client_id:id, business_name:c.business_name, description:c.description||'', phone:c.phone||'', email:c.email||'', address:c.address||'', notes:clientNotes(c).map(function(n){return n.note;}).filter(Boolean).join('\n'), facebook:fbFromNotes(c) };
+    var r=await fetch('/api/preview/generate',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t},body:JSON.stringify(payload)});
+    var d=await r.json().catch(function(){return {error:'failed'};});
+    if(d.error){
+      var extra=/ANTHROPIC|SUPABASE_SERVICE|rr_previews/i.test(d.error)?' (a key or the SQL still needs setting up)':'';
+      el('prev-body').innerHTML='<div style="color:#c0392b">'+esc(d.error)+esc(extra)+'</div>'; btn.disabled=false; btn.textContent='Try again'; return;
+    }
+    previewCache[id]=d;
+    logActivity(id,'note','🌐 Built a preview site: '+d.url+' (code '+d.passcode+')');
+    showPreviewResult(c, d);
+  }catch(e){ el('prev-body').innerHTML='<div style="color:#c0392b">Could not reach the preview generator.</div>'; btn.disabled=false; btn.textContent='Try again'; }
+}
+function showPreviewResult(c, d){
+  el('prev-gen').style.display='none';
+  el('prev-body').innerHTML=
+    '<div style="background:rgba(21,128,61,.08);border:1px solid rgba(21,128,61,.25);border-radius:10px;padding:12px 14px">'+
+      '<div style="font-weight:700;margin-bottom:8px">✅ Preview ready'+(d.photos?(' · '+d.photos+' real photos'):'')+'</div>'+
+      '<div style="font-size:12px;color:var(--muted)">Access code</div>'+
+      '<div style="font-size:26px;font-weight:850;letter-spacing:6px;color:var(--brand);margin:2px 0 10px">'+esc(d.passcode)+'</div>'+
+      '<div style="display:flex;gap:8px;flex-wrap:wrap">'+
+        '<a class="btn btn-primary btn-sm" href="'+esc(d.link_with_code)+'" target="_blank">👁 Open preview</a>'+
+        '<button class="btn btn-ghost btn-sm" onclick="copyText(\''+esc(d.link_with_code)+'\',this)">Copy link</button>'+
+        (c.email?'<button class="btn btn-ghost btn-sm" onclick="emailPreview()">✉️ Draft email to '+esc(c.email)+'</button>':'')+
+        '<button class="btn btn-ghost btn-sm" onclick="generatePreview()">↻ Rebuild</button>'+
+      '</div>'+
+      '<div style="font-size:11.5px;color:var(--muted-2);margin-top:10px">The link includes the code, so it opens instantly when they click — perfect for “check your inbox.” It’s watermarked &amp; noindexed.</div>'+
+    '</div>';
+}
+function copyText(txt, btn){ try{ navigator.clipboard.writeText(txt); if(btn){ var o=btn.textContent; btn.textContent='Copied!'; setTimeout(function(){btn.textContent=o;},1200);} }catch(e){ prompt('Copy this:', txt); } }
+async function emailPreview(){
+  var id=previewClientId; var c=clients.find(function(x){return x.id===id;}); var d=previewCache[id]; if(!c||!d) return;
+  if(!c.email){ alert('No email on file.'); return; }
+  var t=await authToken(); if(!t){ alert('Please sign in again.'); return; }
+  var subject='A quick something for '+(c.business_name||'you')+' 👀';
+  var body='Hi '+(c.contact_name||'there')+',\n\nAs promised — I put together a quick preview of what a site for '+(c.business_name||'your business')+' could look like. Take a peek:\n\n'+d.link_with_code+'\n(access code: '+d.passcode+')\n\nIt’s just a 5-minute mock-up — we fully customize everything to how you run things (online booking, ordering, quotes), and we also build custom apps and handle hosting + SEO so you get found on Google.\n\nLet me know what you think!\n\n— The Rank Rebels Team';
+  var r=await fetch('/api/google/draft',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t},body:JSON.stringify({to:c.email,subject:subject,body:body})});
+  var rd=await r.json().catch(function(){return {};});
+  if(rd.ok){ logActivity(id,'email','Sent preview site link'); if(confirm('Preview email drafted in Gmail. Open it to send now?')) window.open(rd.link,'_blank'); }
+  else { alert(rd.error||'Could not draft the email — connect Google first. You can copy the link and send it manually.'); }
 }
 var fbProfileClientId=null, fbProfilePending=null;
 async function openFbProfile(id){
@@ -1954,6 +2027,7 @@ var LEGEND_GROUPS=[
     ['⭐','Ask the customer for a Google review'],
     ['📄','Send a personalized proposal'],
     ['📘','Pull their full Facebook profile (about, hours, rating, contact) and save it to the lead'],
+    ['🌐','Build a watermarked preview website from their data — the hook to send mid-call'],
     ['📝','Add a quick note'],
     ['← →','Move the deal back / forward a stage']
   ]},
