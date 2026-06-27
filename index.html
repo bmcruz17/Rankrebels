@@ -465,6 +465,40 @@
   .btn-lg{font-size:16px;padding:14px 28px}
   .start-grid.solo{grid-template-columns:1fr;max-width:440px}
   @media(max-width:640px){.start-grid{grid-template-columns:1fr}}
+  /* packages / pricing */
+  .pkg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:1060px;margin:42px auto 0;align-items:stretch}
+  .pkg{background:#fff;border:1px solid var(--line);border-radius:20px;padding:30px 26px;display:flex;flex-direction:column;position:relative;transition:transform .15s,box-shadow .15s}
+  .pkg:hover{transform:translateY(-4px);box-shadow:var(--shadow)}
+  .pkg.pop{border:2px solid var(--brand);box-shadow:0 26px 54px -30px rgba(21,128,61,.5)}
+  .pkg .pop-tag{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--brand);color:#fff;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:5px 14px;border-radius:999px;white-space:nowrap}
+  .pkg .pk-name{font-size:13px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--brand)}
+  .pkg .pk-tag{font-size:13.5px;color:var(--muted);margin:6px 0 18px;min-height:38px}
+  .pkg .pk-build{font-size:38px;font-weight:800;letter-spacing:-.02em;line-height:1}
+  .pkg .pk-build small{font-size:14px;font-weight:600;color:var(--muted)}
+  .pkg .pk-mo{font-size:15px;color:var(--muted);margin-top:8px;font-weight:600}
+  .pkg .pk-mo b{color:var(--text);font-weight:800;font-size:18px}
+  .pkg .pk-divider{height:1px;background:var(--line);margin:20px 0}
+  .pkg ul{list-style:none;display:flex;flex-direction:column;gap:11px;margin:0 0 24px}
+  .pkg li{font-size:14px;display:flex;gap:9px;align-items:flex-start;color:var(--text)}
+  .pkg li:before{content:"✓";color:var(--brand-2);font-weight:800;flex:0 0 auto}
+  .pkg li.head{font-weight:700;color:var(--muted);font-size:12.5px;text-transform:uppercase;letter-spacing:.04em}
+  .pkg li.head:before{content:""}
+  .pkg .btn{width:100%;justify-content:center;margin-top:auto}
+  .pkg-note{text-align:center;font-size:13px;color:var(--muted-2);margin-top:20px}
+  .addon-head{text-align:center;margin:64px auto 0;max-width:60ch}
+  .addon-head h3{font-size:24px;font-weight:800}
+  .addon-head p{font-size:15px;color:var(--muted);margin-top:8px}
+  .addon-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:1060px;margin:30px auto 0}
+  .addon{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px;display:flex;flex-direction:column}
+  .addon .ad-ic{width:42px;height:42px;border-radius:11px;background:var(--bg-soft);display:grid;place-items:center;font-size:21px;margin-bottom:12px}
+  .addon h4{font-size:16px;font-weight:800;margin-bottom:5px}
+  .addon p{font-size:13px;color:var(--muted);flex:1;margin-bottom:14px}
+  .addon .ad-price{font-size:20px;font-weight:800}
+  .addon .ad-price small{font-size:12.5px;color:var(--muted);font-weight:600}
+  .addon .ad-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .addon .ad-add{background:var(--bg-soft);color:var(--brand);border:1px solid var(--line);font-weight:800;font-size:13px;padding:9px 16px;border-radius:10px;cursor:pointer;white-space:nowrap}
+  .addon .ad-add:hover{background:var(--brand);color:#fff;border-color:var(--brand)}
+  @media(max-width:860px){.pkg-grid,.addon-grid{grid-template-columns:1fr;max-width:440px}.pkg.pop{order:-1}}
 </style>
 <link rel="alternate" hreflang="es" href="https://rankrebels.ai/?lang=es">
 <link rel="alternate" hreflang="zh" href="https://rankrebels.ai/?lang=zh">
@@ -485,6 +519,7 @@
     <nav class="nav-links">
       <a href="#services">Services</a>
       <a href="#process">Process</a>
+      <a href="#packages">Packages</a>
       <a href="#areas">Areas</a>
       <a href="#values">Our Why</a>
       <a href="#reviews">Reviews</a>
@@ -705,6 +740,118 @@
   </div>
 </section>
 
+<section id="packages">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Packages</span>
+      <h2>Pick your plan and <span class="hl">get started today</span></h2>
+      <p>A one-time build to launch your custom site, plus a simple monthly plan that keeps you found, fresh, and growing. Start online in minutes.</p>
+    </div>
+    <div class="pkg-grid">
+
+      <div class="pkg">
+        <div class="pk-name">Starter</div>
+        <div class="pk-tag">Get a professional site live and start showing up on Google.</div>
+        <div class="pk-build">$1,500 <small>build</small></div>
+        <div class="pk-mo">then <b>$99</b> / month</div>
+        <div class="pk-divider"></div>
+        <ul>
+          <li>Custom 5-page website</li>
+          <li>Mobile-first, fast &amp; SEO-ready</li>
+          <li>Google Business Profile setup</li>
+          <li>Lead capture &amp; contact forms</li>
+          <li>Hosting, security &amp; maintenance</li>
+          <li>Email support</li>
+        </ul>
+        <button class="btn btn-ghost btn-lg" data-plan="Starter">Start Starter →</button>
+      </div>
+
+      <div class="pkg pop">
+        <div class="pop-tag">Most popular</div>
+        <div class="pk-name">Growth</div>
+        <div class="pk-tag">Get found, get reviews, and turn searches into booked customers.</div>
+        <div class="pk-build">$2,500 <small>build</small></div>
+        <div class="pk-mo">then <b>$299</b> / month</div>
+        <div class="pk-divider"></div>
+        <ul>
+          <li class="head">Everything in Starter, plus</li>
+          <li>Up to 10 custom pages</li>
+          <li>Ongoing SEO for Google &amp; AI search</li>
+          <li>Google Business Profile management</li>
+          <li>1 blog post every month</li>
+          <li>Review generation</li>
+          <li>Monthly performance report</li>
+          <li>Bumper-to-bumper warranty</li>
+        </ul>
+        <button class="btn btn-primary btn-lg" data-plan="Growth">Start Growth →</button>
+      </div>
+
+      <div class="pkg">
+        <div class="pk-name">Pro</div>
+        <div class="pk-tag">Dominate your market with the full system and a dedicated strategist.</div>
+        <div class="pk-build">$4,500 <small>build</small></div>
+        <div class="pk-mo">then <b>$599</b> / month</div>
+        <div class="pk-divider"></div>
+        <ul>
+          <li class="head">Everything in Growth, plus</li>
+          <li>E-commerce or online booking</li>
+          <li>Advanced local SEO + landing pages</li>
+          <li>Social media posting</li>
+          <li>Conversion optimization</li>
+          <li>Priority support + dedicated strategist</li>
+          <li>Quarterly strategy calls</li>
+        </ul>
+        <button class="btn btn-ghost btn-lg" data-plan="Pro">Start Pro →</button>
+      </div>
+
+    </div>
+    <p class="pkg-note">Month-to-month, or save with a 1- or 2-year plan. No surprise lock-in — you always own your site.</p>
+
+    <div class="addon-head">
+      <h3>À la carte add-ons</h3>
+      <p>Bolt these onto any package — or grab them on their own. Everything you need to look established and grow.</p>
+    </div>
+    <div class="addon-grid">
+      <div class="addon">
+        <div class="ad-ic">🎨</div>
+        <h4>Logo &amp; brand identity</h4>
+        <p>Custom logo, color system, and brand artwork that makes you look established on day one.</p>
+        <div class="ad-row"><div class="ad-price">$750 <small>one-time</small></div><button class="ad-add" data-addon="Logo & brand identity">Add →</button></div>
+      </div>
+      <div class="addon">
+        <div class="ad-ic">📣</div>
+        <h4>Social media launch kit</h4>
+        <p>Profiles set up, branded templates, and a 30-day content calendar to hit the ground running.</p>
+        <div class="ad-row"><div class="ad-price">$600 <small>one-time</small></div><button class="ad-add" data-addon="Social media launch kit">Add →</button></div>
+      </div>
+      <div class="addon">
+        <div class="ad-ic">🛒</div>
+        <h4>E-commerce &amp; booking</h4>
+        <p>Sell products or take bookings and deposits online with secure checkout built in.</p>
+        <div class="ad-row"><div class="ad-price">$750 <small>one-time</small></div><button class="ad-add" data-addon="E-commerce & booking setup">Add →</button></div>
+      </div>
+      <div class="addon">
+        <div class="ad-ic">📈</div>
+        <h4>SEO &amp; AI search</h4>
+        <p>Ongoing optimization to climb Google and surface when customers ask AI for a recommendation.</p>
+        <div class="ad-row"><div class="ad-price">$270 <small>/ month</small></div><button class="ad-add" data-addon="SEO & AI search">Add →</button></div>
+      </div>
+      <div class="addon">
+        <div class="ad-ic">📍</div>
+        <h4>Google Business management</h4>
+        <p>We manage your listing to win the local Map pack and drive calls, directions, and reviews.</p>
+        <div class="ad-row"><div class="ad-price">$149 <small>/ month</small></div><button class="ad-add" data-addon="Google Business management">Add →</button></div>
+      </div>
+      <div class="addon">
+        <div class="ad-ic">⭐</div>
+        <h4>Review generation</h4>
+        <p>Automated review requests that build the 5-star reputation customers check before they call.</p>
+        <div class="ad-row"><div class="ad-price">$99 <small>/ month</small></div><button class="ad-add" data-addon="Review generation">Add →</button></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section id="start" style="background:var(--bg-soft)">
   <div class="wrap">
     <div class="sec-head">
@@ -788,6 +935,40 @@
     var dep=document.getElementById('rr-deposit'), card=document.getElementById('rr-deposit-card'), grid=document.querySelector('.start-grid');
     if(RR_DEPOSIT){ if(dep) dep.href=RR_DEPOSIT; }
     else { if(card) card.style.display='none'; if(grid) grid.classList.add('solo'); }
+  })();
+
+  /* Packages: buy online + start onboarding.
+     Paste a Stripe Payment Link into a plan/add-on below to send buyers straight to checkout.
+     Until then, the button starts onboarding: it prefills the form and scrolls to it. */
+  var RR_PLANS = {
+    'Starter': '', // e.g. 'https://buy.stripe.com/xxxx'
+    'Growth':  '',
+    'Pro':     ''
+  };
+  var RR_ADDONS = {
+    'Logo & brand identity':'', 'Social media launch kit':'', 'E-commerce & booking setup':'',
+    'SEO & AI search':'', 'Google Business management':'', 'Review generation':''
+  };
+  (function(){
+    function startOnboarding(label, kind){
+      var msg = document.querySelector('.lead-form textarea[name="message"]');
+      if(msg){ msg.value = (kind==='plan' ? 'I want to get started with the ' + label + ' package.' : 'I want to add: ' + label + '.'); }
+      var contact = document.getElementById('contact');
+      if(contact) contact.scrollIntoView({behavior:'smooth'});
+      if(msg) setTimeout(function(){ try{ msg.focus(); }catch(e){} }, 600);
+    }
+    document.querySelectorAll('[data-plan]').forEach(function(b){
+      b.addEventListener('click', function(){
+        var p = b.getAttribute('data-plan'), link = RR_PLANS[p];
+        if(link){ window.open(link, '_blank', 'noopener'); } else { startOnboarding(p, 'plan'); }
+      });
+    });
+    document.querySelectorAll('[data-addon]').forEach(function(b){
+      b.addEventListener('click', function(){
+        var a = b.getAttribute('data-addon'), link = RR_ADDONS[a];
+        if(link){ window.open(link, '_blank', 'noopener'); } else { startOnboarding(a, 'addon'); }
+      });
+    });
   })();
 
   /* Hero: rotating "search" queries with a typing effect. Purely decorative. */
