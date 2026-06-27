@@ -688,7 +688,14 @@ footer a{color:var(--aqua)}
         </ul>
       </div>
     </div>
-    <div style="text-align:center;margin-top:40px"><a class="btn sun" href="#contact">Let's build it →</a></div>
+    <div style="text-align:center;margin-top:40px">
+      <a class="btn sun" id="buildPay" href="#contact">Pay $500 &amp; let's build it →</a>
+      <div style="font-size:13px;color:#b9a9da;margin-top:12px">Secure $500 build fee today · then from $149/mo after you're live</div>
+    </div>
+    <div style="max-width:760px;margin:30px auto 0;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:22px 26px">
+      <div style="font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--sun);font-weight:800;margin-bottom:10px">How billing works</div>
+      <p style="font-size:14.5px;color:#e0d4f5;line-height:1.65;margin:0">Your <b>$500 build fee</b> is paid today to kick things off. Once your site is published and live, your <b>first monthly payment is due 30 days after the go-live date</b> — and we email your invoice <b>15 days before</b> each automatic payment is withdrawn, so there's never a surprise. Month-to-month — cancel anytime.</p>
+    </div>
   </div>
 </section>
 
@@ -741,6 +748,14 @@ footer a{color:var(--aqua)}
 <div class="watermark">🔒 Preview by <b>Rank&nbsp;Rebels</b></div>
 
 <script>
+// "Pay $500 & let's build it" → Stripe checkout for the build fee.
+// Paste the $500 Stripe Payment Link below. Until then the button routes to the contact form.
+var ICM_BUILD = ''; // e.g. 'https://buy.stripe.com/xxxxxxxx'
+(function(){
+  var b = document.getElementById('buildPay');
+  if(b && ICM_BUILD){ b.href = ICM_BUILD; b.target = '_blank'; b.rel = 'noopener'; }
+})();
+
 // Animate the chart bars/fills when they scroll into view.
 function animateOnView(){
   var bars = document.querySelectorAll('#bars .bar');
