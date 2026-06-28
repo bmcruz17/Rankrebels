@@ -90,6 +90,64 @@ h2{font-size:clamp(26px,3.6vw,40px);font-weight:700;line-height:1.12;color:#fff}
 .see p{font-size:14px;color:var(--muted)}
 .see.problem h3 .d{color:#ff8f6b}.see.fix h3 .d{color:var(--cyan)}
 /* proposal feature blocks */
+/* new homepage showcase */
+.frontdoor{background:var(--navy)}
+.bw{max-width:940px;margin:36px auto 0;border-radius:16px;overflow:hidden;border:1px solid var(--line-2);box-shadow:0 50px 110px -42px rgba(0,0,0,.85);background:#08172e}
+.bw-bar{display:flex;align-items:center;gap:8px;padding:11px 14px;background:#0c2143;border-bottom:1px solid var(--line)}
+.bw-bar i{width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,.18)}
+.bw-bar .url{margin-left:10px;flex:1;font-size:11.5px;color:var(--muted);background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:7px;padding:5px 12px;display:flex;align-items:center;gap:7px}
+.bw-bar .url b{color:var(--cyan-2);font-weight:600}
+.bwn{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-bottom:1px solid rgba(255,255,255,.06)}
+.bwn .lg{font-family:'Space Grotesk',sans-serif;font-weight:700;color:#fff;font-size:15px;letter-spacing:.05em;display:flex;align-items:center;gap:8px}
+.bwn .lg .hx{color:var(--cyan)}
+.bwn .lk{display:flex;gap:18px}
+.bwn .lk span{font-size:12.5px;color:#bcd0ea}
+.bwn .cta{font-size:12px;font-weight:700;background:var(--cyan);color:#062033;padding:8px 14px;border-radius:8px}
+@media(max-width:680px){.bwn .lk{display:none}}
+.bwh{padding:48px 26px 40px;text-align:center;background:radial-gradient(120% 120% at 72% 0%,#163f73 0%,#0b223f 55%,#08172e 100%)}
+.bwh .tag{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--cyan);font-weight:700}
+.bwh h3{font-family:'Space Grotesk',sans-serif;font-size:clamp(22px,4.4vw,34px);color:#fff;line-height:1.12;margin:12px auto 10px;max-width:17ch;font-weight:700}
+.bwh h3 em{font-style:normal;color:var(--cyan)}
+.bwh p{font-size:13px;color:#c2d4ec;max-width:48ch;margin:0 auto 18px;line-height:1.55}
+.bwh .btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.bwh .b1{background:var(--cyan);color:#062033;font-weight:700;font-size:12.5px;padding:10px 18px;border-radius:9px}
+.bwh .b2{background:rgba(255,255,255,.08);border:1px solid var(--line-2);color:#fff;font-weight:600;font-size:12.5px;padding:10px 18px;border-radius:9px}
+.bws{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02)}
+.bws>div{padding:16px 10px;text-align:center;border-right:1px solid rgba(255,255,255,.06)}
+.bws>div:last-child{border-right:0}
+.bws .n{font-family:'Space Grotesk',sans-serif;font-size:19px;font-weight:700;color:var(--cyan)}
+.bws .l{font-size:10px;color:var(--muted);margin-top:3px;line-height:1.3}
+@media(max-width:680px){.bws{grid-template-columns:1fr 1fr}.bws>div:nth-child(2){border-right:0}}
+.bwg{display:grid;grid-template-columns:1.1fr .9fr}
+@media(max-width:680px){.bwg{grid-template-columns:1fr}}
+.bwg .col{padding:20px 22px}
+.bwg .col.l{border-right:1px solid rgba(255,255,255,.06)}
+@media(max-width:680px){.bwg .col.l{border-right:0;border-bottom:1px solid rgba(255,255,255,.06)}}
+.bw-h4{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:12px}
+.bwmap{position:relative;height:142px;border-radius:10px;background:linear-gradient(160deg,#0e2a52,#0a1f3c);border:1px solid var(--line);overflow:hidden}
+.bwmap .dot{position:absolute;width:9px;height:9px;border-radius:50%;background:var(--cyan);box-shadow:0 0 0 4px rgba(79,195,232,.16)}
+.bwmap .ln{position:absolute;height:2px;background:linear-gradient(90deg,var(--cyan),rgba(79,195,232,0));border-radius:2px;transform-origin:left center}
+.bwmap .pill{position:absolute;left:12px;bottom:12px;font-size:10px;font-weight:700;color:var(--cyan);background:rgba(8,23,46,.82);border:1px solid var(--line-2);padding:5px 10px;border-radius:999px;display:inline-flex;align-items:center;gap:6px}
+.bwmap .pill:before{content:"";width:6px;height:6px;border-radius:50%;background:#5fd6a0;box-shadow:0 0 0 3px rgba(95,214,160,.2)}
+.bwcerts{display:flex;flex-wrap:wrap;gap:7px}
+.bwcerts span{font-size:11px;font-weight:700;color:#cfe0f4;background:rgba(79,195,232,.1);border:1px solid rgba(79,195,232,.25);padding:6px 11px;border-radius:7px}
+.bwsafe{display:flex;gap:9px;margin-top:14px}
+.bwsafe>div{flex:1;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:9px;padding:10px;text-align:center}
+.bwsafe .n{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:#5fd6a0}
+.bwsafe .l{font-size:9.5px;color:var(--muted);margin-top:2px}
+.bwcl{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:center;padding:15px 22px;border-top:1px solid rgba(255,255,255,.06)}
+.bwcl span{font-size:11.5px;font-weight:600;color:#9bb2d2}
+.bwcar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 22px;background:linear-gradient(90deg,rgba(79,195,232,.13),rgba(43,127,224,.05));border-top:1px solid rgba(255,255,255,.06)}
+.bwcar .t{font-size:13px;font-weight:700;color:#fff}
+.bwcar .s{font-size:11px;color:#bcd0ea;margin-top:2px}
+.bwcar .a{font-size:11.5px;font-weight:700;background:#fff;color:#0a1c38;padding:9px 15px;border-radius:8px;white-space:nowrap}
+.dream{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:34px}
+@media(max-width:880px){.dream{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.dream{grid-template-columns:1fr}}
+.dream .c{background:linear-gradient(165deg,var(--navy-3),var(--navy-2));border:1px solid var(--line);border-radius:14px;padding:18px}
+.dream .c .ic{width:38px;height:38px;border-radius:10px;background:rgba(79,195,232,.12);border:1px solid rgba(79,195,232,.28);display:grid;place-items:center;font-size:18px;margin-bottom:12px}
+.dream .c b{display:block;font-size:14.5px;color:#fff}
+.dream .c p{font-size:12.5px;color:var(--muted);margin-top:5px;line-height:1.5}
 .feat{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center}
 .feat.rev .feat-vis{order:-1}
 @media(max-width:880px){.feat{grid-template-columns:1fr;gap:32px}.feat.rev .feat-vis{order:0}}
@@ -231,6 +289,78 @@ footer a{color:var(--cyan)}
     <div class="see-grid">
       <div class="see problem"><h3><span class="d">▲</span> Where the friction is</h3><p>Designs live in GIS, field work lives in another app, timesheets in a third, accounting in a fourth, compliance in spreadsheets — and the office only finds out what happened in the field days later. Every seam is a subscription, a re-key, and a chance for an as-built to drift.</p></div>
       <div class="see fix"><h3><span class="d">◆</span> What changes</h3><p>One ecosystem where a GIS design becomes a field work order, a field capture becomes an as-built and an invoice line, and corporate sees it all live. Fewer tools, fewer errors, faster cash — and a real-time picture of every crew, mile, and dollar.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- NEW HOMEPAGE SHOWCASE -->
+<section id="frontdoor" class="frontdoor">
+  <div class="wrap center" style="max-width:780px;margin:0 auto">
+    <div class="kick">Your new front door</div>
+    <h2>A homepage that wins work — not just a brochure.</h2>
+    <p class="lead">The first thing a prime, a carrier, or a future crew lead does is look you up. Today that page should be selling TARO as the scaled, certified, safe partner it is — and turning that traffic into bids, applicants, and booked calls. Here's the redesign.</p>
+  </div>
+  <div class="wrap">
+    <div class="bw">
+      <div class="bw-bar"><i></i><i></i><i></i><span class="url">🔒 <b>tarocommunications.com</b></span></div>
+      <div class="bwn">
+        <div class="lg"><span class="hx">⬡</span> TARO COMMUNICATIONS</div>
+        <div class="lk"><span>Capabilities</span><span>Work</span><span>Certifications</span><span>Careers</span><span>Client Login</span></div>
+        <div class="cta">Request a bid</div>
+      </div>
+      <div class="bwh">
+        <div class="tag">Engineering connectivity · constructing trust</div>
+        <h3>We design and build the networks <em>America runs on</em>.</h3>
+        <p>Wireline, wireless, GIS, and LiDAR — self-performed, certified, and safe. From the first design to the final as-built, TARO delivers.</p>
+        <div class="btns"><span class="b1">Request a bid →</span><span class="b2">Download capabilities</span></div>
+      </div>
+      <div class="bws">
+        <div><div class="n">6,000+</div><div class="l">projects delivered</div></div>
+        <div><div class="n">2,600+</div><div class="l">towers serviced</div></div>
+        <div><div class="n">3,000+ mi</div><div class="l">designed / year</div></div>
+        <div><div class="n">6</div><div class="l">crews live now</div></div>
+      </div>
+      <div class="bwg">
+        <div class="col l">
+          <div class="bw-h4">Live coverage &amp; active builds</div>
+          <div class="bwmap">
+            <span class="ln" style="left:18%;top:38%;width:120px;transform:rotate(18deg)"></span>
+            <span class="ln" style="left:46%;top:54%;width:90px;transform:rotate(-12deg)"></span>
+            <span class="dot" style="left:16%;top:36%"></span>
+            <span class="dot" style="left:44%;top:52%"></span>
+            <span class="dot" style="left:68%;top:42%"></span>
+            <span class="dot" style="left:78%;top:64%"></span>
+            <span class="dot" style="left:30%;top:70%"></span>
+            <span class="pill">6 active crews · 4 states</span>
+          </div>
+        </div>
+        <div class="col">
+          <div class="bw-h4">Certified &amp; safe to award</div>
+          <div class="bwcerts"><span>MBE</span><span>NMSDC</span><span>CPUC</span><span>GSA Schedule</span><span>SAM</span><span>E-Verify</span></div>
+          <div class="bwsafe">
+            <div><div class="n">0.74</div><div class="l">EMR</div></div>
+            <div><div class="n">1.2</div><div class="l">TRIR</div></div>
+            <div><div class="n">$XXM</div><div class="l">Bondable</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="bwcl"><span>Comcast</span><span>Verizon</span><span>Astound</span><span>Dycom</span><span>Ziply</span><span>TDS</span></div>
+      <div class="bwcar">
+        <div><div class="t">👷 We're hiring crews across the Southeast</div><div class="s">Fiber techs, splicers, tower hands, PMs — apply in 60 seconds.</div></div>
+        <span class="a">View openings →</span>
+      </div>
+    </div>
+    <p class="lead" style="text-align:center;max-width:680px;margin:34px auto 0">Every block above is a feature working for you. Here's what each one does — the dream stack for a CEO in connectivity infrastructure:</p>
+    <div class="dream">
+      <div class="c"><div class="ic">🎯</div><b>Request-a-bid portal</b><p>Scopes and RFPs land structured and routed to the right estimator — not lost in an inbox. Your homepage becomes a pipeline.</p></div>
+      <div class="c"><div class="ic">🗺️</div><b>Live coverage &amp; project map</b><p>A GIS-fed map of where you've built and where crews are working now. Proof of scale a prime can see in five seconds.</p></div>
+      <div class="c"><div class="ic">🛡️</div><b>Certifications &amp; safety wall</b><p>MBE/NMSDC/CPUC/GSA plus EMR &amp; TRIR — always current. The first thing a prime checks before they award.</p></div>
+      <div class="c"><div class="ic">👷</div><b>Careers &amp; crew recruiting</b><p>Your #1 bottleneck, solved at the front door: apply-in-60-seconds that feeds a real recruiting pipeline.</p></div>
+      <div class="c"><div class="ic">🔐</div><b>Client &amp; prime portal</b><p>Secure logins for as-builts, project status, and invoices. Stop emailing files — give partners self-serve access.</p></div>
+      <div class="c"><div class="ic">📄</div><b>One-click capability statement</b><p>An always-current capability statement and line card a prime can download instantly — generated from your real numbers.</p></div>
+      <div class="c"><div class="ic">🤖</div><b>AI site concierge</b><p>Answers "do you cover this region, are you bondable to $X, can you self-perform Y" 24/7 — and books the call.</p></div>
+      <div class="c"><div class="ic">📊</div><b>Real-time proof counters</b><p>Miles designed, towers serviced, crews live — pulled straight from the platform, never hand-edited or stale.</p></div>
+      <div class="c"><div class="ic">📰</div><b>Newsroom &amp; leadership</b><p>Awards, press, and your MBE/ESG story — the credibility primes, carriers, and municipalities look for.</p></div>
     </div>
   </div>
 </section>
