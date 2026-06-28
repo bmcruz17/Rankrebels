@@ -455,9 +455,9 @@ footer a{color:var(--cyan)}
               <div class="bw-h4">Certified &amp; safe to award</div>
               <div class="bwcerts"><span>MBE</span><span>NMSDC</span><span>CPUC</span><span>GSA Schedule</span><span>SAM</span><span>E-Verify</span></div>
               <div class="bwsafe">
-                <div><div class="n">0.74</div><div class="l">EMR</div></div>
-                <div><div class="n">1.2</div><div class="l">TRIR</div></div>
-                <div><div class="n">$XXM</div><div class="l">Bondable</div></div>
+                <div><div class="n">0.82</div><div class="l">EMR</div></div>
+                <div><div class="n">1.7</div><div class="l">TRIR</div></div>
+                <div><div class="n">$15M</div><div class="l">Bondable</div></div>
               </div>
             </div>
           </div>
@@ -519,7 +519,7 @@ footer a{color:var(--cyan)}
               <div class="c" style="cursor:default"><b>GSA Schedule</b><p>Pre-negotiated federal contract vehicle.</p></div>
               <div class="c" style="cursor:default"><b>SAM.gov</b><p>Active federal registration &amp; UEI.</p></div>
               <div class="c" style="cursor:default"><b>E-Verify</b><p>Workforce eligibility verified.</p></div>
-              <div class="c" style="cursor:default"><b>Safety</b><p>EMR 0.74 · TRIR 1.2 · bondable to $XXM.</p></div>
+              <div class="c" style="cursor:default"><b>Safety &amp; bonding</b><p>EMR 0.82 · TRIR 1.7 · bondable to $15M single / $50M aggregate.</p></div>
             </div>
           </div>
         </div>
@@ -1056,7 +1056,7 @@ function submitIntake(e){
   };
   function fdAnswer(q){ q=q.toLowerCase();
     if(/north carolina|\bnc\b|cover|region|where|state/.test(q)) return "Yes — we're active across the Southeast (NC, SC, GA, TN) with 6 crews live right now, and we mobilize into new markets for the right contract.";
-    if(/bond|bondable/.test(q)) return "Yes, TARO is bondable — single and aggregate limits available on request. Our EMR is 0.74 and TRIR is 1.2.";
+    if(/bond|bondable/.test(q)) return "Yes — TARO is bondable to roughly $15M single / $50M aggregate. Our EMR is 0.82 and TRIR is 1.7, both well below industry average.";
     if(/self.?perform|fiber|splice|osp|wireless|tower|lidar/.test(q)) return "We self-perform fiber design, OSP construction, and splicing — plus wireless/tower, LiDAR, and GIS. One certified team from design to as-built.";
     if(/cert|mbe|gsa|nmsdc|cpuc|sam/.test(q)) return "We hold MBE/NMSDC, CPUC, SAM, E-Verify, and a GSA Schedule — all current. Want our capability statement?";
     if(/price|cost|quote|bid/.test(q)) return "Happy to scope it — tap 'Request a bid' and it routes straight to our estimating team, or I can book a call now.";
