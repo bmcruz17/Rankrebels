@@ -227,7 +227,7 @@ html[dir=rtl] .hero h1,html[dir=rtl] .lead{margin-left:auto}
 <script>
 document.getElementById('y').textContent=new Date().getFullYear();
 var sb=window.supabase.createClient('https://eejmocneacfleltspedl.supabase.co','eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVlam1vY25lYWNmbGVsdHNwZWRsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyNDQ3MTMsImV4cCI6MjA5NzgyMDcxM30.dXJTMFp_d9JRlXkesVPCUj6tBi3qphxxOu3v-Cuw7_Y');
-async function submitLead(e){e.preventDefault();var f=e.target;var rec={business_name:f.business.value,contact_name:f.name.value,email:f.email.value,phone:f.phone.value||null,stage:'lead',acquired_by:'website',notes:'Inbound lead from ${esc(place)} landing page'+(f.message.value?(' — '+f.message.value):'')};try{var r=await sb.from('rr_clients').insert(rec);if(r.error)throw r.error;f.reset();document.getElementById('fm').style.display='block';}catch(err){alert('Sorry, something went wrong — please email hello@rankrebels.ai');}return false;}
+async function submitLead(e){e.preventDefault();var f=e.target;var rec={business_name:f.business.value,contact_name:f.name.value,email:f.email.value,phone:f.phone.value||null,stage:'lead',acquired_by:'website',notes:'Inbound lead from ${esc(place)} landing page'+(f.message.value?(' — '+f.message.value):'')};try{var r=await sb.from('rr_clients').insert(rec);if(r.error)throw r.error;f.reset();document.getElementById('fm').style.display='block';}catch(err){alert('Sorry, something went wrong — please email sales@rankrebels.ai');}return false;}
 </script>
 </body></html>`;
   return new Response(body, { headers: { 'content-type': 'text/html; charset=utf-8', 'cache-control': 'public, max-age=3600' } });

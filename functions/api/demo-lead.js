@@ -6,9 +6,9 @@
 //
 // Cloudflare secret (optional): RESEND_API_KEY  — when unset, this no-ops gracefully
 //   (returns {ok:true, demo:true}) so the form still shows success and never errors.
-// Optional env: RESEND_FROM (default 'Rank Rebels <hello@rankrebels.ai>'),
-//               LEAD_NOTIFY (owner address that always gets a copy / the intake answers;
-//                            default 'brandonmcruz@mac.com'),
+// Optional env: RESEND_FROM (default 'Rank Rebels <sales@rankrebels.ai>'),
+//               LEAD_NOTIFY (comma-separated owner addresses that always get a copy /
+//                            the intake answers; default 'brandon@rankrebels.ai,eric@rankrebels.ai'),
 //               DEMO_BCC (an extra address to copy on every submission).
 //
 // Two paths:
@@ -33,8 +33,9 @@ export async function onRequestPost({ request, env }) {
   const kind = b.source === 'booking' ? 'booking request' : 'quote request';
   const cta = /^https:\/\//.test(b.cta || '') ? b.cta : 'https://rankrebels.ai';
   const brand = String(b.brand || 'your site').trim().slice(0, 120);
-  const owner = String(env.LEAD_NOTIFY || 'brandonmcruz@mac.com').trim();
-  const from = env.RESEND_FROM || 'Rank Rebels <hello@rankrebels.ai>';
+  const owners = String(env.LEAD_NOTIFY || 'brandon@rankrebels.ai,eric@rankrebels.ai')
+    .split(',').map((s) => s.trim()).filter(Boolean);
+  const from = env.RESEND_FROM || 'Rank Rebels <sales@rankrebels.ai>';
 
   // ── Discovery intake (e.g. TARO questionnaire) → email the answers to the OWNER ──
   if (b.source === 'intake') {
@@ -63,7 +64,7 @@ export async function onRequestPost({ request, env }) {
       </table>
     </td></tr></table></body></html>`;
     const ipayload = {
-      from, to: [owner], subject: `⬡ New ${esc(brand)} intake${name ? ' — ' + name : ''}`,
+      from, to: owners, subject: `⬡ New ${esc(brand)} intake${name ? ' — ' + name : ''}`,
       html: ihtml,
     };
     if (/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) ipayload.reply_to = email;
@@ -126,12 +127,12 @@ export async function onRequestPost({ request, env }) {
   const payload = {
     from,
     to: [email],
-    reply_to: 'hello@rankrebels.ai',
+    reply_to: 'sales@rankrebels.ai',
     subject: `⚡ New ${kind} for ${biz} — see how it works`,
     html,
   };
-  const bcc = [owner];
-  if (env.DEMO_BCC && env.DEMO_BCC !== owner) bcc.push(env.DEMO_BCC);
+  const bcc = owners.slice();
+  if (env.DEMO_BCC && !bcc.includes(env.DEMO_BCC)) bcc.push(env.DEMO_BCC);
   payload.bcc = bcc;
 
   try {
