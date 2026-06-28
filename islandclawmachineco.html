@@ -209,6 +209,19 @@ h2{font-size:clamp(28px,4vw,44px);font-weight:800;letter-spacing:-.015em;line-he
 .dmini{flex:1;background:rgba(255,255,255,.05);border-radius:13px;padding:13px}
 .dmini .n{font-size:20px;font-weight:800;color:var(--sun);font-family:'Baloo 2',sans-serif}
 .dmini .l{font-size:10.5px;color:#9fb4cf;margin-top:2px}
+/* finances */
+.fin-dash{display:flex;flex-direction:column;gap:14px}
+.fin-top{display:flex;justify-content:space-between;align-items:flex-start;gap:14px}
+.fin-lbl{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#b9c6d6;font-weight:700}
+.fin-big{font-size:34px;font-weight:800;font-family:'Baloo 2',sans-serif;color:#fff;line-height:1.1}
+.fin-up{font-size:12px;color:#6fd69a;font-weight:700;margin-top:2px}
+.fin-plaid{font-size:11px;color:#c2d2e4;text-align:right;line-height:1.5}
+.fin-plaid b{color:#fff}
+.fin-goal-row{display:flex;justify-content:space-between;font-size:12.5px;color:#dbe6f2;font-weight:700;margin-bottom:6px}
+.fin-bar{height:10px;background:rgba(255,255,255,.12);border-radius:6px;overflow:hidden}
+.fin-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--sun),var(--pink));transition:width 1s cubic-bezier(.2,.7,.2,1)}
+.fin-ai{background:rgba(62,127,208,.16);border:1px solid rgba(62,127,208,.4);border-radius:12px;padding:12px 14px;font-size:12.5px;color:#e7eef6;line-height:1.5}
+.fin-ai b{color:var(--sun)}
 /* booking + proposal */
 .book{background:var(--cream)}
 .book-grid{display:grid;grid-template-columns:1fr 1fr;gap:46px;align-items:start}
@@ -264,30 +277,32 @@ footer a{color:var(--aqua)}
 <body>
 <!-- Island Claw logo (recreated from her brand mark — swap for her real file anytime) -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <symbol id="icmMark" viewBox="74 48 92 148" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round">
-    <line x1="78" y1="58" x2="162" y2="58"/><rect x="111" y="52" width="18" height="11" rx="2.5"/><line x1="120" y1="63" x2="120" y2="78"/><circle cx="120" cy="80" r="3.2" fill="#fff" stroke="none"/>
-    <path d="M120 82 C 109 88, 102 99, 104 110"/><path d="M120 82 C 131 88, 138 99, 136 110"/><path d="M120 83 L120 106"/>
-    <path d="M120 114 L120 86"/><path d="M120 113 L107 95"/><path d="M120 113 L133 95"/><path d="M120 115 L98 104"/><path d="M120 115 L142 104"/>
-    <path d="M120 115 C 99 115, 91 132, 93 151 C 95 172, 107 187, 120 187 C 133 187, 145 172, 147 151 C 149 132, 141 115, 120 115 Z"/>
-    <g stroke-width="2" opacity=".8"><path d="M99 152 L141 152 M101 164 L139 164 M108 176 L132 176"/><path d="M112 150 L108 184 M120 150 L120 186 M128 150 L132 184"/></g>
-    <path d="M98 130 C 98 143, 104 147, 112 146 C 118 145, 119 137, 118 130 C 111 128, 103 128, 98 130 Z" fill="rgba(0,0,0,.16)"/>
-    <path d="M142 130 C 142 143, 136 147, 128 146 C 122 145, 121 137, 122 130 C 129 128, 137 128, 142 130 Z" fill="rgba(0,0,0,.16)"/>
-    <line x1="118" y1="132" x2="122" y2="132"/>
+  <symbol id="icmMark" viewBox="74 48 92 146" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="113" y="55" width="14" height="11" rx="1.5"/><line x1="104" y1="67" x2="136" y2="67"/><line x1="120" y1="67" x2="120" y2="78"/>
+    <circle cx="120" cy="86" r="9"/><circle cx="120" cy="86" r="2" fill="#fff" stroke="none"/>
+    <path d="M112,91 L96,114 L100,122"/><path d="M128,91 L144,114 L140,122"/>
+    <path d="M120,112 L120,83"/><path d="M120,112 L111,90"/><path d="M120,112 L129,90"/><path d="M119,112 L108,99"/><path d="M121,112 L132,99"/>
+    <path d="M120,113 C 101,113 93,129 94,148 C 95,169 106,185 120,185 C 134,185 145,169 146,148 C 147,129 139,113 120,113 Z"/>
+    <clipPath id="lbM"><path d="M95,143 C 96,167 107,185 120,185 C 133,185 144,167 145,143 Z"/></clipPath>
+    <g clip-path="url(#lbM)" stroke-width="1.5" opacity=".7"><path d="M70,138 L118,186 M80.5,138 L128.5,186 M91,138 L139,186 M101.5,138 L149.5,186 M112,138 L160,186 M122.5,138 L170.5,186 M133,138 L181,186"/><path d="M46,186 L94,138 M56.5,186 L104.5,138 M67,186 L115,138 M77.5,186 L125.5,138 M88,186 L136,138 M98.5,186 L146.5,138 M109,186 L157,138 M119.5,186 L167.5,138"/></g>
+    <path d="M101,128 L117,126 C 118,138 111,143 105,142 C 100,141 100,133 101,128 Z" fill="rgba(0,0,0,.2)"/>
+    <path d="M139,128 L123,126 C 122,138 129,143 135,142 C 140,141 140,133 139,128 Z" fill="rgba(0,0,0,.2)"/>
+    <path d="M117,127 Q120,124.5 123,127"/>
   </symbol>
   <symbol id="icmBadge" viewBox="0 0 240 240" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-    <circle cx="120" cy="120" r="116" stroke-width="2.5"/><circle cx="120" cy="120" r="99" stroke-width="1.4"/>
-    <defs><path id="arcTop" d="M 14 120 A 106 106 0 0 1 226 120"/><path id="arcBot" d="M 22 120 A 102 102 0 0 0 218 120"/></defs>
-    <text font-family="'Baloo 2',sans-serif" font-weight="800" font-size="15.5" fill="#fff" stroke="none" letter-spacing="1.4"><textPath href="#arcTop" startOffset="50%" text-anchor="middle">ISLAND CLAW MACHINE CO.</textPath></text>
-    <text font-family="'Baloo 2',sans-serif" font-weight="800" font-size="16" fill="#fff" stroke="none" letter-spacing="3"><textPath href="#arcBot" startOffset="50%" text-anchor="middle">HONOLULU, HI</textPath></text>
-    <circle cx="20" cy="120" r="2.4" fill="#fff" stroke="none"/><circle cx="220" cy="120" r="2.4" fill="#fff" stroke="none"/>
-    <line x1="78" y1="58" x2="162" y2="58"/><rect x="111" y="52" width="18" height="11" rx="2.5"/><line x1="120" y1="63" x2="120" y2="78"/><circle cx="120" cy="80" r="3.2" fill="#fff" stroke="none"/>
-    <path d="M120 82 C 109 88, 102 99, 104 110"/><path d="M120 82 C 131 88, 138 99, 136 110"/><path d="M120 83 L120 106"/>
-    <path d="M120 114 L120 86"/><path d="M120 113 L107 95"/><path d="M120 113 L133 95"/><path d="M120 115 L98 104"/><path d="M120 115 L142 104"/>
-    <path d="M120 115 C 99 115, 91 132, 93 151 C 95 172, 107 187, 120 187 C 133 187, 145 172, 147 151 C 149 132, 141 115, 120 115 Z"/>
-    <g stroke-width="1.8" opacity=".8"><path d="M99 152 L141 152 M101 164 L139 164 M108 176 L132 176"/><path d="M112 150 L108 184 M120 150 L120 186 M128 150 L132 184"/></g>
-    <path d="M98 130 C 98 143, 104 147, 112 146 C 118 145, 119 137, 118 130 C 111 128, 103 128, 98 130 Z" fill="rgba(0,0,0,.16)"/>
-    <path d="M142 130 C 142 143, 136 147, 128 146 C 122 145, 121 137, 122 130 C 129 128, 137 128, 142 130 Z" fill="rgba(0,0,0,.16)"/>
-    <line x1="118" y1="132" x2="122" y2="132"/>
+    <defs><path id="at" d="M 18,120 A 102,102 0 0 1 222,120"/><path id="ab" d="M 26,120 A 98,98 0 0 0 214,120"/></defs>
+    <text font-family="'Baloo 2',sans-serif" font-weight="800" font-size="16" fill="#fff" stroke="none" letter-spacing="1.2"><textPath href="#at" startOffset="50%" text-anchor="middle">ISLAND CLAW MACHINE CO.</textPath></text>
+    <text font-family="'Baloo 2',sans-serif" font-weight="800" font-size="16.5" fill="#fff" stroke="none" letter-spacing="2.6"><textPath href="#ab" startOffset="50%" text-anchor="middle">HONOLULU, HI</textPath></text>
+    <rect x="113" y="55" width="14" height="11" rx="1.5"/><line x1="104" y1="67" x2="136" y2="67"/><line x1="120" y1="67" x2="120" y2="78"/>
+    <circle cx="120" cy="86" r="9"/><circle cx="120" cy="86" r="2" fill="#fff" stroke="none"/>
+    <path d="M112,91 L96,114 L100,122"/><path d="M128,91 L144,114 L140,122"/>
+    <path d="M120,112 L120,83"/><path d="M120,112 L111,90"/><path d="M120,112 L129,90"/><path d="M119,112 L108,99"/><path d="M121,112 L132,99"/>
+    <path d="M120,113 C 101,113 93,129 94,148 C 95,169 106,185 120,185 C 134,185 145,169 146,148 C 147,129 139,113 120,113 Z"/>
+    <clipPath id="lbB"><path d="M95,143 C 96,167 107,185 120,185 C 133,185 144,167 145,143 Z"/></clipPath>
+    <g clip-path="url(#lbB)" stroke-width="1.5" opacity=".7"><path d="M70,138 L118,186 M80.5,138 L128.5,186 M91,138 L139,186 M101.5,138 L149.5,186 M112,138 L160,186 M122.5,138 L170.5,186 M133,138 L181,186"/><path d="M46,186 L94,138 M56.5,186 L104.5,138 M67,186 L115,138 M77.5,186 L125.5,138 M88,186 L136,138 M98.5,186 L146.5,138 M109,186 L157,138 M119.5,186 L167.5,138"/></g>
+    <path d="M101,128 L117,126 C 118,138 111,143 105,142 C 100,141 100,133 101,128 Z" fill="rgba(0,0,0,.2)"/>
+    <path d="M139,128 L123,126 C 122,138 129,143 135,142 C 140,141 140,133 139,128 Z" fill="rgba(0,0,0,.2)"/>
+    <path d="M117,127 Q120,124.5 123,127"/>
   </symbol>
 </svg>
 
@@ -296,7 +311,7 @@ footer a{color:var(--aqua)}
 <div class="nav">
   <div class="brand"><div class="logo"><svg style="width:30px;height:34px" aria-label="Island Claw Machine Co."><use href="#icmMark"/></svg></div><div>Island Claw Machine Co.<small>Honolulu, HI · Have a CLAW-some day!</small></div></div>
   <div class="links">
-    <a href="#rent">Rent</a><a href="#shop">Buy a Machine</a><a href="#franchise">Franchise</a><a href="#book">Book</a><a href="#growth">Growth Plan</a><a href="#grow">Content</a>
+    <a href="#rent">Rent</a><a href="#shop">Buy a Machine</a><a href="#franchise">Franchise</a><a href="#book">Book</a><a href="#growth">Growth Plan</a><a href="#finances">Finances</a><a href="#grow">Content</a>
   </div>
   <a class="ncta" href="#book">Book an Event</a>
 </div>
@@ -594,6 +609,42 @@ footer a{color:var(--aqua)}
   </div>
 </section>
 
+<!-- FINANCES -->
+<section id="finances" class="cc" style="background:var(--cream)">
+  <div class="wrap">
+    <div class="cc-grid">
+      <div>
+        <div class="kick">Your money, handled</div>
+        <h2>Connect your bank and watch your business grow</h2>
+        <p class="lead">Securely link your bank with Plaid and your whole financial picture lives in one place — earnings, revenue, and expenses tracked automatically. Set growth goals, and let your built-in AI assistant help you hit them.</p>
+        <div class="cc-feat">
+          <div><div class="c">🔒</div><div><b>Bank-level secure with Plaid</b><p>Link your accounts in seconds with the same trusted tech the big finance apps use. We never see your login.</p></div></div>
+          <div><div class="c">📊</div><div><b>Every dollar in one place</b><p>Bookings, machine sales, and deposits flow into one dashboard, so you always know what you're making.</p></div></div>
+          <div><div class="c">🎯</div><div><b>Set &amp; track revenue goals</b><p>Pick a target — a record month, a new machine, your first franchise — and watch your progress in real time.</p></div></div>
+          <div><div class="c">🤖</div><div><b>An AI goal coach, built in</b><p>Powered by Claude, your assistant helps you set smart goals, spot trends, and suggests the next move to grow.</p></div></div>
+        </div>
+      </div>
+      <div class="dash fin-dash">
+        <div class="dbar"><i></i><i></i><i></i><span class="dt">Island Claw · Finances</span></div>
+        <div class="fin-top">
+          <div><div class="fin-lbl">Revenue this month</div><div class="fin-big">$11,240</div><div class="fin-up">▲ 18% vs last month</div></div>
+          <div class="fin-plaid">🔒 Connected via Plaid<br><b>Chase ••4821</b></div>
+        </div>
+        <div class="fin-goal">
+          <div class="fin-goal-row"><span>🎯 Goal: $15,000</span><span>75%</span></div>
+          <div class="fin-bar"><div class="fin-fill" style="width:75%"></div></div>
+        </div>
+        <div class="drow">
+          <div class="dmini"><div class="n">$7.4k</div><div class="l">Bookings</div></div>
+          <div class="dmini"><div class="n">$3.1k</div><div class="l">Machine sales</div></div>
+          <div class="dmini"><div class="n">$740</div><div class="l">Add-ons</div></div>
+        </div>
+        <div class="fin-ai">💡 <b>Claude:</b> You're $3,760 from your goal — two more both-machine weekends gets you there. Want me to draft a weekend promo to fill them?</div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- COMMAND CENTER -->
 <section id="command" class="cc">
   <div class="wrap">
@@ -634,51 +685,6 @@ footer a{color:var(--aqua)}
           <div class="dmini"><div class="n">6</div><div class="l">Weekends filled</div></div>
           <div class="dmini"><div class="n">2</div><div class="l">Machine orders</div></div>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- GROW / MONTHLY ADD-ONS -->
-<section id="grow">
-  <div class="wrap center">
-    <div class="kick">Optional monthly add-ons</div>
-    <h2>We don't just build it — we help you <span style="color:var(--pink)">grow it</span></h2>
-    <p class="lead">Your machines already turn heads. Let's turn that into a following, a brand, and a team. Add any of these to your plan whenever you're ready.</p>
-  </div>
-  <div class="wrap">
-    <div class="grow-grid">
-      <div class="gcard">
-        <div class="gic">🎬</div>
-        <div class="gbadge">Content &amp; reels</div>
-        <h3>High-production reels, done for you</h3>
-        <p>A videographer on retainer captures your gigs and machines, and our editors cut it into scroll-stopping reels and posts — polished, on-brand, and ready to publish. The kind of content that gets you booked.</p>
-        <div class="gprice">from $1,200 <small>/ month</small></div>
-        <button class="btn" data-interest="Content, reels &amp; social">Add content →</button>
-      </div>
-      <div class="gcard">
-        <div class="gic">📲</div>
-        <div class="gbadge">Social management</div>
-        <h3>Hand off your socials entirely</h3>
-        <p>We plan, post, and engage across Instagram &amp; TikTok so your feed stays active and growing while you run events. Captions, hashtags, replies, and a steady drumbeat of content — all handled.</p>
-        <div class="gprice">from $600 <small>/ month</small></div>
-        <button class="btn aqua" data-interest="Content, reels &amp; social">Manage my socials →</button>
-      </div>
-      <div class="gcard">
-        <div class="gic">✨</div>
-        <div class="gbadge">Brand building</div>
-        <h3>A brand people remember</h3>
-        <p>Cohesive branding, custom machine-artwork direction, and a look that's unmistakably you — online and at every event. We make Island Claw feel like the premium experience it is.</p>
-        <div class="gprice">from $750 <small>one-time</small></div>
-        <button class="btn" data-interest="Brand building">Build my brand →</button>
-      </div>
-      <div class="gcard">
-        <div class="gic">🧑‍🤝‍🧑</div>
-        <div class="gbadge">Hiring &amp; recruiting</div>
-        <h3>More hands for the big weekends</h3>
-        <p>Both machines out on one gig is your most profitable setup — but it takes staff. We help you find, screen, and onboard reliable workers so you never have to turn down a booking again.</p>
-        <div class="gprice">Scoped per role <small>· let's talk</small></div>
-        <button class="btn" data-interest="Hiring &amp; recruiting">Help me hire →</button>
       </div>
     </div>
   </div>
@@ -775,6 +781,51 @@ footer a{color:var(--aqua)}
     <div style="max-width:760px;margin:30px auto 0;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:22px 26px">
       <div style="font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--sun);font-weight:800;margin-bottom:10px">How billing works</div>
       <p style="font-size:14.5px;color:#dde8f3;line-height:1.65;margin:0">Your <b>$500 build fee</b> is paid today to kick things off. Once your site is published and live, your <b>first monthly payment is due 30 days after the go-live date</b> — and we email your invoice <b>15 days before</b> each automatic payment is withdrawn, so there's never a surprise. Month-to-month — cancel anytime.</p>
+    </div>
+  </div>
+</section>
+
+<!-- GROW / MONTHLY ADD-ONS -->
+<section id="grow">
+  <div class="wrap center">
+    <div class="kick">Optional monthly add-ons</div>
+    <h2>We don't just build it — we help you <span style="color:var(--pink)">grow it</span></h2>
+    <p class="lead">Your machines already turn heads. Let's turn that into a following, a brand, and a team. Add any of these to your plan whenever you're ready.</p>
+  </div>
+  <div class="wrap">
+    <div class="grow-grid">
+      <div class="gcard">
+        <div class="gic">🎬</div>
+        <div class="gbadge">Content &amp; reels</div>
+        <h3>High-production reels, done for you</h3>
+        <p>A videographer on retainer captures your gigs and machines, and our editors cut it into scroll-stopping reels and posts — polished, on-brand, and ready to publish. The kind of content that gets you booked.</p>
+        <div class="gprice">from $1,200 <small>/ month</small></div>
+        <button class="btn" data-interest="Content, reels &amp; social">Add content →</button>
+      </div>
+      <div class="gcard">
+        <div class="gic">📲</div>
+        <div class="gbadge">Social management</div>
+        <h3>Hand off your socials entirely</h3>
+        <p>We plan, post, and engage across Instagram &amp; TikTok so your feed stays active and growing while you run events. Captions, hashtags, replies, and a steady drumbeat of content — all handled.</p>
+        <div class="gprice">from $600 <small>/ month</small></div>
+        <button class="btn aqua" data-interest="Content, reels &amp; social">Manage my socials →</button>
+      </div>
+      <div class="gcard">
+        <div class="gic">✨</div>
+        <div class="gbadge">Brand building</div>
+        <h3>A brand people remember</h3>
+        <p>Cohesive branding, custom machine-artwork direction, and a look that's unmistakably you — online and at every event. We make Island Claw feel like the premium experience it is.</p>
+        <div class="gprice">from $750 <small>one-time</small></div>
+        <button class="btn" data-interest="Brand building">Build my brand →</button>
+      </div>
+      <div class="gcard">
+        <div class="gic">🧑‍🤝‍🧑</div>
+        <div class="gbadge">Hiring &amp; recruiting</div>
+        <h3>More hands for the big weekends</h3>
+        <p>Both machines out on one gig is your most profitable setup — but it takes staff. We help you find, screen, and onboard reliable workers so you never have to turn down a booking again.</p>
+        <div class="gprice">Scoped per role <small>· let's talk</small></div>
+        <button class="btn" data-interest="Hiring &amp; recruiting">Help me hire →</button>
+      </div>
     </div>
   </div>
 </section>
