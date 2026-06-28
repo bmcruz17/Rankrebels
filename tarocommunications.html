@@ -305,6 +305,57 @@ h2{font-size:clamp(26px,3.6vw,40px);font-weight:700;line-height:1.12;color:#fff}
 /* typing caret */
 .caret:after{content:"";display:inline-block;width:1px;height:1em;background:var(--cyan);margin-left:1px;vertical-align:-2px;animation:blink 1s steps(1) infinite}
 @keyframes blink{50%{opacity:0}}
+/* v2 showcase cleanup */
+.bw{position:relative}
+.bwn .lk span{cursor:pointer;transition:color .12s}
+.bwn .lk span:hover{color:var(--cyan)}
+.si svg{width:22px;height:22px;fill:none;stroke:var(--cyan);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.wmore{font-size:11px;font-weight:700;color:var(--cyan);margin-top:10px}
+.wcard{cursor:pointer;transition:transform .14s,border-color .14s}
+.wcard:hover{transform:translateY(-3px);border-color:var(--cyan)}
+.wd-hero{border-radius:13px;padding:20px;margin-bottom:14px}
+.wd-hero h3{font-family:'Space Grotesk',sans-serif;font-size:18px;color:#fff;margin:10px 0 3px}
+.wd-sub{font-size:12px;color:#cfe0f4}
+.wd-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+@media(max-width:560px){.wd-stats{grid-template-columns:1fr 1fr}}
+.wd-stats>div{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:11px;padding:13px;text-align:center;font-size:11px;color:var(--muted)}
+.wd-stats b{display:block;font-family:'Space Grotesk',sans-serif;font-size:18px;color:var(--cyan)}
+.wd-p{font-size:13.5px;color:#cdd9e8;line-height:1.6;margin-bottom:14px}
+.wd-scope{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:12px;padding:15px;margin-bottom:12px}
+.wd-scope b{font-size:12px;color:#fff;display:block;margin-bottom:8px}
+.wd-scope ul{margin:0;padding-left:18px}.wd-scope li{font-size:12.5px;color:var(--muted);margin-bottom:5px}
+.wd-outcome{font-size:12.5px;color:#9fe6c2;background:rgba(95,214,160,.1);border:1px solid rgba(95,214,160,.3);border-radius:10px;padding:12px 14px}
+/* login role toggle */
+.roletog{display:flex;gap:6px;background:var(--navy-3);border:1px solid var(--line);border-radius:11px;padding:4px;max-width:380px;margin-bottom:14px}
+.roletog button{flex:1;font:inherit;font-size:12.5px;font-weight:700;color:var(--muted);background:transparent;border:0;padding:9px 10px;border-radius:8px;cursor:pointer}
+.roletog button.on{background:var(--cyan);color:#062033}
+.loginbox{max-width:380px}
+.loginbox input{width:100%;padding:11px 13px;border:1px solid var(--line-2);border-radius:9px;background:rgba(255,255,255,.03);color:var(--text);font:inherit;font-size:13px;margin-bottom:10px}
+.loginhint{font-size:11px;color:var(--muted);text-align:center;margin-top:10px}
+/* client dashboard */
+.cl-sum{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:6px}
+@media(max-width:560px){.cl-sum{grid-template-columns:1fr 1fr}}
+.cl-sum>div{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:11px;padding:13px;font-size:11px;color:var(--muted)}
+.cl-sum b{display:block;font-family:'Space Grotesk',sans-serif;font-size:18px;color:var(--cyan);margin-bottom:2px}
+.phase{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+.ph-s{display:flex;align-items:center;gap:6px;font-size:10.5px;font-weight:600;color:var(--muted);background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:999px;padding:5px 10px}
+.ph-s i{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.18)}
+.ph-s.done{color:#9fe6c2}.ph-s.done i{background:#5fd6a0}
+.ph-s.now{color:var(--cyan);border-color:rgba(79,195,232,.4)}.ph-s.now i{background:var(--cyan);box-shadow:0 0 0 3px rgba(79,195,232,.2)}
+.thumbs{display:flex;align-items:center;gap:6px;margin-top:10px}
+.thumbs span{width:38px;height:30px;border-radius:7px;border:1px solid var(--line);background:linear-gradient(160deg,#1c4a7a 0%,#1c4a7a 55%,#2f6b3e 55%,#3a7d49 100%)}
+.thumbs small{font-size:11px;color:var(--muted);margin-left:4px}
+.docs{margin-top:14px;background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:12px;padding:14px}
+.docs-h{font-size:12px;font-weight:700;color:#fff;margin-bottom:10px}
+.docrow{display:flex;flex-wrap:wrap;gap:8px}
+.doc{font-size:11.5px;font-weight:600;color:var(--cyan);background:rgba(79,195,232,.1);border:1px solid rgba(79,195,232,.3);border-radius:8px;padding:7px 11px;cursor:pointer;transition:background .12s}
+.doc:hover{background:rgba(79,195,232,.18)}
+.am{display:flex;align-items:center;gap:12px;margin-top:12px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:12px;padding:13px 15px}
+.am-av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--blue));color:#062033;font-weight:800;font-size:13px;display:grid;place-items:center;flex:0 0 auto}
+.am b{font-size:13px;color:#fff;display:block}.am div div{font-size:11.5px;color:var(--muted)}.am>div:nth-of-type(2){flex:1}
+/* AI floating bubble */
+.aibubble{position:absolute;bottom:14px;right:14px;z-index:5;display:inline-flex;align-items:center;gap:8px;background:var(--cyan);color:#062033;font:inherit;font-weight:800;font-size:12.5px;border:0;border-radius:999px;padding:11px 16px;cursor:pointer;box-shadow:0 12px 30px -10px rgba(79,195,232,.7)}
+.aibubble:hover{background:var(--cyan-2)}
 .feat{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center}
 .feat.rev .feat-vis{order:-1}
 @media(max-width:880px){.feat{grid-template-columns:1fr;gap:32px}.feat.rev .feat-vis{order:0}}
@@ -497,21 +548,8 @@ footer a{color:var(--cyan)}
       <div class="bw-screen after on" data-screen="after">
         <div class="bwn">
           <div class="lg"><span class="hx">⬡</span> TARO COMMUNICATIONS</div>
-          <div class="lk"><span data-go="capabilities">Capabilities</span><span data-go="work">Work</span><span data-go="certs">Certifications</span><span data-go="careers">Careers</span><span data-go="portal">Client Login</span></div>
+          <div class="lk"><span data-go="capabilities">Capabilities</span><span data-go="work">Work</span><span data-go="certs">Certifications</span><span data-go="news">News</span><span data-go="careers">Careers</span><span data-go="portal">Sign in</span></div>
           <div class="cta" data-go="bid">Request a bid</div>
-        </div>
-        <div class="bwtabs" id="bwTabs">
-          <button data-go="home">🏠 Home</button>
-          <button data-go="bid">🎯 Request a bid</button>
-          <button data-go="capabilities">🧰 Capabilities</button>
-          <button data-go="work">🏗️ Work</button>
-          <button data-go="map">🗺️ Coverage</button>
-          <button data-go="certs">🛡️ Certifications</button>
-          <button data-go="careers">👷 Careers</button>
-          <button data-go="portal">🔐 Client portal</button>
-          <button data-go="ai">🤖 AI concierge</button>
-          <button data-go="proof">📊 Proof</button>
-          <button data-go="news">📰 Newsroom</button>
         </div>
 
         <!-- HOME stage -->
@@ -545,7 +583,7 @@ footer a{color:var(--cyan)}
           </div>
           <div class="bwcl"><span>Comcast</span><span>Verizon</span><span>Astound</span><span>Dycom</span><span>Ziply</span><span>TDS</span></div>
           <div class="bwcar">
-            <div><div class="t">👷 We're hiring crews across the Southeast</div><div class="s">Fiber techs, splicers, tower hands, PMs — apply in 60 seconds.</div></div>
+            <div><div class="t">We're hiring crews across the Southeast</div><div class="s">Fiber techs, splicers, tower hands, PMs — apply in 60 seconds.</div></div>
             <span class="a" data-go="careers">View openings →</span>
           </div>
         </div>
@@ -568,16 +606,6 @@ footer a{color:var(--cyan)}
           </div>
         </div>
 
-        <!-- MAP stage -->
-        <div class="stage" data-stage="map">
-          <div class="stageback" data-back>‹ Back to homepage</div>
-          <div class="demo">
-            <div class="dh">Live coverage &amp; active builds</div>
-            <div class="ds">A real map of the Southeast — every pin is a live job, fed straight from GIS. 6 active crews · 4 states · 312 mi in progress.</div>
-            <div class="tmap" data-map style="max-width:560px"></div>
-          </div>
-        </div>
-
         <!-- CAPABILITIES stage -->
         <div class="stage" data-stage="capabilities">
           <div class="stageback" data-back>‹ Back to homepage</div>
@@ -585,15 +613,15 @@ footer a{color:var(--cyan)}
             <div class="dh">Capabilities</div>
             <div class="ds">One certified team, the full lifecycle — design to as-built. Self-performed, not subbed out.</div>
             <div class="svcgrid">
-              <div class="svc2"><div class="si">🛰️</div><b>Fiber design &amp; engineering</b><p>FTTH/FTTx, OSP routing, permitting, and 3,000+ mi designed a year.</p></div>
-              <div class="svc2"><div class="si">🚜</div><b>OSP construction</b><p>Aerial &amp; underground placement, boring, splicing, restoration.</p></div>
-              <div class="svc2"><div class="si">📡</div><b>Wireless &amp; towers</b><p>Small-cell, DAS, and tower service across 2,600+ sites.</p></div>
-              <div class="svc2"><div class="si">🗺️</div><b>GIS &amp; as-builts</b><p>ESRI mapping, red-lines, and as-built documentation primes can trust.</p></div>
-              <div class="svc2"><div class="si">📐</div><b>LiDAR &amp; survey</b><p>Aerial LiDAR capture, make-ready, and pole-loading analysis.</p></div>
-              <div class="svc2"><div class="si">🛡️</div><b>Make-ready &amp; permitting</b><p>Joint-use, utility coordination, and regulatory compliance.</p></div>
+              <div class="svc2"><div class="si"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="2.2"/><circle cx="19" cy="6" r="2.2"/><circle cx="18" cy="18" r="2.2"/><path d="M7 11 16 7M7 13 16 17"/></svg></div><b>Fiber design &amp; engineering</b><p>FTTH/FTTx, OSP routing, permitting, and 3,000+ mi designed a year.</p></div>
+              <div class="svc2"><div class="si"><svg viewBox="0 0 24 24"><path d="M3 19h18M6 19V9l6-4 6 4v10"/><path d="M10 19v-5h4v5"/></svg></div><b>OSP construction</b><p>Aerial &amp; underground placement, boring, splicing, restoration.</p></div>
+              <div class="svc2"><div class="si"><svg viewBox="0 0 24 24"><path d="M8 21l4-12 4 12M9.5 16h5"/><path d="M6 8a8 8 0 0 1 12 0M8.5 10.5a4.5 4.5 0 0 1 7 0"/></svg></div><b>Wireless &amp; towers</b><p>Small-cell, DAS, and tower service across 2,600+ sites.</p></div>
+              <div class="svc2"><div class="si"><svg viewBox="0 0 24 24"><path d="M12 21s6-5.3 6-10a6 6 0 0 0-12 0c0 4.7 6 10 6 10z"/><circle cx="12" cy="11" r="2.2"/></svg></div><b>GIS &amp; as-builts</b><p>ESRI mapping, red-lines, and as-built documentation primes can trust.</p></div>
+              <div class="svc2"><div class="si"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18" opacity=".4"/><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2.4"/></svg></div><b>LiDAR &amp; survey</b><p>Aerial LiDAR capture, make-ready, and pole-loading analysis.</p></div>
+              <div class="svc2"><div class="si"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/></svg></div><b>Make-ready &amp; permitting</b><p>Joint-use, utility coordination, and regulatory compliance.</p></div>
             </div>
-            <div style="margin-top:16px"><button class="dbtn" onclick="fdCap(this)">⬇ Download capability statement</button>
-              <div class="dok" id="fdCapOk">✓ Generated <b>TARO_Capabilities_2026.pdf</b> — pulled live from your certs, NAICS codes, and project stats.</div>
+            <div style="margin-top:18px"><button class="dbtn" onclick="fdCap(this)">⬇ Download capability statement (PDF)</button>
+              <div class="dok" id="fdCapOk">✓ Downloaded <b>TARO_Capability_Statement.pdf</b> — your full line card, certs, NAICS codes, and past performance in one sheet.</div>
             </div>
           </div>
         </div>
@@ -602,13 +630,47 @@ footer a{color:var(--cyan)}
         <div class="stage" data-stage="work">
           <div class="stageback" data-back>‹ Back to homepage</div>
           <div class="demo">
-            <div class="dh">Selected work</div>
-            <div class="ds">A portfolio that proves scale — the case studies a prime scrolls before they award.</div>
-            <div class="workgrid">
-              <div class="wcard"><div class="wimg" style="background:linear-gradient(135deg,#13325c,#1857a8)"><span class="wtag">FTTH</span></div><div class="wb"><div class="wt">Charlotte Metro — Fiber Ring Ph.2</div><div class="wm">Self-performed design + OSP build for a regional carrier.</div><div class="wstat"><div><b>128 mi</b>placed</div><div><b>11 mo</b>on schedule</div><div><b>0</b>recordables</div></div></div></div>
-              <div class="wcard"><div class="wimg" style="background:linear-gradient(135deg,#0e3a4a,#13325c)"><span class="wtag">Wireless</span></div><div class="wb"><div class="wt">Nashville — Small-cell densification</div><div class="wm">142 small-cell nodes designed, permitted, and constructed.</div><div class="wstat"><div><b>142</b>nodes</div><div><b>9 mo</b>delivery</div><div><b>98%</b>QA pass</div></div></div></div>
-              <div class="wcard"><div class="wimg" style="background:linear-gradient(135deg,#143f73,#0e2547)"><span class="wtag">GIS</span></div><div class="wb"><div class="wt">Southeast — As-built GIS program</div><div class="wm">Standing GIS &amp; as-built team across 4 states for a national prime.</div><div class="wstat"><div><b>2,600+</b>towers</div><div><b>4</b>states</div><div><b>3,000mi</b>/yr</div></div></div></div>
-              <div class="wcard"><div class="wimg" style="background:linear-gradient(135deg,#13325c,#2b7fe0)"><span class="wtag">Municipal</span></div><div class="wb"><div class="wt">Indianapolis — Municipal fiber</div><div class="wm">Open-access design &amp; build connecting public facilities.</div><div class="wstat"><div><b>$3.1M</b>contract</div><div><b>On</b>budget</div><div><b>62</b>sites</div></div></div></div>
+            <div id="fdWorkList">
+              <div class="dh">Selected work</div>
+              <div class="ds">Click any project to open the case study.</div>
+              <div class="workgrid">
+                <div class="wcard" data-proj="charlotte"><div class="wimg" style="background:linear-gradient(135deg,#13325c,#1857a8)"><span class="wtag">FTTH</span></div><div class="wb"><div class="wt">Charlotte Metro — Fiber Ring Ph.2</div><div class="wm">Self-performed design + OSP build for a regional carrier.</div><div class="wstat"><div><b>128 mi</b>placed</div><div><b>11 mo</b>on time</div><div><b>0</b>recordables</div></div><div class="wmore">View case study →</div></div></div>
+                <div class="wcard" data-proj="nashville"><div class="wimg" style="background:linear-gradient(135deg,#0e3a4a,#13325c)"><span class="wtag">Wireless</span></div><div class="wb"><div class="wt">Nashville — Small-cell densification</div><div class="wm">142 small-cell nodes designed, permitted, and constructed.</div><div class="wstat"><div><b>142</b>nodes</div><div><b>9 mo</b>delivery</div><div><b>98%</b>QA pass</div></div><div class="wmore">View case study →</div></div></div>
+                <div class="wcard" data-proj="gis"><div class="wimg" style="background:linear-gradient(135deg,#143f73,#0e2547)"><span class="wtag">GIS</span></div><div class="wb"><div class="wt">Southeast — As-built GIS program</div><div class="wm">Standing GIS &amp; as-built team across 4 states for a national prime.</div><div class="wstat"><div><b>2,600+</b>towers</div><div><b>4</b>states</div><div><b>3,000mi</b>/yr</div></div><div class="wmore">View case study →</div></div></div>
+                <div class="wcard" data-proj="indy"><div class="wimg" style="background:linear-gradient(135deg,#13325c,#2b7fe0)"><span class="wtag">Municipal</span></div><div class="wb"><div class="wt">Indianapolis — Municipal fiber</div><div class="wm">Open-access design &amp; build connecting public facilities.</div><div class="wstat"><div><b>$3.1M</b>contract</div><div><b>On</b>budget</div><div><b>62</b>sites</div></div><div class="wmore">View case study →</div></div></div>
+              </div>
+            </div>
+            <div class="workdetail" data-proj="charlotte" style="display:none">
+              <div class="stageback" data-wback>‹ All projects</div>
+              <div class="wd-hero" style="background:linear-gradient(135deg,#13325c,#1857a8)"><span class="wtag">FTTH</span><h3>Charlotte Metro — Fiber Ring Ph.2</h3><div class="wd-sub">Regional carrier · Charlotte, NC · 2024–2025</div></div>
+              <div class="wd-stats"><div><b>128 mi</b>fiber placed</div><div><b>11 mo</b>on schedule</div><div><b>0</b>OSHA recordables</div><div><b>99.2%</b>QA first-pass</div></div>
+              <p class="wd-p">TARO self-performed the engineering, permitting, and OSP construction of a 128-mile metro fiber ring — aerial and underground — feeding 14 hub sites across Mecklenburg County. One team carried it from GIS design to signed-off as-builts.</p>
+              <div class="wd-scope"><b>Scope</b><ul><li>FTTH ring design &amp; OSP routing in ESRI</li><li>Make-ready, permitting &amp; utility coordination</li><li>Aerial + underground placement, boring, splicing</li><li>As-built redlines delivered with each segment</li></ul></div>
+              <div class="wd-outcome">✓ Delivered on schedule with zero recordables; as-builts accepted first submission.</div>
+            </div>
+            <div class="workdetail" data-proj="nashville" style="display:none">
+              <div class="stageback" data-wback>‹ All projects</div>
+              <div class="wd-hero" style="background:linear-gradient(135deg,#0e3a4a,#13325c)"><span class="wtag">Wireless</span><h3>Nashville — Small-cell densification</h3><div class="wd-sub">National carrier · Nashville, TN · 2023–2024</div></div>
+              <div class="wd-stats"><div><b>142</b>nodes built</div><div><b>9 mo</b>delivery</div><div><b>98%</b>QA pass</div><div><b>4</b>jurisdictions</div></div>
+              <p class="wd-p">A 142-node small-cell densification program across downtown and the stadium district — design, ROW permitting across four jurisdictions, and self-performed construction, all tracked in one platform.</p>
+              <div class="wd-scope"><b>Scope</b><ul><li>Node design &amp; RF coordination</li><li>ROW &amp; pole-attachment permitting</li><li>Power &amp; fiber backhaul construction</li><li>Closeout packages per node</li></ul></div>
+              <div class="wd-outcome">✓ 98% QA first-pass; full closeout packages delivered node-by-node.</div>
+            </div>
+            <div class="workdetail" data-proj="gis" style="display:none">
+              <div class="stageback" data-wback>‹ All projects</div>
+              <div class="wd-hero" style="background:linear-gradient(135deg,#143f73,#0e2547)"><span class="wtag">GIS</span><h3>Southeast — As-built GIS program</h3><div class="wd-sub">National prime · 4 states · ongoing</div></div>
+              <div class="wd-stats"><div><b>2,600+</b>towers</div><div><b>4</b>states</div><div><b>3,000 mi</b>/yr designed</div><div><b>24/7</b>turnaround</div></div>
+              <p class="wd-p">A standing GIS and as-built team embedded with a national prime — keeping tower and route records current across four states, with the throughput to design 3,000+ miles a year.</p>
+              <div class="wd-scope"><b>Scope</b><ul><li>ESRI/ArcGIS mapping &amp; data maintenance</li><li>As-built redline processing at scale</li><li>Tower &amp; route record QA</li><li>Standardized deliverables to the prime's spec</li></ul></div>
+              <div class="wd-outcome">✓ Multi-year relationship; the team primes lean on to keep records audit-ready.</div>
+            </div>
+            <div class="workdetail" data-proj="indy" style="display:none">
+              <div class="stageback" data-wback>‹ All projects</div>
+              <div class="wd-hero" style="background:linear-gradient(135deg,#13325c,#2b7fe0)"><span class="wtag">Municipal</span><h3>Indianapolis — Municipal fiber</h3><div class="wd-sub">Municipal · Indianapolis, IN · 2024</div></div>
+              <div class="wd-stats"><div><b>$3.1M</b>contract</div><div><b>62</b>sites</div><div><b>On</b>budget</div><div><b>100%</b>on time</div></div>
+              <p class="wd-p">Open-access municipal fiber connecting 62 public facilities — design through build — giving the city a backbone it owns and can grow on.</p>
+              <div class="wd-scope"><b>Scope</b><ul><li>Backbone &amp; lateral design</li><li>Permitting &amp; public coordination</li><li>Construction &amp; splicing to 62 sites</li><li>As-built &amp; O&amp;M handoff to the city</li></ul></div>
+              <div class="wd-outcome">✓ Delivered on time and on budget; clean handoff to city IT.</div>
             </div>
           </div>
         </div>
@@ -634,13 +696,37 @@ footer a{color:var(--cyan)}
         <div class="stage" data-stage="careers">
           <div class="stageback" data-back>‹ Back to homepage</div>
           <div class="demo">
-            <div class="dh">Careers — we're hiring</div>
-            <div class="ds">Your #1 bottleneck, solved at the front door. Apply in 60 seconds; it feeds a real recruiting pipeline.</div>
-            <div class="jobs">
-              <div class="job"><div><div class="jt">Fiber Splicer</div><div class="jl">Charlotte, NC · Full-time · $28–38/hr</div></div><button onclick="fdApply(this)">Apply</button></div>
-              <div class="job"><div><div class="jt">Tower Hand / Climber</div><div class="jl">Atlanta, GA · Full-time · per diem</div></div><button onclick="fdApply(this)">Apply</button></div>
-              <div class="job"><div><div class="jt">OSP Project Manager</div><div class="jl">Remote · Southeast region</div></div><button onclick="fdApply(this)">Apply</button></div>
-              <div class="job"><div><div class="jt">GIS / Design Technician</div><div class="jl">Fishers, IN · Hybrid</div></div><button onclick="fdApply(this)">Apply</button></div>
+            <div id="fdJobsView">
+              <div class="dh">Careers — we're hiring</div>
+              <div class="ds">Apply in 60 seconds — click any role and watch the application fill itself out.</div>
+              <div class="jobs">
+                <div class="job"><div><div class="jt">Fiber Splicer</div><div class="jl">Charlotte, NC · Full-time · $28–38/hr</div></div><button data-applyjob="Fiber Splicer">Apply</button></div>
+                <div class="job"><div><div class="jt">Tower Hand / Climber</div><div class="jl">Atlanta, GA · Full-time · per diem</div></div><button data-applyjob="Tower Hand / Climber">Apply</button></div>
+                <div class="job"><div><div class="jt">OSP Project Manager</div><div class="jl">Remote · Southeast region</div></div><button data-applyjob="OSP Project Manager">Apply</button></div>
+                <div class="job"><div><div class="jt">GIS / Design Technician</div><div class="jl">Fishers, IN · Hybrid</div></div><button data-applyjob="GIS / Design Technician">Apply</button></div>
+              </div>
+            </div>
+            <div id="fdApplyView" style="display:none">
+              <div class="stageback" data-jback>‹ All openings</div>
+              <div class="dh">Apply — <span id="fdApplyRole">Fiber Splicer</span></div>
+              <div class="ds">No account, no PDF upload — watch it complete itself.</div>
+              <div class="dform">
+                <div><label>Full name</label><input id="apName" readonly></div>
+                <div><label>Email</label><input id="apEmail" readonly></div>
+                <div><label>Phone</label><input id="apPhone" readonly></div>
+                <div><label>Years experience</label><input id="apExp" readonly></div>
+                <div class="full"><label>Certifications / licenses</label><input id="apCert" readonly></div>
+                <div class="full"><label>Why TARO?</label><textarea id="apWhy" rows="2" readonly></textarea></div>
+                <div class="full"><button class="dbtn" id="apBtn" onclick="fdApplySubmit()">Submit application →</button></div>
+              </div>
+            </div>
+            <div id="fdThanksView" style="display:none">
+              <div class="login" style="text-align:center;max-width:360px">
+                <div style="font-size:40px;line-height:1">✅</div>
+                <div class="dh" style="font-size:18px;margin-top:8px">Thank you, Jordan!</div>
+                <div class="ds">Your application for <span id="fdThanksRole">Fiber Splicer</span> is in. TARO recruiting will reach out within 2 business days — and it's already in the hiring pipeline.</div>
+                <button class="dbtn" data-jback style="margin-top:6px">View other openings</button>
+              </div>
             </div>
           </div>
         </div>
@@ -649,70 +735,87 @@ footer a{color:var(--cyan)}
         <div class="stage" data-stage="portal">
           <div class="stageback" data-back>‹ Back to homepage</div>
           <div class="demo">
-            <!-- auto-typed login -->
-            <div class="login" id="fdLogin">
-              <div class="lk2">🔐</div>
-              <div class="dh" style="font-size:16px">Client &amp; project portal</div>
-              <div class="ds" style="margin-bottom:14px">Clients watch their jobs in real time; TARO runs every project from bid to secured.</div>
-              <input id="fdLogEmail" placeholder="you@company.com" readonly>
-              <input id="fdLogPass" type="password" placeholder="Password" readonly>
-              <button class="dbtn" id="fdLogBtn" style="width:100%" onclick="fdSignIn()">Sign in →</button>
+            <!-- login (role-aware, auto-typed) -->
+            <div id="fdLogin">
+              <div class="dh" style="font-size:16px">Sign in</div>
+              <div class="ds" style="margin:2px 0 14px">Clients and TARO staff see different tools. Pick one to preview.</div>
+              <div class="roletog" id="fdRole">
+                <button class="on" data-role="client">Client login</button>
+                <button data-role="staff">TARO staff login</button>
+              </div>
+              <div class="loginbox">
+                <input id="fdLogEmail" readonly>
+                <input id="fdLogPass" type="password" readonly>
+                <button class="dbtn" id="fdLogBtn" style="width:100%" onclick="fdSignIn()">Sign in →</button>
+                <div class="loginhint" id="fdLogHint">Client portal · Metro Fiber Partners</div>
+              </div>
             </div>
-            <!-- dashboard (revealed after sign-in) -->
-            <div id="fdApp" style="display:none">
-              <div class="pv-tabs">
-                <button class="on" data-pv="client">Client view</button>
-                <button data-pv="admin">TARO admin · Pipeline</button>
+
+            <!-- CLIENT dashboard -->
+            <div id="fdClient" style="display:none">
+              <div class="pv-top">
+                <div><div class="dh" style="font-size:15px">Metro Fiber Partners — Project Portal</div><div class="ds" style="margin:2px 0 0">Signed in as ops@metrofiber.com · <span class="doc" style="padding:2px 7px" onclick="fdSwitchUser()">Switch user</span></div></div>
+                <span class="pv-badge">● Live</span>
               </div>
-              <!-- CLIENT VIEW -->
-              <div class="pv on" data-pv="client">
-                <div class="pv-top">
-                  <div><div class="dh" style="font-size:15px">Welcome, Metro Fiber Partners</div><div class="ds" style="margin:2px 0 0">2 active projects with TARO · updated 2h ago</div></div>
-                  <span class="pv-badge">● Live</span>
-                </div>
-                <div class="pcards">
-                  <div class="pcard">
-                    <div class="ph"><div class="pt">Charlotte — Fiber Ring Ph.2</div><span class="statpill sp-prod">In production</span></div>
-                    <div class="pbar"><i style="width:64%"></i></div>
-                    <div class="pm">Crew 7 · 8.2 of 12.8 mi placed · next: splice &amp; test</div>
-                    <div class="pu">Updated 2h ago — 1,240 ft placed on Tryon St, 3 photos attached.</div>
-                    <div class="pbtns"><button onclick="fdGo('map')">View on map</button><button onclick="this.textContent='Downloaded ✓'">Download as-built</button></div>
-                  </div>
-                  <div class="pcard">
-                    <div class="ph"><div class="pt">Uptown — Conduit &amp; make-ready</div><span class="statpill sp-qa">QA</span></div>
-                    <div class="pbar"><i style="width:88%"></i></div>
-                    <div class="pm">Crew 3 · make-ready complete · final QA walk scheduled</div>
-                    <div class="pu">Updated yesterday — QA punch list cleared, invoice draft ready.</div>
-                    <div class="pbtns"><button onclick="this.textContent='Opened ✓'">View invoice</button><button onclick="this.textContent='Downloaded ✓'">Download as-built</button></div>
-                  </div>
-                </div>
+              <div class="cl-sum">
+                <div><b>2</b>active projects</div>
+                <div><b>100%</b>on-time</div>
+                <div><b>$48.2K</b>open invoices</div>
+                <div><b>Jul 12</b>next milestone</div>
               </div>
-              <!-- TARO ADMIN · KANBAN -->
-              <div class="pv" data-pv="admin">
-                <div class="pv-top">
-                  <div><div class="dh" style="font-size:15px">Project pipeline</div><div class="ds" style="margin:2px 0 0">Bid → secured → production. Click a card to advance it a stage.</div></div>
-                  <span class="pv-badge gold">$7.8M open</span>
+              <div class="pcard" style="margin-top:14px">
+                <div class="ph"><div class="pt">Charlotte — Fiber Ring Ph.2</div><span class="statpill sp-prod">In production</span></div>
+                <div class="phase">
+                  <div class="ph-s done"><i></i>Design</div><div class="ph-s done"><i></i>Permitting</div><div class="ph-s now"><i></i>Construction</div><div class="ph-s"><i></i>Splice &amp; test</div><div class="ph-s"><i></i>As-built</div>
                 </div>
-                <div class="kan" id="fdKan">
-                  <div class="kcol"><div class="kh">Bidding <span class="kc">2</span></div><div class="kbody">
-                    <div class="kcard"><div class="kt">Raleigh, NC — Municipal FTTH</div><div class="kv">$3.1M</div><div class="kloc">Est. due Fri · GIS scoping</div></div>
-                    <div class="kcard"><div class="kt">Knoxville, TN — OSP construction</div><div class="kv">$1.4M</div><div class="kloc">Walk-down scheduled</div></div>
-                  </div></div>
-                  <div class="kcol"><div class="kh">Proposal <span class="kc">1</span></div><div class="kbody">
-                    <div class="kcard"><div class="kt">Augusta, GA — Tower upgrades</div><div class="kv">$720K</div><div class="kloc">Sent · awaiting review</div></div>
-                  </div></div>
-                  <div class="kcol"><div class="kh">Negotiation <span class="kc">1</span></div><div class="kbody">
-                    <div class="kcard"><div class="kt">Indianapolis, IN — Smart-city fiber</div><div class="kv">$2.6M</div><div class="kloc">Redlines w/ legal</div></div>
-                  </div></div>
-                  <div class="kcol"><div class="kh">Secured <span class="kc">1</span></div><div class="kbody">
-                    <div class="kcard"><div class="kt">Charlotte, NC — Fiber Ring Ph.2</div><div class="kv">$2.4M</div><div class="kloc">PO received · mobilizing</div></div>
-                  </div></div>
-                  <div class="kcol"><div class="kh">Production <span class="kc">2</span></div><div class="kbody">
-                    <div class="kcard"><div class="kt">Nashville, TN — Small-cell</div><div class="kv">$1.1M</div><div class="kloc">Crew 4 · 62% complete</div></div>
-                    <div class="kcard"><div class="kt">Greenville, SC — Tower TX-2241</div><div class="kv">$240K</div><div class="kloc">Crew 2 · QA</div></div>
-                  </div></div>
-                </div>
-                <div class="khint">↑ Tap a project to move it forward — bid → proposal → negotiation → secured → production.</div>
+                <div class="pbar"><i style="width:64%"></i></div>
+                <div class="pm">64% complete · Crew 7 · 8.2 of 12.8 mi placed · est. completion Aug 8</div>
+                <div class="pu">Daily log — 2h ago: 1,240 ft placed on Tryon St; splice case at Vault 12 complete.</div>
+                <div class="thumbs"><span></span><span></span><span></span><small>3 field photos</small></div>
+              </div>
+              <div class="pcard" style="margin-top:12px">
+                <div class="ph"><div class="pt">Uptown — Conduit &amp; make-ready</div><span class="statpill sp-qa">Final QA</span></div>
+                <div class="pbar"><i style="width:88%"></i></div>
+                <div class="pm">88% complete · make-ready done · final QA walk Jul 12</div>
+              </div>
+              <div class="docs">
+                <div class="docs-h">Documents &amp; invoices</div>
+                <div class="docrow"><span class="doc" onclick="this.textContent='Downloaded ✓'">As-built (current)</span><span class="doc" onclick="this.textContent='Downloaded ✓'">Permit packet</span><span class="doc" onclick="this.textContent='Downloaded ✓'">Certificate of Insurance</span><span class="doc" onclick="this.textContent='Opened ✓'">Invoice #1042 · $48.2K</span></div>
+              </div>
+              <div class="am"><div class="am-av">RG</div><div><b>Your account manager · Rosa Gentry</b><div>rosa@tarocommunications.com · (317) 555-0148</div></div><span class="doc" onclick="this.textContent='✓ Message sent'">Message</span></div>
+            </div>
+
+            <!-- STAFF / admin dashboard -->
+            <div id="fdAdmin" style="display:none">
+              <div class="pv-top">
+                <div><div class="dh" style="font-size:15px">TARO — Business development</div><div class="ds" style="margin:2px 0 0">Staff console · pipeline from bid to secured · <span class="doc" style="padding:2px 7px" onclick="fdSwitchUser()">Switch user</span></div></div>
+                <span class="pv-badge gold">$7.8M open</span>
+              </div>
+              <div class="cl-sum">
+                <div><b>$7.8M</b>open pipeline</div>
+                <div><b>34%</b>win rate</div>
+                <div><b>3</b>proposals out</div>
+                <div><b>18</b>active clients</div>
+              </div>
+              <div class="ds" style="margin:14px 0 8px">Drag the work forward — tap a project to advance a stage.</div>
+              <div class="kan" id="fdKan">
+                <div class="kcol"><div class="kh">Bidding <span class="kc">2</span></div><div class="kbody">
+                  <div class="kcard"><div class="kt">Raleigh, NC — Municipal FTTH</div><div class="kv">$3.1M</div><div class="kloc">Est. due Fri · GIS scoping</div></div>
+                  <div class="kcard"><div class="kt">Knoxville, TN — OSP construction</div><div class="kv">$1.4M</div><div class="kloc">Walk-down scheduled</div></div>
+                </div></div>
+                <div class="kcol"><div class="kh">Proposal <span class="kc">1</span></div><div class="kbody">
+                  <div class="kcard"><div class="kt">Augusta, GA — Tower upgrades</div><div class="kv">$720K</div><div class="kloc">Sent · awaiting review</div></div>
+                </div></div>
+                <div class="kcol"><div class="kh">Negotiation <span class="kc">1</span></div><div class="kbody">
+                  <div class="kcard"><div class="kt">Indianapolis, IN — Smart-city fiber</div><div class="kv">$2.6M</div><div class="kloc">Redlines w/ legal</div></div>
+                </div></div>
+                <div class="kcol"><div class="kh">Secured <span class="kc">1</span></div><div class="kbody">
+                  <div class="kcard"><div class="kt">Charlotte, NC — Fiber Ring Ph.2</div><div class="kv">$2.4M</div><div class="kloc">PO received · mobilizing</div></div>
+                </div></div>
+                <div class="kcol"><div class="kh">Production <span class="kc">2</span></div><div class="kbody">
+                  <div class="kcard"><div class="kt">Nashville, TN — Small-cell</div><div class="kv">$1.1M</div><div class="kloc">Crew 4 · 62% complete</div></div>
+                  <div class="kcard"><div class="kt">Greenville, SC — Tower TX-2241</div><div class="kv">$240K</div><div class="kloc">Crew 2 · QA</div></div>
+                </div></div>
               </div>
             </div>
           </div>
@@ -736,21 +839,6 @@ footer a{color:var(--cyan)}
           </div>
         </div>
 
-        <!-- PROOF stage -->
-        <div class="stage" data-stage="proof">
-          <div class="stageback" data-back>‹ Back to homepage</div>
-          <div class="demo">
-            <div class="dh">Real-time proof counters</div>
-            <div class="ds">Pulled straight from the platform — never hand-edited or stale.</div>
-            <div class="proof">
-              <div class="p"><div class="n" data-to="6240" data-suf="+">0</div><div class="l">projects delivered</div></div>
-              <div class="p"><div class="n" data-to="2680" data-suf="+">0</div><div class="l">towers serviced</div></div>
-              <div class="p"><div class="n" data-to="3120" data-suf=" mi">0</div><div class="l">designed / year</div></div>
-              <div class="p"><div class="n" data-to="6">0</div><div class="l">crews live now</div></div>
-            </div>
-          </div>
-        </div>
-
         <!-- NEWS stage -->
         <div class="stage" data-stage="news">
           <div class="stageback" data-back>‹ Back to homepage</div>
@@ -765,21 +853,11 @@ footer a{color:var(--cyan)}
           </div>
         </div>
 
+        <button class="aibubble" data-go="ai" title="Ask TARO" aria-label="Ask TARO"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9.6 9.6 0 0 1-4-.9L3 20l1-3.8A8.4 8.4 0 1 1 21 11.5z"/></svg><span>Ask&nbsp;TARO</span></button>
       </div>
     </div>
 
-    <p class="lead" id="fdHint" style="text-align:center;max-width:680px;margin:32px auto 0">Tap any feature to watch it work inside the page — the dream stack for a CEO in connectivity infrastructure:</p>
-    <div class="dream" id="fdCards">
-      <div class="c" data-go="bid"><div class="ic">🎯</div><b>Request-a-bid portal</b><p>Scopes and RFPs land structured and routed to the right estimator — not lost in an inbox. Your homepage becomes a pipeline.</p><span class="see">▸ See it live</span></div>
-      <div class="c" data-go="map"><div class="ic">🗺️</div><b>Live coverage &amp; project map</b><p>A GIS-fed map of where you've built and where crews are working now. Proof of scale a prime can see in five seconds.</p><span class="see">▸ See it live</span></div>
-      <div class="c" data-go="certs"><div class="ic">🛡️</div><b>Certifications &amp; safety wall</b><p>MBE/NMSDC/CPUC/GSA plus EMR &amp; TRIR — always current. The first thing a prime checks before they award.</p><span class="see">▸ See it live</span></div>
-      <div class="c" data-go="careers"><div class="ic">👷</div><b>Careers &amp; crew recruiting</b><p>Your #1 bottleneck, solved at the front door: apply-in-60-seconds that feeds a real recruiting pipeline.</p><span class="see">▸ See it live</span></div>
-      <div class="c" data-go="portal"><div class="ic">🔐</div><b>Client &amp; prime portal</b><p>Secure logins for as-builts, project status, and invoices. Stop emailing files — give partners self-serve access.</p><span class="see">▸ See it live</span></div>
-      <div class="c" data-go="capabilities"><div class="ic">📄</div><b>Capabilities &amp; one-click statement</b><p>Your full service lineup, plus an always-current capability statement a prime can download instantly — generated from your real numbers.</p><span class="see">▸ See it live</span></div>
-      <div class="c" data-go="ai"><div class="ic">🤖</div><b>AI site concierge</b><p>Answers "do you cover this region, are you bondable to $X, can you self-perform Y" 24/7 — and books the call.</p><span class="see">▸ See it live</span></div>
-      <div class="c" data-go="proof"><div class="ic">📊</div><b>Real-time proof counters</b><p>Miles designed, towers serviced, crews live — pulled straight from the platform, never hand-edited or stale.</p><span class="see">▸ See it live</span></div>
-      <div class="c" data-go="news"><div class="ic">📰</div><b>Newsroom &amp; leadership</b><p>Awards, press, and your MBE/ESG story — the credibility primes, carriers, and municipalities look for.</p><span class="see">▸ See it live</span></div>
-    </div>
+    <p class="lead" style="text-align:center;max-width:600px;margin:30px auto 0;font-size:15px">A working concept of <strong>TARO's</strong> new site — explore the menu, request a bid, or sign in to the client portal. Every screen runs on one platform.</p>
   </div>
 </section>
 
@@ -1185,40 +1263,24 @@ function submitIntake(e){
     fd.querySelectorAll('#baToggle button').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-view')===v); });
     fd.querySelectorAll('.bw-screen').forEach(function(s){ s.classList.toggle('on', s.getAttribute('data-screen')===v); });
   }
-  function highlight(name){
-    fd.querySelectorAll('#fdCards .c').forEach(function(c){ c.classList.toggle('on', c.getAttribute('data-go')===name); });
-    fd.querySelectorAll('#bwTabs button').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-go')===name); });
-  }
   function showStage(name){
     after.querySelectorAll('.stage').forEach(function(s){ s.classList.toggle('on', s.getAttribute('data-stage')===name); });
-    highlight(name);
-    if(name==='proof') animate(after.querySelector('.stage[data-stage="proof"]'));
     if(name==='bid') autoBid();
     if(name==='portal') typeLogin();
+    if(name==='work') resetWork();
+    if(name==='careers') resetCareers();
   }
   function goStage(name){ setView('after'); showStage(name); }
-  function scrollToFrame(){ var y=frame.getBoundingClientRect().top+window.pageYOffset-84; window.scrollTo({top:y,behavior:'smooth'}); }
 
   fd.querySelector('#baToggle').addEventListener('click',function(e){
     var b=e.target.closest('button'); if(!b) return;
     var v=b.getAttribute('data-view'); setView(v); if(v==='before') showStage('home');
   });
-  /* in-frame controls (tabs, nav, hero buttons, portal, back) — switch in place, NO page scroll */
+  /* nav, hero buttons, AI bubble, back links — switch in place */
   after.addEventListener('click',function(e){
     var g=e.target.closest('[data-go]'); if(g){ goStage(g.getAttribute('data-go')); return; }
     if(e.target.closest('[data-back]')) goStage('home');
   });
-  /* bottom cards — switch + one gentle scroll up to the frame */
-  document.getElementById('fdCards').addEventListener('click',function(e){
-    var g=e.target.closest('[data-go]'); if(!g) return; goStage(g.getAttribute('data-go')); scrollToFrame();
-  });
-
-  function animate(scope){ if(!scope) return; scope.querySelectorAll('[data-to]').forEach(function(el){
-    var to=+el.getAttribute('data-to'), suf=el.getAttribute('data-suf')||'', t0=null, dur=900;
-    function step(ts){ if(!t0)t0=ts; var p=Math.min(1,(ts-t0)/dur); var val=Math.floor(to*(0.1+0.9*p*(2-p)));
-      el.textContent=val.toLocaleString()+suf; if(p<1) requestAnimationFrame(step); else el.textContent=to.toLocaleString()+suf; }
-    requestAnimationFrame(step);
-  }); }
 
   /* typing helper */
   function clearTimers(a){ a.forEach(clearTimeout); a.length=0; }
@@ -1247,36 +1309,48 @@ function submitIntake(e){
     });
   }
 
-  /* client portal: auto-typed login -> dashboard */
+  /* portal: role-aware auto-typed login -> client OR staff dashboard */
   var logT=[];
-  function typeLogin(){
-    var login=document.getElementById('fdLogin'), app=document.getElementById('fdApp'); if(!login) return;
+  var CREDS={ client:{email:'ops@metrofiber.com',hint:'Client portal · Metro Fiber Partners'},
+              staff:{email:'r.gentry@tarocommunications.com',hint:'TARO staff · Business development console'} };
+  function currentRole(){ var b=document.querySelector('#fdRole button.on'); return b?b.getAttribute('data-role'):'client'; }
+  function typeLogin(autoSubmit){
+    var login=document.getElementById('fdLogin'); if(!login) return;
     clearTimers(logT);
-    app.style.display='none'; login.style.display='block';
-    var em=document.getElementById('fdLogEmail'), pw=document.getElementById('fdLogPass'), btn=document.getElementById('fdLogBtn');
-    em.value='';pw.value='';btn.textContent='Sign in →';
+    document.getElementById('fdClient').style.display='none';
+    document.getElementById('fdAdmin').style.display='none';
+    login.style.display='block';
+    var c=CREDS[currentRole()];
+    var em=document.getElementById('fdLogEmail'), pw=document.getElementById('fdLogPass'),
+        btn=document.getElementById('fdLogBtn'), hint=document.getElementById('fdLogHint');
+    em.value='';pw.value='';btn.textContent='Sign in →';hint.textContent=c.hint;
     logT.push(setTimeout(function(){
-      typeInto(em,'ops@metrofiber.com',52,logT,function(){
+      typeInto(em,c.email,46,logT,function(){
         logT.push(setTimeout(function(){
-          typeInto(pw,'taro2026',80,logT,function(){
-            logT.push(setTimeout(function(){ btn.textContent='Signing in…';
-              logT.push(setTimeout(window.fdSignIn,750)); },350));
+          typeInto(pw,'taro2026',75,logT,function(){
+            if(autoSubmit!==false) logT.push(setTimeout(function(){ btn.textContent='Signing in…';
+              logT.push(setTimeout(window.fdSignIn,700)); },300));
           });
-        },380));
+        },340));
       });
-    },420));
+    },380));
   }
-  window.fdSignIn=function(){ var l=document.getElementById('fdLogin'), a=document.getElementById('fdApp'); if(l)l.style.display='none'; if(a)a.style.display='block'; };
-
-  /* portal sub-tabs */
-  var app=document.getElementById('fdApp');
-  if(app){ app.querySelector('.pv-tabs').addEventListener('click',function(e){
-    var b=e.target.closest('button'); if(!b) return; var v=b.getAttribute('data-pv');
-    app.querySelectorAll('.pv-tabs button').forEach(function(x){ x.classList.toggle('on',x===b); });
-    app.querySelectorAll('.pv[data-pv]').forEach(function(p){ p.classList.toggle('on',p.getAttribute('data-pv')===v); });
+  window.fdSignIn=function(){ clearTimers(logT); document.getElementById('fdLogin').style.display='none';
+    var r=currentRole();
+    document.getElementById('fdClient').style.display = r==='client'?'block':'none';
+    document.getElementById('fdAdmin').style.display = r==='staff'?'block':'none';
+  };
+  window.fdSwitchUser=function(){
+    document.getElementById('fdClient').style.display='none';
+    document.getElementById('fdAdmin').style.display='none';
+    typeLogin(false);
+  };
+  var roleEl=document.getElementById('fdRole');
+  if(roleEl){ roleEl.addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b) return;
+    roleEl.querySelectorAll('button').forEach(function(x){ x.classList.toggle('on',x===b); }); typeLogin(false);
   }); }
 
-  /* kanban: click a card to advance a column */
+  /* kanban (staff): click a card to advance a column */
   var kan=document.getElementById('fdKan');
   if(kan){
     function recount(){ kan.querySelectorAll('.kcol').forEach(function(c){ c.querySelector('.kc').textContent=c.querySelectorAll('.kcard').length; }); }
@@ -1287,10 +1361,57 @@ function submitIntake(e){
     });
   }
 
-  window.fdGo=goStage;
+  /* work: clickable project case studies */
+  var workStage=after.querySelector('.stage[data-stage="work"]');
+  function resetWork(){ if(!workStage) return; workStage.querySelector('#fdWorkList').style.display='block';
+    workStage.querySelectorAll('.workdetail').forEach(function(d){ d.style.display='none'; }); }
+  if(workStage){ workStage.addEventListener('click',function(e){
+    var card=e.target.closest('.wcard[data-proj]');
+    if(card){ var p=card.getAttribute('data-proj'); workStage.querySelector('#fdWorkList').style.display='none';
+      workStage.querySelectorAll('.workdetail').forEach(function(d){ d.style.display=d.getAttribute('data-proj')===p?'block':'none'; }); return; }
+    if(e.target.closest('[data-wback]')) resetWork();
+  }); }
+
+  /* careers: animated application -> thank you */
+  var carStage=after.querySelector('.stage[data-stage="careers"]'), apT=[];
+  function resetCareers(){ if(!carStage) return; clearTimers(apT);
+    carStage.querySelector('#fdJobsView').style.display='block';
+    carStage.querySelector('#fdApplyView').style.display='none';
+    carStage.querySelector('#fdThanksView').style.display='none'; }
+  function fillApp(role){
+    clearTimers(apT);
+    carStage.querySelector('#fdJobsView').style.display='none';
+    carStage.querySelector('#fdThanksView').style.display='none';
+    carStage.querySelector('#fdApplyView').style.display='block';
+    document.getElementById('fdApplyRole').textContent=role;
+    document.getElementById('fdThanksRole').textContent=role;
+    var n=document.getElementById('apName'),em=document.getElementById('apEmail'),ph=document.getElementById('apPhone'),
+        ex=document.getElementById('apExp'),ct=document.getElementById('apCert'),wh=document.getElementById('apWhy'),btn=document.getElementById('apBtn');
+    [n,em,ph,ex,ct].forEach(function(x){x.value='';}); wh.value=''; btn.textContent='Submit application →';
+    typeInto(n,'Jordan Vega',50,apT,function(){
+      typeInto(em,'jordan.vega@email.com',36,apT,function(){
+        typeInto(ph,'(704) 555-0193',44,apT,function(){
+          typeInto(ex,'7 years',60,apT,function(){
+            typeInto(ct,'OSHA 30 · CDL-A · fiber splicing cert',28,apT,function(){
+              typeInto(wh,'I want to build real infrastructure with a crew that takes safety and quality seriously.',22,apT,function(){
+                apT.push(setTimeout(window.fdApplySubmit,750));
+              });
+            });
+          });
+        });
+      });
+    });
+  }
+  window.fdApplySubmit=function(){ if(!carStage) return;
+    carStage.querySelector('#fdApplyView').style.display='none';
+    carStage.querySelector('#fdThanksView').style.display='block'; };
+  if(carStage){ carStage.addEventListener('click',function(e){
+    var ap=e.target.closest('[data-applyjob]'); if(ap){ fillApp(ap.getAttribute('data-applyjob')); return; }
+    if(e.target.closest('[data-jback]')) resetCareers();
+  }); }
+
   window.fdBid=function(e){ e.preventDefault(); clearTimers(bidT); document.getElementById('fdBidOk').classList.add('on'); var b=e.target.querySelector('button[type=submit]'); if(b)b.textContent='Submitted ✓'; return false; };
-  window.fdApply=function(b){ b.textContent='Applied ✓'; b.disabled=true; b.style.opacity='.7'; };
-  window.fdCap=function(b){ var ok=document.getElementById('fdCapOk'); b.textContent='Generating…'; setTimeout(function(){ b.textContent='⬇ Download capability statement'; ok.classList.add('on'); },700); };
+  window.fdCap=function(b){ var ok=document.getElementById('fdCapOk'); b.textContent='Downloading…'; setTimeout(function(){ b.textContent='⬇ Download capability statement (PDF)'; ok.classList.add('on'); },700); };
   window.fdAsk=function(q){ var inp=document.getElementById('fdAiIn'); q=q||(inp?inp.value.trim():''); if(!q) return; if(inp)inp.value='';
     var chat=document.getElementById('fdChat');
     var u=document.createElement('div'); u.className='bub u'; u.textContent=q; chat.appendChild(u);
