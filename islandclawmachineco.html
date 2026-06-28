@@ -25,19 +25,19 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --pink:#ff2e74;--pink-d:#e01e60;--grape:#2b0f54;--grape2:#3d1670;
-  --aqua:#10c8c4;--aqua-d:#0a9b98;--sun:#ffc23d;--ink:#1c1230;--muted:#6b5f7e;
-  --cream:#fff6fb;--line:#f0e2ec;--card:#ffffff;
+  --pink:#e0392a;--pink-d:#c42f22;--grape:#11283f;--grape2:#1c3e5e;
+  --aqua:#3e7fd0;--aqua-d:#2e63ab;--sun:#f5a02e;--ink:#241910;--muted:#6f6053;
+  --cream:#fff5ea;--line:#f1e6d6;--rust:#a9531c;--card:#ffffff;
 }
 html{scroll-behavior:smooth}
 body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;color:var(--ink);line-height:1.6;background:#fff;-webkit-font-smoothing:antialiased}
 a{color:inherit;text-decoration:none}
 h1,h2,h3,.disp{font-family:'Baloo 2','Plus Jakarta Sans',sans-serif}
 .wrap{max-width:1140px;margin:0 auto;padding:0 24px}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--pink);color:#fff;font-weight:800;font-size:16px;padding:14px 26px;border-radius:14px;box-shadow:0 14px 30px -12px rgba(255,46,116,.6);transition:transform .15s;border:0;cursor:pointer;font-family:'Baloo 2',sans-serif}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--pink);color:#fff;font-weight:800;font-size:16px;padding:14px 26px;border-radius:14px;box-shadow:0 14px 30px -12px rgba(224,57,42,.6);transition:transform .15s;border:0;cursor:pointer;font-family:'Baloo 2',sans-serif}
 .btn:hover{transform:translateY(-2px)}
-.btn.aqua{background:var(--aqua);box-shadow:0 14px 30px -12px rgba(16,200,196,.6)}
-.btn.sun{background:var(--sun);color:#5a3d00;box-shadow:0 14px 30px -12px rgba(255,194,61,.6)}
+.btn.aqua{background:var(--aqua);box-shadow:0 14px 30px -12px rgba(62,127,208,.6)}
+.btn.sun{background:var(--sun);color:#5a3d00;box-shadow:0 14px 30px -12px rgba(245,160,46,.6)}
 .btn.o{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.45);box-shadow:none;backdrop-filter:blur(6px)}
 .btn.ghost{background:#fff;color:var(--pink);border:2px solid var(--line);box-shadow:none}
 /* preview ribbon */
@@ -46,26 +46,28 @@ h1,h2,h3,.disp{font-family:'Baloo 2','Plus Jakarta Sans',sans-serif}
 /* nav */
 .nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:13px 24px;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
 .brand{display:flex;align-items:center;gap:11px;font-weight:800;font-size:19px;letter-spacing:-.01em;font-family:'Baloo 2',sans-serif}
-.brand .logo{width:44px;height:44px;border-radius:13px;background:linear-gradient(135deg,var(--pink),var(--grape));color:#fff;display:grid;place-items:center;font-size:23px;box-shadow:0 6px 16px -6px rgba(255,46,116,.7)}
+.brand .logo{width:46px;height:46px;border-radius:13px;background:linear-gradient(140deg,#f5a02e,#e0392a 55%,#3e7fd0);color:#fff;display:grid;place-items:center;font-size:23px;box-shadow:0 6px 16px -6px rgba(224,57,42,.7)}
 .brand small{display:block;font-size:10.5px;font-weight:700;color:var(--muted);letter-spacing:.05em;font-family:'Plus Jakarta Sans',sans-serif}
 .nav .links{display:flex;gap:24px;font-size:14.5px;font-weight:700;color:var(--muted)}
 .nav .links a:hover{color:var(--pink)}
 .nav .ncta{background:var(--pink);color:#fff;font-weight:800;font-size:14px;padding:10px 18px;border-radius:11px;font-family:'Baloo 2',sans-serif}
 @media(max-width:900px){.nav .links{display:none}}
 /* hero */
-.hero{position:relative;color:#fff;padding:90px 0 96px;background:radial-gradient(120% 110% at 82% 4%,#ff5e94 0%,var(--pink) 30%,#a01b8f 62%,var(--grape) 100%);overflow:hidden}
+.hero{position:relative;color:#fff;padding:90px 0 96px;background:linear-gradient(112deg,#f5a02e 0%,#e0392a 46%,#d6392c 56%,#3e7fd0 100%);overflow:hidden}
 .hero:before{content:"";position:absolute;inset:0;opacity:.5;background:
-  radial-gradient(36% 28% at 12% 16%,rgba(16,200,196,.5),transparent 60%),
-  radial-gradient(30% 26% at 90% 80%,rgba(255,194,61,.45),transparent 60%);pointer-events:none}
+  radial-gradient(36% 28% at 12% 16%,rgba(255,160,46,.45),transparent 60%),
+  radial-gradient(30% 26% at 90% 80%,rgba(62,127,208,.5),transparent 60%);pointer-events:none}
 .hero .bubbles{position:absolute;inset:0;pointer-events:none;overflow:hidden}
 .hero .bubbles span{position:absolute;border-radius:50%;opacity:.18;background:#fff}
 .hero-in{position:relative;max-width:740px}
+.hero-badge{width:150px;height:150px;display:block;margin-bottom:22px;filter:drop-shadow(0 12px 24px rgba(0,0,0,.22))}
+@media(max-width:640px){.hero-badge{width:120px;height:120px;margin:0 auto 18px}}
 .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;font-weight:800;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);padding:7px 15px;border-radius:999px;margin-bottom:20px;font-family:'Plus Jakarta Sans',sans-serif}
 .hero h1{font-size:clamp(36px,6.4vw,68px);font-weight:800;letter-spacing:-.02em;line-height:1.02}
 .hero h1 em{font-style:normal;color:var(--sun)}
-.hero p{font-size:clamp(16px,2.3vw,21px);margin-top:18px;max-width:52ch;color:#ffe9f2}
+.hero p{font-size:clamp(16px,2.3vw,21px);margin-top:18px;max-width:52ch;color:#fff0e2}
 .hero-btns{display:flex;gap:12px;flex-wrap:wrap;margin-top:34px}
-.hero-trust{display:flex;gap:24px;flex-wrap:wrap;margin-top:36px;font-size:14px;font-weight:700;color:#ffd9e8}
+.hero-trust{display:flex;gap:24px;flex-wrap:wrap;margin-top:36px;font-size:14px;font-weight:700;color:#ffe2cf}
 .hero-trust span{display:flex;align-items:center;gap:8px}
 /* sections */
 section{padding:80px 0}
@@ -82,46 +84,54 @@ h2{font-size:clamp(28px,4vw,44px);font-weight:800;letter-spacing:-.015em;line-he
 .svc h3{font-size:19px;font-weight:700;margin-bottom:7px}
 .svc p{font-size:14.5px;color:var(--muted)}
 /* growth / analytics */
-.growth{background:linear-gradient(170deg,#1c0f38,var(--grape));color:#fff}
+.growth{background:linear-gradient(170deg,#0c1d30,var(--grape));color:#fff}
 .growth .kick{color:var(--aqua)}
 .growth h2{color:#fff}
-.growth .lead{color:#d9cdf0}
+.growth .lead{color:#d2deec}
 .statrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-top:42px}
 .stat{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:24px}
 .stat .n{font-size:clamp(28px,4vw,40px);font-weight:800;color:var(--sun);font-family:'Baloo 2',sans-serif;line-height:1}
-.stat .l{font-size:13.5px;color:#cdbfe8;margin-top:8px}
+.stat .l{font-size:13.5px;color:#c2d2e4;margin-top:8px}
 .charts{display:grid;grid-template-columns:1.3fr 1fr;gap:22px;margin-top:26px}
 @media(max-width:860px){.charts{grid-template-columns:1fr}}
 .panel{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:22px;padding:26px}
 .panel h3{font-size:18px;color:#fff;margin-bottom:4px}
-.panel .psub{font-size:13px;color:#b9a9da;margin-bottom:18px}
+.panel .psub{font-size:13px;color:#9fb4cf;margin-bottom:18px}
 .bars{display:flex;align-items:flex-end;gap:9px;height:200px;padding-top:8px}
-.bars .bar{flex:1;border-radius:7px 7px 0 0;background:linear-gradient(180deg,var(--aqua),#0a9b98);position:relative;min-width:0;transition:height 1s cubic-bezier(.2,.7,.2,1)}
-.bars .bar:nth-child(n+9){background:linear-gradient(180deg,var(--sun),#e0a020)}
-.bars .bar span{position:absolute;top:-19px;left:50%;transform:translateX(-50%);font-size:10px;color:#cdbfe8;font-weight:700}
+.bars .bar{flex:1;border-radius:7px 7px 0 0;background:linear-gradient(180deg,var(--aqua),#2e63ab);position:relative;min-width:0;transition:height 1s cubic-bezier(.2,.7,.2,1)}
+.bars .bar:nth-child(n+9){background:linear-gradient(180deg,var(--sun),#e0851e)}
+.bars .bar span{position:absolute;top:-19px;left:50%;transform:translateX(-50%);font-size:10px;color:#c2d2e4;font-weight:700}
 .barx{display:flex;gap:9px;margin-top:8px}
-.barx span{flex:1;text-align:center;font-size:9.5px;color:#9c8cc4;min-width:0}
-.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:16px;font-size:13px;color:#d9cdf0}
+.barx span{flex:1;text-align:center;font-size:9.5px;color:#8298b5;min-width:0}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:16px;font-size:13px;color:#d2deec}
 .legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:middle}
 .donut-wrap{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.info{position:relative;display:inline-flex;vertical-align:middle;margin-left:7px}
+.info .ibtn{width:20px;height:20px;border-radius:50%;border:1.5px solid rgba(255,255,255,.55);background:rgba(255,255,255,.1);color:#fff;font:italic 800 12px/1 Georgia,serif;cursor:pointer;display:grid;place-items:center;padding:0}
+.info .ibtn:hover{background:rgba(255,255,255,.22)}
+.info .tip{position:absolute;top:140%;left:50%;transform:translateX(-50%);width:290px;max-width:76vw;background:#fff;color:var(--ink);border-radius:12px;padding:14px 16px;font-size:12.5px;line-height:1.55;font-weight:500;text-align:left;box-shadow:0 18px 44px -16px rgba(0,0,0,.55);opacity:0;visibility:hidden;transition:opacity .15s;z-index:20}
+.info .tip:after{content:"";position:absolute;bottom:100%;left:50%;transform:translateX(-50%);border:7px solid transparent;border-bottom-color:#fff}
+.info .tip b{color:var(--pink)}
+.info:hover .tip,.info:focus-within .tip{opacity:1;visibility:visible}
+@media(max-width:560px){.info .tip{left:auto;right:-8px;transform:none}.info .tip:after{left:auto;right:14px}}
 .donut{width:188px;height:188px;flex:0 0 auto}
 .keyrow{margin-top:18px}
 .keybar{display:flex;align-items:center;gap:12px;margin-bottom:13px;font-size:13.5px}
-.keybar .kw{flex:0 0 200px;color:#e7ddf6;font-weight:600}
+.keybar .kw{flex:0 0 200px;color:#e2ecf5;font-weight:600}
 .keybar .track{flex:1;height:13px;background:rgba(255,255,255,.1);border-radius:7px;overflow:hidden}
 .keybar .fill{height:100%;border-radius:7px;background:linear-gradient(90deg,var(--pink),var(--sun));transition:width 1.1s cubic-bezier(.2,.7,.2,1)}
-.keybar .v{flex:0 0 64px;text-align:right;color:#cdbfe8;font-weight:700}
+.keybar .v{flex:0 0 64px;text-align:right;color:#c2d2e4;font-weight:700}
 @media(max-width:560px){.keybar .kw{flex-basis:120px;font-size:12px}}
-.disclaim{font-size:12px;color:#9c8cc4;margin-top:22px;max-width:70ch}
+.disclaim{font-size:12px;color:#8298b5;margin-top:22px;max-width:70ch}
 /* shop */
 .shop{background:var(--cream)}
 .machines{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;margin-top:42px}
 .mach{background:#fff;border:1px solid var(--line);border-radius:22px;overflow:hidden;display:flex;flex-direction:column;transition:transform .15s,box-shadow .15s}
 .mach:hover{transform:translateY(-4px);box-shadow:0 30px 56px -30px rgba(28,18,48,.35)}
 .mach .top{height:170px;display:grid;place-items:center;font-size:64px;position:relative}
-.mach .top.a{background:radial-gradient(120% 120% at 30% 20%,#ff7aa8,var(--pink))}
-.mach .top.b{background:radial-gradient(120% 120% at 30% 20%,#3ad8d4,var(--aqua-d))}
-.mach .top.c{background:radial-gradient(120% 120% at 30% 20%,#7b4bd6,var(--grape2))}
+.mach .top.a{background:radial-gradient(120% 120% at 30% 20%,#f06a4e,var(--pink))}
+.mach .top.b{background:radial-gradient(120% 120% at 30% 20%,#5a97e0,var(--aqua-d))}
+.mach .top.c{background:radial-gradient(120% 120% at 30% 20%,#ffc06a,#e0851e)}
 .mach .tag{position:absolute;top:12px;left:12px;background:rgba(0,0,0,.28);color:#fff;font-size:11px;font-weight:800;padding:5px 11px;border-radius:999px;letter-spacing:.04em;text-transform:uppercase}
 .mach .body{padding:22px;display:flex;flex-direction:column;gap:8px;flex:1}
 .mach h3{font-size:20px}
@@ -139,12 +149,12 @@ h2{font-size:clamp(28px,4vw,44px);font-weight:800;letter-spacing:-.015em;line-he
 .gtile .gph{display:grid;place-items:center;gap:8px;color:#fff;text-align:center;padding:14px}
 .gtile .gph .gem{font-size:34px;opacity:.9}
 .gtile .gph .gcap{font-size:13px;font-weight:700;opacity:.95}
-.gtile.g1{background:linear-gradient(150deg,#ff7aa8,var(--pink))}
-.gtile.g2{background:linear-gradient(150deg,#3ad8d4,var(--aqua-d))}
-.gtile.g3{background:linear-gradient(150deg,#7b4bd6,var(--grape2))}
-.gtile.g4{background:linear-gradient(150deg,var(--sun),#e0a020)}
-.gtile.g5{background:linear-gradient(150deg,#ff5e94,#a01b8f)}
-.gtile.g6{background:linear-gradient(150deg,#12c2c9,#0a6f8f)}
+.gtile.g1{background:linear-gradient(150deg,#ffc06a,#e0851e)}
+.gtile.g2{background:linear-gradient(150deg,#f06a4e,#d6392c)}
+.gtile.g3{background:linear-gradient(150deg,#5a97e0,#2e63ab)}
+.gtile.g4{background:linear-gradient(150deg,#c8743a,#9e4a18)}
+.gtile.g5{background:linear-gradient(120deg,#f5a02e,#e0392a 55%,#3e7fd0)}
+.gtile.g6{background:linear-gradient(150deg,#5a97e0,#1f4f86)}
 .gnote{text-align:center;font-size:13px;color:var(--muted);margin-top:16px}
 /* grow / monthly add-ons */
 .grow-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:42px}
@@ -152,7 +162,7 @@ h2{font-size:clamp(28px,4vw,44px);font-weight:800;letter-spacing:-.015em;line-he
 .gcard{border:1px solid var(--line);border-radius:20px;padding:28px 26px;background:#fff;display:flex;flex-direction:column;transition:transform .15s,box-shadow .15s}
 .gcard:hover{transform:translateY(-4px);box-shadow:0 28px 54px -30px rgba(28,18,48,.32)}
 .gcard .gic{width:54px;height:54px;border-radius:15px;background:var(--cream);display:grid;place-items:center;font-size:27px;margin-bottom:14px}
-.gcard .gbadge{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--pink);background:#fff0f6;border:1px solid #ffd4e6;padding:4px 10px;border-radius:999px;margin-bottom:12px;align-self:flex-start}
+.gcard .gbadge{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--pink);background:#fff2e8;border:1px solid #ffd9b8;padding:4px 10px;border-radius:999px;margin-bottom:12px;align-self:flex-start}
 .gcard h3{font-size:21px;margin-bottom:8px}
 .gcard p{font-size:14.5px;color:var(--muted);flex:1}
 .gcard .gprice{font-size:15px;font-weight:800;color:var(--ink);margin:16px 0 4px;font-family:'Baloo 2',sans-serif}
@@ -162,7 +172,7 @@ h2{font-size:clamp(28px,4vw,44px);font-weight:800;letter-spacing:-.015em;line-he
 .fr-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:20px;margin-top:44px}
 .tier{border:1px solid var(--line);border-radius:24px;padding:30px 26px;background:#fff;display:flex;flex-direction:column;position:relative;transition:transform .15s,box-shadow .15s}
 .tier:hover{transform:translateY(-4px);box-shadow:0 30px 56px -30px rgba(28,18,48,.3)}
-.tier.hot{border:2px solid var(--pink);box-shadow:0 24px 50px -26px rgba(255,46,116,.5)}
+.tier.hot{border:2px solid var(--pink);box-shadow:0 24px 50px -26px rgba(224,57,42,.5)}
 .tier .hot-tag{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--pink);color:#fff;font-size:11px;font-weight:800;padding:5px 14px;border-radius:999px;letter-spacing:.06em;text-transform:uppercase}
 .tier h3{font-size:22px;margin-bottom:4px}
 .tier .ts{font-size:13.5px;color:var(--muted);margin-bottom:16px;min-height:40px}
@@ -174,7 +184,7 @@ h2{font-size:clamp(28px,4vw,44px);font-weight:800;letter-spacing:-.015em;line-he
 .tier .btn{width:100%;margin-top:auto}
 .royalty{margin-top:30px;background:linear-gradient(135deg,var(--grape),var(--grape2));color:#fff;border-radius:22px;padding:30px 28px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;justify-content:space-between}
 .royalty .big{font-size:40px;font-weight:800;font-family:'Baloo 2',sans-serif;color:var(--sun)}
-.royalty p{color:#e0d4f5;max-width:48ch;font-size:15px}
+.royalty p{color:#dde8f3;max-width:48ch;font-size:15px}
 /* command center */
 .cc{background:#fff}
 .cc-grid{display:grid;grid-template-columns:1fr 1.15fr;gap:50px;align-items:center}
@@ -184,13 +194,13 @@ h2{font-size:clamp(28px,4vw,44px);font-weight:800;letter-spacing:-.015em;line-he
 .cc-feat .c{width:38px;height:38px;border-radius:11px;background:var(--cream);display:grid;place-items:center;flex:0 0 auto;font-size:19px}
 .cc-feat b{display:block;font-size:16px}
 .cc-feat p{font-size:14px;color:var(--muted);margin-top:1px}
-.dash{background:linear-gradient(165deg,#241247,var(--grape));border-radius:24px;padding:20px;box-shadow:0 40px 80px -40px rgba(28,18,48,.7)}
+.dash{background:linear-gradient(165deg,#163450,var(--grape));border-radius:24px;padding:20px;box-shadow:0 40px 80px -40px rgba(28,18,48,.7)}
 .dash .dbar{display:flex;align-items:center;gap:7px;margin-bottom:14px}
 .dash .dbar i{width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,.3)}
-.dash .dbar .dt{margin-left:8px;font-size:12.5px;color:#cdbfe8;font-weight:700}
+.dash .dbar .dt{margin-left:8px;font-size:12.5px;color:#c2d2e4;font-weight:700}
 .kanban{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .kcol{background:rgba(255,255,255,.05);border-radius:13px;padding:10px}
-.kcol .kh{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:#b9a9da;font-weight:800;margin-bottom:9px;display:flex;justify-content:space-between}
+.kcol .kh{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:#9fb4cf;font-weight:800;margin-bottom:9px;display:flex;justify-content:space-between}
 .kcard{background:#fff;border-radius:9px;padding:9px 10px;margin-bottom:8px;box-shadow:0 6px 14px -8px rgba(0,0,0,.4)}
 .kcard b{font-size:12px;display:block;color:var(--ink)}
 .kcard span{font-size:10.5px;color:var(--muted)}
@@ -198,7 +208,7 @@ h2{font-size:clamp(28px,4vw,44px);font-weight:800;letter-spacing:-.015em;line-he
 .drow{display:flex;gap:10px;margin-top:12px}
 .dmini{flex:1;background:rgba(255,255,255,.05);border-radius:13px;padding:13px}
 .dmini .n{font-size:20px;font-weight:800;color:var(--sun);font-family:'Baloo 2',sans-serif}
-.dmini .l{font-size:10.5px;color:#b9a9da;margin-top:2px}
+.dmini .l{font-size:10.5px;color:#9fb4cf;margin-top:2px}
 /* booking + proposal */
 .book{background:var(--cream)}
 .book-grid{display:grid;grid-template-columns:1fr 1fr;gap:46px;align-items:start}
@@ -208,53 +218,83 @@ h2{font-size:clamp(28px,4vw,44px);font-weight:800;letter-spacing:-.015em;line-he
 .bsteps .num{width:34px;height:34px;border-radius:50%;background:var(--pink);color:#fff;display:grid;place-items:center;font-weight:800;flex:0 0 auto;font-family:'Baloo 2',sans-serif}
 .bsteps b{display:block;font-size:16px}
 .bsteps p{font-size:14px;color:var(--muted)}
-.form{background:#fff;border:1px solid var(--line);border-radius:22px;padding:28px;box-shadow:0 30px 60px -34px rgba(28,18,48,.4)}
+.form{position:relative;background:#fff;border:1px solid var(--line);border-radius:22px;padding:28px;box-shadow:0 30px 60px -34px rgba(28,18,48,.4)}
+.hp{position:absolute;width:1px;height:1px;padding:0;margin:0;overflow:hidden;clip:rect(0 0 0 0);border:0;opacity:0;pointer-events:none}
 .form h3{font-size:21px;margin-bottom:4px}
 .form .sub{font-size:13.5px;color:var(--muted);margin-bottom:18px}
 .form label{font-size:12px;font-weight:700;color:var(--ink);display:block;margin-bottom:5px}
 .form input,.form select,.form textarea{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:11px;font:inherit;margin-bottom:13px;background:#fff;color:var(--ink)}
 .form .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .form .two>div{margin:0}
+@media(max-width:560px){.form .two{grid-template-columns:1fr}}
 .deposit{background:var(--cream);border:1px dashed var(--pink);border-radius:13px;padding:13px 15px;font-size:13.5px;color:var(--ink);margin-bottom:14px;display:flex;gap:9px;align-items:center}
 .form button{width:100%}
 .okmsg{display:none;background:#e9fbf2;border:1px solid #b7ecd2;color:#0a7a4a;border-radius:12px;padding:14px;font-size:14px;font-weight:600;margin-top:6px}
 /* proposal */
-.prop{background:linear-gradient(170deg,var(--grape),#1c0f38);color:#fff}
+.prop{background:linear-gradient(170deg,var(--grape),#0c1d30);color:#fff}
 .prop .kick{color:var(--sun)}
 .prop h2{color:#fff}
-.prop .lead{color:#d9cdf0}
+.prop .lead{color:#d2deec}
 .plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin-top:44px}
 .plan{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);border-radius:22px;padding:28px 26px;display:flex;flex-direction:column}
 .plan.hot{border:2px solid var(--sun)}
 .plan h3{font-size:20px;color:#fff;margin-bottom:6px}
 .plan .pp{font-size:34px;font-weight:800;font-family:'Baloo 2',sans-serif;color:var(--sun);line-height:1}
-.plan .pp small{font-size:14px;color:#cdbfe8;font-weight:600}
-.plan .pd{font-size:13.5px;color:#cdbfe8;margin:10px 0 16px}
+.plan .pp small{font-size:14px;color:#c2d2e4;font-weight:600}
+.plan .pd{font-size:13.5px;color:#c2d2e4;margin:10px 0 16px}
 .plan ul{list-style:none;display:flex;flex-direction:column;gap:9px}
-.plan li{font-size:13.5px;color:#e7ddf6;display:flex;gap:8px}
+.plan li{font-size:13.5px;color:#e2ecf5;display:flex;gap:8px}
 .plan li:before{content:"✦";color:var(--aqua)}
 /* contact */
-.contact{background:#140a2b;color:#fff}
+.contact{background:#0c1d30;color:#fff}
 .contact-in{display:grid;grid-template-columns:1fr 1fr;gap:46px;align-items:center}
 @media(max-width:760px){.contact-in{grid-template-columns:1fr;gap:30px}}
 .cline{display:flex;gap:14px;align-items:center;padding:15px 0;border-bottom:1px solid rgba(255,255,255,.12);font-size:16px}
 .cline .ic{font-size:21px}
 .cline b{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--aqua);margin-bottom:3px}
-footer{background:#0d0620;color:#9c8cc4;text-align:center;padding:44px 24px;font-size:13.5px}
+footer{background:#0a1722;color:#8298b5;text-align:center;padding:44px 24px;font-size:13.5px}
 footer a{color:var(--aqua)}
 .rr{margin-top:16px;font-size:12px;color:#6b5f7e}
-.rr a{color:#b9a9da;font-weight:700}
-.watermark{position:fixed;right:14px;bottom:14px;z-index:40;background:rgba(20,10,43,.86);color:#fff;font-size:11.5px;font-weight:700;padding:8px 14px;border-radius:999px;box-shadow:0 10px 26px -12px rgba(0,0,0,.6);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.12)}
+.rr a{color:#9fb4cf;font-weight:700}
+.watermark{position:fixed;right:14px;bottom:14px;z-index:40;background:rgba(10,25,40,.9);color:#fff;font-size:11.5px;font-weight:700;padding:8px 14px;border-radius:999px;box-shadow:0 10px 26px -12px rgba(0,0,0,.6);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.12)}
 .watermark b{color:var(--sun)}
 @media(max-width:560px){.watermark{display:none}}
 </style>
 </head>
 <body>
+<!-- Island Claw logo (recreated from her brand mark — swap for her real file anytime) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="icmMark" viewBox="74 48 92 148" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round">
+    <line x1="78" y1="58" x2="162" y2="58"/><rect x="111" y="52" width="18" height="11" rx="2.5"/><line x1="120" y1="63" x2="120" y2="78"/><circle cx="120" cy="80" r="3.2" fill="#fff" stroke="none"/>
+    <path d="M120 82 C 109 88, 102 99, 104 110"/><path d="M120 82 C 131 88, 138 99, 136 110"/><path d="M120 83 L120 106"/>
+    <path d="M120 114 L120 86"/><path d="M120 113 L107 95"/><path d="M120 113 L133 95"/><path d="M120 115 L98 104"/><path d="M120 115 L142 104"/>
+    <path d="M120 115 C 99 115, 91 132, 93 151 C 95 172, 107 187, 120 187 C 133 187, 145 172, 147 151 C 149 132, 141 115, 120 115 Z"/>
+    <g stroke-width="2" opacity=".8"><path d="M99 152 L141 152 M101 164 L139 164 M108 176 L132 176"/><path d="M112 150 L108 184 M120 150 L120 186 M128 150 L132 184"/></g>
+    <path d="M98 130 C 98 143, 104 147, 112 146 C 118 145, 119 137, 118 130 C 111 128, 103 128, 98 130 Z" fill="rgba(0,0,0,.16)"/>
+    <path d="M142 130 C 142 143, 136 147, 128 146 C 122 145, 121 137, 122 130 C 129 128, 137 128, 142 130 Z" fill="rgba(0,0,0,.16)"/>
+    <line x1="118" y1="132" x2="122" y2="132"/>
+  </symbol>
+  <symbol id="icmBadge" viewBox="0 0 240 240" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="120" cy="120" r="116" stroke-width="2.5"/><circle cx="120" cy="120" r="99" stroke-width="1.4"/>
+    <defs><path id="arcTop" d="M 14 120 A 106 106 0 0 1 226 120"/><path id="arcBot" d="M 22 120 A 102 102 0 0 0 218 120"/></defs>
+    <text font-family="'Baloo 2',sans-serif" font-weight="800" font-size="15.5" fill="#fff" stroke="none" letter-spacing="1.4"><textPath href="#arcTop" startOffset="50%" text-anchor="middle">ISLAND CLAW MACHINE CO.</textPath></text>
+    <text font-family="'Baloo 2',sans-serif" font-weight="800" font-size="16" fill="#fff" stroke="none" letter-spacing="3"><textPath href="#arcBot" startOffset="50%" text-anchor="middle">HONOLULU, HI</textPath></text>
+    <circle cx="20" cy="120" r="2.4" fill="#fff" stroke="none"/><circle cx="220" cy="120" r="2.4" fill="#fff" stroke="none"/>
+    <line x1="78" y1="58" x2="162" y2="58"/><rect x="111" y="52" width="18" height="11" rx="2.5"/><line x1="120" y1="63" x2="120" y2="78"/><circle cx="120" cy="80" r="3.2" fill="#fff" stroke="none"/>
+    <path d="M120 82 C 109 88, 102 99, 104 110"/><path d="M120 82 C 131 88, 138 99, 136 110"/><path d="M120 83 L120 106"/>
+    <path d="M120 114 L120 86"/><path d="M120 113 L107 95"/><path d="M120 113 L133 95"/><path d="M120 115 L98 104"/><path d="M120 115 L142 104"/>
+    <path d="M120 115 C 99 115, 91 132, 93 151 C 95 172, 107 187, 120 187 C 133 187, 145 172, 147 151 C 149 132, 141 115, 120 115 Z"/>
+    <g stroke-width="1.8" opacity=".8"><path d="M99 152 L141 152 M101 164 L139 164 M108 176 L132 176"/><path d="M112 150 L108 184 M120 150 L120 186 M128 150 L132 184"/></g>
+    <path d="M98 130 C 98 143, 104 147, 112 146 C 118 145, 119 137, 118 130 C 111 128, 103 128, 98 130 Z" fill="rgba(0,0,0,.16)"/>
+    <path d="M142 130 C 142 143, 136 147, 128 146 C 122 145, 121 137, 122 130 C 129 128, 137 128, 142 130 Z" fill="rgba(0,0,0,.16)"/>
+    <line x1="118" y1="132" x2="122" y2="132"/>
+  </symbol>
+</svg>
 
 <div class="preview-bar">🔒 Private preview prepared by <b>Rank Rebels</b> for Island Claw Machine Co. — sample content &amp; illustrative numbers</div>
 
 <div class="nav">
-  <div class="brand"><div class="logo">🕹️</div><div>Island Claw Machine Co.<small>Honolulu, HI · Have a CLAW-some day!</small></div></div>
+  <div class="brand"><div class="logo"><svg style="width:30px;height:34px" aria-label="Island Claw Machine Co."><use href="#icmMark"/></svg></div><div>Island Claw Machine Co.<small>Honolulu, HI · Have a CLAW-some day!</small></div></div>
   <div class="links">
     <a href="#rent">Rent</a><a href="#shop">Buy a Machine</a><a href="#franchise">Franchise</a><a href="#book">Book</a><a href="#growth">Growth Plan</a><a href="#grow">Content</a>
   </div>
@@ -270,6 +310,7 @@ footer a{color:var(--aqua)}
     <span style="width:90px;height:90px;left:40%;top:72%"></span>
   </div>
   <div class="wrap hero-in">
+    <svg class="hero-badge" viewBox="0 0 240 240" aria-label="Island Claw Machine Co. — Honolulu, HI"><use href="#icmBadge"/></svg>
     <span class="eyebrow">🏝️ O‘ahu's custom claw machine experience</span>
     <h1>Turn any party into a <em>CLAW-some</em> win.</h1>
     <p>Two custom-built claw machines, your choice of prizes, and a setup that gets every guest crowding around. Birthdays, weddings, graduations, and corporate events across Honolulu — we bring the fun, you grab the glory.</p>
@@ -448,7 +489,7 @@ footer a{color:var(--aqua)}
         <h3>Request &amp; reserve your date</h3>
         <div class="sub">Have a CLAW-some day! Fill this out and we'll confirm availability.</div>
         <form id="bookForm" onsubmit="return submitBook(event)">
-          <input type="text" name="company_url" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+          <input type="text" name="company_url" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true">
           <div class="two">
             <div><label>Your name</label><input name="name" required placeholder="Jane Doe"></div>
             <div><label>Phone</label><input name="phone" required placeholder="(808) 000-0000"></div>
@@ -514,15 +555,15 @@ footer a{color:var(--aqua)}
       </div>
 
       <div class="panel">
-        <h3>Your future revenue mix</h3>
+        <h3>Your future revenue mix<span class="info"><button type="button" class="ibtn" aria-label="More details about the revenue mix">i</button><span class="tip"><b>How this mix could come together:</b> <b>Event rentals (45%)</b> stay your core — weekends booked right from the site. <b>Machine sales (30%)</b> come from the online store shipping to the mainland. <b>Franchise &amp; royalties (18%)</b> build recurring income as you license the brand. <b>Prizes &amp; add-ons (7%)</b> round it out. Illustrative — your real mix depends on how hard you push each stream.</span></span></h3>
         <div class="psub">Where the money could come from once all three streams are live.</div>
         <div class="donut-wrap">
           <svg class="donut" viewBox="0 0 200 200" aria-hidden="true">
             <g transform="rotate(-90 100 100)" fill="none" stroke-width="30">
-              <circle cx="100" cy="100" r="80" stroke="#10c8c4" stroke-dasharray="226.2 502.65" stroke-dashoffset="0"/>
-              <circle cx="100" cy="100" r="80" stroke="#ff2e74" stroke-dasharray="150.8 502.65" stroke-dashoffset="-226.2"/>
-              <circle cx="100" cy="100" r="80" stroke="#ffc23d" stroke-dasharray="90.5 502.65" stroke-dashoffset="-377"/>
-              <circle cx="100" cy="100" r="80" stroke="#7b4bd6" stroke-dasharray="35.2 502.65" stroke-dashoffset="-467.5"/>
+              <circle cx="100" cy="100" r="80" stroke="#3e7fd0" stroke-dasharray="226.2 502.65" stroke-dashoffset="0"/>
+              <circle cx="100" cy="100" r="80" stroke="#e0392a" stroke-dasharray="150.8 502.65" stroke-dashoffset="-226.2"/>
+              <circle cx="100" cy="100" r="80" stroke="#f5a02e" stroke-dasharray="90.5 502.65" stroke-dashoffset="-377"/>
+              <circle cx="100" cy="100" r="80" stroke="#a9531c" stroke-dasharray="35.2 502.65" stroke-dashoffset="-467.5"/>
             </g>
           </svg>
           <div style="flex:1;min-width:160px">
@@ -530,7 +571,7 @@ footer a{color:var(--aqua)}
               <span><i style="background:var(--aqua)"></i>Event rentals — 45%</span>
               <span><i style="background:var(--pink)"></i>Machine sales (drop-ship) — 30%</span>
               <span><i style="background:var(--sun)"></i>Franchise &amp; royalties — 18%</span>
-              <span><i style="background:#7b4bd6"></i>Prizes &amp; add-ons — 7%</span>
+              <span><i style="background:#a9531c"></i>Prizes &amp; add-ons — 7%</span>
             </div>
           </div>
         </div>
@@ -650,7 +691,7 @@ footer a{color:var(--aqua)}
       <div>
         <div class="kick" style="color:var(--aqua)">Get in touch</div>
         <h2>Ready to claw your way to more bookings?</h2>
-        <p class="lead" style="color:#cdbfe8">Reach out to Island Claw Machine Co. and we'll get your event on the calendar.</p>
+        <p class="lead" style="color:#c2d2e4">Reach out to Island Claw Machine Co. and we'll get your event on the calendar.</p>
         <div style="margin-top:24px">
           <a class="cline" href="tel:+18088240348"><span class="ic">📞</span><span><b>Call or text</b>(808) 824-0348</span></a>
           <a class="cline" href="mailto:islandclawmachineco@gmail.com"><span class="ic">✉️</span><span><b>Email</b>islandclawmachineco@gmail.com</span></a>
@@ -662,7 +703,7 @@ footer a{color:var(--aqua)}
         <h3>Quick custom quote</h3>
         <div class="sub">Buying a machine, branding one, or franchising? Tell us what you're after.</div>
         <form id="quoteForm" onsubmit="return submitQuote(event)">
-          <input type="text" name="company_url" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">
+          <input type="text" name="company_url" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true">
           <div class="two">
             <div><label>Name</label><input name="name" required placeholder="Your name"></div>
             <div><label>Email</label><input type="email" name="email" required placeholder="you@email.com"></div>
@@ -729,18 +770,18 @@ footer a{color:var(--aqua)}
     </div>
     <div style="text-align:center;margin-top:40px">
       <a class="btn sun" id="buildPay" href="#contact">Let's build it →</a>
-      <div style="font-size:13px;color:#b9a9da;margin-top:12px">$500 build fee at checkout · then from $149/mo after you're live</div>
+      <div style="font-size:13px;color:#9fb4cf;margin-top:12px">$500 build fee at checkout · then from $149/mo after you're live</div>
     </div>
     <div style="max-width:760px;margin:30px auto 0;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:22px 26px">
       <div style="font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--sun);font-weight:800;margin-bottom:10px">How billing works</div>
-      <p style="font-size:14.5px;color:#e0d4f5;line-height:1.65;margin:0">Your <b>$500 build fee</b> is paid today to kick things off. Once your site is published and live, your <b>first monthly payment is due 30 days after the go-live date</b> — and we email your invoice <b>15 days before</b> each automatic payment is withdrawn, so there's never a surprise. Month-to-month — cancel anytime.</p>
+      <p style="font-size:14.5px;color:#dde8f3;line-height:1.65;margin:0">Your <b>$500 build fee</b> is paid today to kick things off. Once your site is published and live, your <b>first monthly payment is due 30 days after the go-live date</b> — and we email your invoice <b>15 days before</b> each automatic payment is withdrawn, so there's never a surprise. Month-to-month — cancel anytime.</p>
     </div>
   </div>
 </section>
 
 <footer>
   <div class="wrap">
-    <div style="font-family:'Baloo 2',sans-serif;font-size:18px;font-weight:800;color:#fff">🕹️ Island Claw Machine Co.</div>
+    <div style="font-family:'Baloo 2',sans-serif;font-size:18px;font-weight:800;color:#fff;display:inline-flex;align-items:center;gap:9px"><svg style="width:26px;height:30px" aria-hidden="true"><use href="#icmMark"/></svg> Island Claw Machine Co.</div>
     <p style="margin-top:8px">Have a CLAW-some day! · Honolulu, Hawai‘i · (808) 824-0348</p>
     <p style="margin-top:6px"><a href="https://instagram.com/islandclawmachineco" target="_blank" rel="noopener">@islandclawmachineco</a> · <a href="mailto:islandclawmachineco@gmail.com">islandclawmachineco@gmail.com</a></p>
     <div class="rr">Private preview &amp; growth proposal crafted by <a href="https://rankrebels.ai" target="_blank" rel="noopener">Rank Rebels</a> — websites, SEO &amp; systems for local businesses. Sample content; numbers shown are illustrative, not guarantees.</div>
