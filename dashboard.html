@@ -270,6 +270,11 @@
   .cred-row button{background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:9px;cursor:pointer;padding:0 12px}
   .cred-row button:hover{color:var(--accent);border-color:var(--accent)}
   .modal-actions{display:flex;gap:10px;justify-content:space-between;margin-top:10px;align-items:center}
+  /* Customer modal: wider, with internal scroll + pinned Save/Cancel footer */
+  #m-client .modal{max-width:900px;max-height:calc(100vh - 56px);overflow:auto;padding-bottom:0}
+  #m-client .svc-list{grid-template-columns:1fr 1fr;gap:8px}
+  @media(max-width:680px){#m-client .svc-list{grid-template-columns:1fr}}
+  #m-client .modal-actions{position:sticky;bottom:0;margin:16px -24px 0;padding:14px 24px;background:var(--panel);border-top:1px solid var(--line);z-index:5}
   .reveal{font-size:12px;color:var(--brand-2);cursor:pointer;user-select:none}
   .seg{display:inline-flex;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:3px;gap:3px}
   .seg button{background:transparent;border:0;color:var(--muted);font-weight:600;font-size:13px;padding:6px 12px;border-radius:8px;cursor:pointer;font-family:inherit}
