@@ -31,6 +31,7 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';</script>
 :root{
   --navy:#0a1c38;--navy-2:#0e2547;--navy-3:#13325c;--panel:#0f2950;
   --blue:#2b7fe0;--blue-d:#1857a8;--cyan:#4fc3e8;--cyan-2:#86dbf2;
+  --red:#e0283c;--red-d:#bb1f31;
   --line:rgba(140,180,230,.16);--line-2:rgba(140,180,230,.28);
   --text:#e8f1fb;--muted:#9db4d4;--muted-2:#7891b4;
 }
@@ -43,6 +44,8 @@ h1,h2,h3,h4,.disp{font-family:'Space Grotesk','Inter',sans-serif;letter-spacing:
 .btn:hover{transform:translateY(-2px)}
 .btn.cyan{background:var(--cyan);color:#062033;box-shadow:0 14px 30px -12px rgba(79,195,232,.6)}
 .btn.cyan:hover{background:var(--cyan-2)}
+.btn.red{background:var(--red);color:#fff;box-shadow:0 14px 30px -12px rgba(224,40,60,.55)}
+.btn.red:hover{background:var(--red-d)}
 .btn.o{background:rgba(255,255,255,.07);border:1px solid var(--line-2);box-shadow:none;color:#fff}
 .btn.o:hover{background:rgba(255,255,255,.13)}
 .glow{position:absolute;border-radius:50%;filter:blur(80px);opacity:.5;pointer-events:none}
@@ -60,7 +63,7 @@ h1,h2,h3,h4,.disp{font-family:'Space Grotesk','Inter',sans-serif;letter-spacing:
 /* hero */
 .hero{position:relative;overflow:hidden;padding:88px 0 84px;background:radial-gradient(120% 120% at 78% -10%,#1f6fd0 0%,#13325c 42%,#0a1c38 78%)}
 .hero .g1{width:520px;height:520px;background:#2b7fe0;left:-120px;top:-160px}
-.hero .g2{width:420px;height:420px;background:#4fc3e8;right:-120px;bottom:-180px;opacity:.32}
+.hero .g2{width:420px;height:420px;background:var(--red);right:-120px;bottom:-180px;opacity:.3}
 .hero-in{position:relative;max-width:780px}
 .eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--cyan);background:rgba(79,195,232,.1);border:1px solid rgba(79,195,232,.3);padding:7px 14px;border-radius:999px;margin-bottom:22px}
 .hero h1{font-size:clamp(34px,5.6vw,60px);font-weight:700;line-height:1.04;color:#fff}
@@ -102,7 +105,7 @@ h2{font-size:clamp(26px,3.6vw,40px);font-weight:700;line-height:1.12;color:#fff}
 .bwn .lg .hx{color:var(--cyan)}
 .bwn .lk{display:flex;gap:18px}
 .bwn .lk span{font-size:12.5px;color:#bcd0ea}
-.bwn .cta{font-size:12px;font-weight:700;background:var(--cyan);color:#062033;padding:8px 14px;border-radius:8px}
+.bwn .cta{font-size:12px;font-weight:700;background:var(--red);color:#fff;padding:8px 14px;border-radius:8px}
 @media(max-width:680px){.bwn .lk{display:none}}
 .bwh{padding:48px 26px 40px;text-align:center;background:radial-gradient(120% 120% at 72% 0%,#163f73 0%,#0b223f 55%,#08172e 100%)}
 .bwh .tag{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--cyan);font-weight:700}
@@ -110,7 +113,7 @@ h2{font-size:clamp(26px,3.6vw,40px);font-weight:700;line-height:1.12;color:#fff}
 .bwh h3 em{font-style:normal;color:var(--cyan)}
 .bwh p{font-size:13px;color:#c2d4ec;max-width:48ch;margin:0 auto 18px;line-height:1.55}
 .bwh .btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-.bwh .b1{background:var(--cyan);color:#062033;font-weight:700;font-size:12.5px;padding:10px 18px;border-radius:9px}
+.bwh .b1{background:var(--red);color:#fff;font-weight:700;font-size:12.5px;padding:10px 18px;border-radius:9px}
 .bwh .b2{background:rgba(255,255,255,.08);border:1px solid var(--line-2);color:#fff;font-weight:600;font-size:12.5px;padding:10px 18px;border-radius:9px}
 .bws{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02)}
 .bws>div{padding:16px 10px;text-align:center;border-right:1px solid rgba(255,255,255,.06)}
@@ -479,7 +482,7 @@ footer a{color:var(--cyan)}
   <div class="links">
     <a href="#vision">The Vision</a><a href="#app">The App</a><a href="#command">Command Center</a><a href="#boardroom">Board Room</a><a href="#outreach">Outreach</a><a href="#intake">Start</a>
   </div>
-  <a class="btn cyan" href="#intake" style="padding:10px 18px;font-size:14px">Start discovery</a>
+  <a class="btn red" href="#intake" style="padding:10px 18px;font-size:14px">Start discovery</a>
 </div>
 
 <!-- HERO -->
@@ -490,7 +493,7 @@ footer a{color:var(--cyan)}
     <h1>KERN — one platform to run <em>all of TARO</em>.</h1>
     <p class="sub">You've built a fiber and GIS powerhouse: 6,000+ projects, 2,600+ towers, 3,000+ miles designed a year — for Comcast, Verizon, Astound, Dycom and more. But that work runs across a dozen disconnected tools. Here's a single custom ecosystem that ties your field reps, corporate officers, GIS, finances, and growth together — and retires the subscriptions you're stacking to fake it today.</p>
     <div class="hero-btns">
-      <a class="btn cyan" href="#intake">Start the discovery →</a>
+      <a class="btn red" href="#intake">Start the discovery →</a>
       <a class="btn o" href="#vision">See what we'd build</a>
     </div>
     <div class="hero-note"><strong>Kern</strong> — Dutch for <em>core</em>. The single system the whole company runs through. Engineering connectivity, constructing trust — now with the back office to match.</div>
@@ -1111,7 +1114,7 @@ footer a{color:var(--cyan)}
         <div class="qnav">
           <button type="button" class="btn o" id="qback" style="visibility:hidden" onclick="qStep(-1)">← Back</button>
           <button type="button" class="btn cyan" id="qnext" onclick="qStep(1)">Next →</button>
-          <button type="submit" class="btn cyan" id="qsubmit" style="display:none">Send to Rank Rebels →</button>
+          <button type="submit" class="btn red" id="qsubmit" style="display:none">Send to Rank Rebels →</button>
         </div>
       </form>
       <div class="qok" id="qok">
@@ -1129,7 +1132,7 @@ footer a{color:var(--cyan)}
     <h2>Built for how TARO wins.</h2>
     <p class="lead">One ecosystem for the field and the office, your numbers visible in real time, the busywork automated, AI advisors on call, and a pipeline that turns your certifications into contracts. Let's scope it together.</p>
     <div class="hero-btns">
-      <a class="btn cyan" href="#intake">Start the discovery →</a>
+      <a class="btn red" href="#intake">Start the discovery →</a>
       <a class="btn o" href="tel:+18082655339">Call Rank Rebels</a>
     </div>
   </div>
