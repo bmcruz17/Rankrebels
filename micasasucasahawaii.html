@@ -115,6 +115,41 @@ footer a{color:#7fd4e6}
 .kbar .v{flex:0 0 56px;text-align:right;color:#bcd6db;font-weight:700}
 @media(max-width:560px){.kbar .kw{flex-basis:135px;font-size:12px}}
 .disc{font-size:12px;color:#7fa3ab;margin-top:18px;max-width:72ch}
+/* audience analytics (GA-style) */
+.aud-h{text-align:center;max-width:760px;margin:0 auto 8px}
+.ga{background:#fff;border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:0 34px 80px -44px rgba(14,32,39,.45);max-width:980px;margin:38px auto 0}
+.ga-bar{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-bottom:1px solid var(--line);background:var(--sand)}
+.ga-bar .t{font-size:13px;font-weight:800;color:var(--ink);display:flex;align-items:center;gap:9px}
+.ga-bar .t .ic{width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,#1596b4,var(--sun));display:grid;place-items:center;color:#fff;font-size:12px}
+.ga-bar .live{font-size:11.5px;color:var(--muted);display:inline-flex;align-items:center;gap:7px;font-weight:600}
+.ga-bar .live:before{content:"";width:7px;height:7px;border-radius:50%;background:#2bb673;box-shadow:0 0 0 3px rgba(43,182,115,.2)}
+.ga-stats{display:grid;grid-template-columns:repeat(4,1fr)}
+.ga-stat{padding:17px 18px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.ga-stat:last-child{border-right:none}
+.ga-stat .n{font-size:23px;font-weight:800;color:var(--ink);line-height:1}
+.ga-stat .l{font-size:11.5px;color:var(--muted);margin-top:5px}
+.ga-stat .up{font-size:11px;color:#1f9d57;font-weight:700;margin-top:3px}
+.ga-grid{display:grid;grid-template-columns:1fr 1fr}
+@media(max-width:680px){.ga-stats{grid-template-columns:1fr 1fr}.ga-grid{grid-template-columns:1fr}}
+.ga-panel{padding:20px;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.ga-panel:nth-child(even){border-right:none}
+.ga-panel h4{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:800;margin-bottom:16px}
+.hb{display:flex;align-items:center;gap:10px;margin-bottom:11px;font-size:12.5px}
+.hb .k{flex:0 0 78px;color:var(--ink);font-weight:600}
+.hb .tr{flex:1;height:9px;background:var(--sand);border-radius:5px;overflow:hidden}
+.hb .fl{height:100%;border-radius:5px;transition:width 1.1s cubic-bezier(.2,.7,.2,1)}
+.hb .v{flex:0 0 38px;text-align:right;color:var(--muted);font-weight:700}
+.gsplit{display:flex;height:30px;border-radius:8px;overflow:hidden;margin-bottom:13px}
+.glegend{display:flex;gap:20px;font-size:12.5px}
+.glegend span{display:flex;align-items:center;gap:7px;color:var(--muted);font-weight:600}
+.glegend i{width:11px;height:11px;border-radius:3px}
+.ga-why{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;max-width:980px;margin:30px auto 0}
+@media(max-width:680px){.ga-why{grid-template-columns:1fr}}
+.ga-why .w{display:flex;gap:12px;align-items:flex-start;background:var(--sand);border:1px solid var(--line);border-radius:16px;padding:18px}
+.ga-why .ic{width:40px;height:40px;border-radius:11px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;font-size:19px;flex:0 0 auto}
+.ga-why b{display:block;font-size:15px;color:var(--ink)}
+.ga-why p{font-size:13px;color:var(--muted);margin-top:2px}
+.aud-disc{text-align:center;font-size:12px;color:#9aa7ab;margin-top:22px;max-width:70ch;margin-left:auto;margin-right:auto}
 /* app + device */
 .app-grid{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center}
 .app-grid.rev .phone{order:-1}
@@ -240,6 +275,62 @@ footer a{color:#7fd4e6}
     <div class="kbar"><div class="kw">"general contractor kailua"</div><div class="track"><div class="fill" data-w="24"></div></div><div class="v">210</div></div>
   </div>
   <p class="disc">*Illustrative figures to show the <b>potential</b> of getting found online — not guarantees. Search volumes and results vary. Rank Rebels never guarantees specific rankings; we focus on getting you found and getting your phone to ring.</p>
+</div></section>
+
+<!-- AUDIENCE ANALYTICS -->
+<section id="audience"><div class="wrap">
+  <div class="aud-h">
+    <div class="kick" style="text-align:center">Know your audience</div>
+    <h2 style="text-align:center">It's not just traffic — it's your next remodel.</h2>
+    <p class="lead" style="text-align:center;margin:0 auto">The moment your site is live, we see exactly who's finding you — their age, their neighborhood, how they got there. That's the raw material for ads that bring you more of the right homeowners.</p>
+  </div>
+  <div class="ga">
+    <div class="ga-bar"><span class="t"><span class="ic">📊</span> Mi Casa Su Casa · Audience · Last 30 days</span><span class="live">Live</span></div>
+    <div class="ga-stats">
+      <div class="ga-stat"><div class="n">980</div><div class="l">Visitors</div><div class="up">▲ 28% MoM</div></div>
+      <div class="ga-stat"><div class="n">3:12</div><div class="l">Avg. time on site</div></div>
+      <div class="ga-stat"><div class="n">64%</div><div class="l">On mobile</div></div>
+      <div class="ga-stat"><div class="n">Kailua</div><div class="l">Top area</div></div>
+    </div>
+    <div class="ga-grid">
+      <div class="ga-panel">
+        <h4>Age of visitors</h4>
+        <div class="hb"><span class="k">35–44</span><span class="tr"><span class="fl" style="width:100%;background:var(--teal)"></span></span><span class="v">31%</span></div>
+        <div class="hb"><span class="k">45–54</span><span class="tr"><span class="fl" style="width:90%;background:var(--teal)"></span></span><span class="v">28%</span></div>
+        <div class="hb"><span class="k">55–64</span><span class="tr"><span class="fl" style="width:58%;background:var(--teal)"></span></span><span class="v">18%</span></div>
+        <div class="hb"><span class="k">25–34</span><span class="tr"><span class="fl" style="width:48%;background:var(--teal)"></span></span><span class="v">15%</span></div>
+        <div class="hb"><span class="k">65+</span><span class="tr"><span class="fl" style="width:26%;background:var(--teal)"></span></span><span class="v">8%</span></div>
+      </div>
+      <div class="ga-panel">
+        <h4>Homeowners vs. renters</h4>
+        <div class="gsplit"><span style="width:78%;background:var(--teal)"></span><span style="width:22%;background:var(--sun)"></span></div>
+        <div class="glegend"><span><i style="background:var(--teal)"></i>Homeowners 78%</span><span><i style="background:var(--sun)"></i>Renters 22%</span></div>
+        <div style="margin-top:16px;font-size:12.5px;color:var(--muted)">Owners with equity and a project in mind — the people who hire a remodeler.</div>
+      </div>
+      <div class="ga-panel">
+        <h4>Where they're coming from</h4>
+        <div class="hb"><span class="k">Kailua</span><span class="tr"><span class="fl" style="width:100%;background:var(--sun)"></span></span><span class="v">34%</span></div>
+        <div class="hb"><span class="k">Kāne‘ohe</span><span class="tr"><span class="fl" style="width:62%;background:var(--sun)"></span></span><span class="v">21%</span></div>
+        <div class="hb"><span class="k">Honolulu</span><span class="tr"><span class="fl" style="width:53%;background:var(--sun)"></span></span><span class="v">18%</span></div>
+        <div class="hb"><span class="k">Lā‘ie</span><span class="tr"><span class="fl" style="width:32%;background:var(--sun)"></span></span><span class="v">11%</span></div>
+        <div class="hb"><span class="k">Hau‘ula</span><span class="tr"><span class="fl" style="width:24%;background:var(--sun)"></span></span><span class="v">8%</span></div>
+      </div>
+      <div class="ga-panel">
+        <h4>Devices</h4>
+        <div class="hb"><span class="k">Mobile</span><span class="tr"><span class="fl" style="width:100%;background:var(--teal)"></span></span><span class="v">64%</span></div>
+        <div class="hb"><span class="k">Desktop</span><span class="tr"><span class="fl" style="width:44%;background:var(--teal)"></span></span><span class="v">28%</span></div>
+        <div class="hb"><span class="k">Tablet</span><span class="tr"><span class="fl" style="width:13%;background:var(--teal)"></span></span><span class="v">8%</span></div>
+        <div style="margin-top:14px;font-size:12.5px;color:var(--muted)">Most reach out from their phone — so your site is built mobile-first.</div>
+      </div>
+    </div>
+  </div>
+  <div class="ga-why">
+    <div class="w"><div class="ic">🎯</div><div><b>Spend that actually lands</b><p>We aim your ad budget at the exact ages and neighborhoods already requesting estimates — not a guess, not spray-and-pray.</p></div></div>
+    <div class="w"><div class="ic">📈</div><div><b>Data that compounds</b><p>Every month of real data makes the next campaign smarter and your cost-per-lead lower. Your edge grows.</p></div></div>
+    <div class="w"><div class="ic">🗺️</div><div><b>Own the windward side</b><p>Double down on the neighborhoods and homeowners that convert, and expand into the ones warming up.</p></div></div>
+    <div class="w"><div class="ic">🔒</div><div><b>Why it pays to keep us</b><p>The longer we run it, the bigger your data advantage over every contractor still flying blind.</p></div></div>
+  </div>
+  <p class="aud-disc">Sample dashboard with illustrative numbers. Once your site is live, this fills with your real visitor data.</p>
 </div></section>
 
 <!-- THE APP (LiDAR) -->
