@@ -152,6 +152,8 @@ h2{font-size:clamp(26px,3.6vw,40px);font-weight:700;line-height:1.12;color:#fff}
 .chip.sel{background:rgba(79,195,232,.16);border-color:var(--cyan);color:#fff}
 .chip .ck{width:16px;height:16px;border-radius:5px;border:1.5px solid var(--line-2);display:grid;place-items:center;font-size:11px;color:#062033}
 .chip.sel .ck{background:var(--cyan);border-color:var(--cyan)}
+.otherbox{width:100%;margin-top:12px;padding:12px 14px;border:1px solid var(--cyan);border-radius:10px;font:inherit;font-size:14px;background:rgba(79,195,232,.06);color:var(--text)}
+.otherbox::placeholder{color:var(--muted-2)}
 .qf{margin-top:16px}
 .qf label{display:block;font-size:12.5px;font-weight:600;color:var(--text);margin-bottom:6px}
 .qf input,.qf textarea,.qf select{width:100%;padding:12px 14px;border:1px solid var(--line-2);border-radius:10px;font:inherit;font-size:14px;background:rgba(255,255,255,.03);color:var(--text);margin-bottom:14px}
@@ -413,7 +415,9 @@ footer a{color:var(--cyan)}
             <span class="chip" data-v="Compliance & certifications">Compliance &amp; certs</span>
             <span class="chip" data-v="CRM / client relationships">CRM</span>
             <span class="chip" data-v="Document & contract management">Docs &amp; contracts</span>
+            <span class="chip" data-v="Other" data-other="1">+ Other</span>
           </div>
+          <input class="otherbox" data-for="manage" placeholder="Something else you manage? Type it here…" style="display:none">
           <div class="qf" style="margin-top:18px">
             <label>Roughly how many separate software subscriptions are you paying for — and which ones?</label>
             <textarea name="subs" rows="2" placeholder="e.g. ESRI, QuickBooks, a field app, payroll, a scheduling tool…"></textarea>
@@ -431,10 +435,12 @@ footer a{color:var(--cyan)}
             <span class="chip" data-v="Revenue & margin by project">Revenue &amp; margin</span>
             <span class="chip" data-v="Cash flow / AR aging">Cash flow / AR</span>
             <span class="chip" data-v="Compliance / cert renewals">Cert renewals</span>
+            <span class="chip" data-v="Other" data-other="1">+ Other</span>
           </div>
+          <input class="otherbox" data-for="see" placeholder="Another area you can see today? Type it here…" style="display:none">
           <div class="qf" style="margin-top:18px">
-            <label>What would you most want to see that you can't today?</label>
-            <textarea name="want_see" rows="2" placeholder="The dashboard or number you wish you had at your fingertips…"></textarea>
+            <label>What would you most want better visibility into — anything that's hurting the bottom line because it's hard to track today?</label>
+            <textarea name="want_see" rows="2" placeholder="The dashboard, number, or leak you wish you could see — e.g. job costing, idle crew time, change orders, AR slipping…"></textarea>
           </div>
         </div>
 
@@ -450,7 +456,9 @@ footer a{color:var(--cyan)}
             <span class="chip" data-v="CPUC utility supplier database">CPUC utilities</span>
             <span class="chip" data-v="GSA Schedule">GSA Schedule</span>
             <span class="chip" data-v="Referrals / reputation">Referrals</span>
+            <span class="chip" data-v="Other" data-other="1">+ Other</span>
           </div>
+          <input class="otherbox" data-for="bizgen" placeholder="Another way work comes in? Type it here…" style="display:none">
           <div class="qf" style="margin-top:18px">
             <label>What's the biggest bottleneck in winning more work?</label>
             <textarea name="bottleneck" rows="2" placeholder="Time to respond, capacity, the right relationships, certifications…"></textarea>
@@ -474,7 +482,9 @@ footer a{color:var(--cyan)}
             <span class="chip" data-v="Government / federal (8(a), HUBZone)">Government / federal</span>
             <span class="chip" data-v="New service lines (security, LiDAR, EV/solar)">New service lines</span>
             <span class="chip" data-v="Larger contracts">Larger contracts</span>
+            <span class="chip" data-v="Other" data-other="1">+ Other</span>
           </div>
+          <input class="otherbox" data-for="expand_into" placeholder="Somewhere else you'd expand? Type it here…" style="display:none">
         </div>
 
         <div class="qstep" data-step="4">
@@ -553,7 +563,14 @@ function qStep(d){
 /* chips (multi-select) */
 document.querySelectorAll('.chips .chip').forEach(function(c){
   c.innerHTML='<span class="ck">'+'</span>'+c.innerHTML;
-  c.addEventListener('click',function(){ c.classList.toggle('sel'); c.querySelector('.ck').textContent=c.classList.contains('sel')?'✓':''; });
+  c.addEventListener('click',function(){
+    c.classList.toggle('sel'); c.querySelector('.ck').textContent=c.classList.contains('sel')?'✓':'';
+    if(c.getAttribute('data-other')){
+      var grpEl=c.closest('[data-group]'); var grp=grpEl?grpEl.getAttribute('data-group'):'';
+      var box=document.querySelector('.otherbox[data-for="'+grp+'"]');
+      if(box){ var on=c.classList.contains('sel'); box.style.display=on?'block':'none'; if(on){ box.focus(); } }
+    }
+  });
 });
 /* radios (single-select) */
 document.querySelectorAll('[data-radio] .radio').forEach(function(r){
@@ -562,7 +579,12 @@ document.querySelectorAll('[data-radio] .radio').forEach(function(r){
     r.classList.add('sel');
   });
 });
-function picked(group){ return Array.prototype.map.call(document.querySelectorAll('[data-group="'+group+'"] .chip.sel'),function(c){return c.getAttribute('data-v');}); }
+function picked(group){
+  var out=Array.prototype.map.call(document.querySelectorAll('[data-group="'+group+'"] .chip.sel'),function(c){return c.getAttribute('data-v');});
+  var box=document.querySelector('.otherbox[data-for="'+group+'"]');
+  if(box && box.value.trim()){ out=out.filter(function(v){return v!=='Other';}); out.push('Other: '+box.value.trim()); }
+  return out;
+}
 function pickedRadio(name){ var el=document.querySelector('[data-radio="'+name+'"] .radio.sel'); return el?el.getAttribute('data-v'):''; }
 function val(n){ var el=document.querySelector('[name="'+n+'"]'); return el?el.value.trim():''; }
 

@@ -7,7 +7,15 @@
 // Cloudflare secret (optional): RESEND_API_KEY  — when unset, this no-ops gracefully
 //   (returns {ok:true, demo:true}) so the form still shows success and never errors.
 // Optional env: RESEND_FROM (default 'Rank Rebels <hello@rankrebels.ai>'),
-//               DEMO_BCC (an address to copy on every test submission).
+//               LEAD_NOTIFY (owner address that always gets a copy / the intake answers;
+//                            default 'brandonmcruz@mac.com'),
+//               DEMO_BCC (an extra address to copy on every submission).
+//
+// Two paths:
+//   • source==='intake'  → a discovery questionnaire (e.g. the TARO page). The full
+//        answers are emailed straight to the OWNER (LEAD_NOTIFY); reply-to is the prospect.
+//   • booking / quote     → the visitor gets the instant "lead alert" pitch, and the
+//        OWNER is BCC'd so every demo submission also lands in our inbox.
 
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
@@ -25,6 +33,52 @@ export async function onRequestPost({ request, env }) {
   const kind = b.source === 'booking' ? 'booking request' : 'quote request';
   const cta = /^https:\/\//.test(b.cta || '') ? b.cta : 'https://rankrebels.ai';
   const brand = String(b.brand || 'your site').trim().slice(0, 120);
+  const owner = String(env.LEAD_NOTIFY || 'brandonmcruz@mac.com').trim();
+  const from = env.RESEND_FROM || 'Rank Rebels <hello@rankrebels.ai>';
+
+  // ── Discovery intake (e.g. TARO questionnaire) → email the answers to the OWNER ──
+  if (b.source === 'intake') {
+    if (!env.RESEND_API_KEY) return json({ ok: true, demo: true });
+    const notes = String(b.notes || '').slice(0, 4000);
+    const contact = [];
+    const c = (l, v) => { if (v != null && String(v).trim()) contact.push([l, String(v).trim().slice(0, 200)]); };
+    c('Name', name); c('Email', email); c('Phone', b.phone); c('Best time', b.besttime);
+    const crows = contact.map(([k, v]) =>
+      `<tr><td style="padding:6px 0;color:#5b6b86;font-size:13px;white-space:nowrap;vertical-align:top">${esc(k)}</td>
+           <td style="padding:6px 0 6px 16px;color:#0a1c38;font-size:14px;font-weight:600">${esc(v)}</td></tr>`).join('');
+    const ihtml = `<!doctype html><html><body style="margin:0;background:#eef3fb;font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#eef3fb;padding:24px 0"><tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 18px 50px -24px rgba(10,28,56,.4)">
+        <tr><td style="background:linear-gradient(120deg,#0a1c38,#2b7fe0);padding:26px 30px">
+          <div style="color:#bfe2f7;font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase">⬡ New discovery intake</div>
+          <div style="color:#fff;font-size:23px;font-weight:800;margin-top:6px">${esc(brand)} filled out the questionnaire</div>
+        </td></tr>
+        <tr><td style="padding:24px 30px 6px">
+          <table cellpadding="0" cellspacing="0" style="width:100%;border-bottom:1px solid #e7eef8;margin-bottom:14px">${crows}</table>
+          <div style="white-space:pre-wrap;color:#0a1c38;font-size:14px;line-height:1.7;background:#f4f8fd;border:1px solid #e2ecf8;border-radius:12px;padding:16px">${esc(notes)}</div>
+        </td></tr>
+        <tr><td style="padding:18px 30px 28px;text-align:center;color:#73839c;font-size:12px">
+          Reply directly to reach ${esc(name || 'the prospect')} · Rank Rebels intake
+        </td></tr>
+      </table>
+    </td></tr></table></body></html>`;
+    const ipayload = {
+      from, to: [owner], subject: `⬡ New ${esc(brand)} intake${name ? ' — ' + name : ''}`,
+      html: ihtml,
+    };
+    if (/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) ipayload.reply_to = email;
+    try {
+      const r = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { authorization: 'Bearer ' + env.RESEND_API_KEY, 'content-type': 'application/json' },
+        body: JSON.stringify(ipayload),
+      });
+      if (!r.ok) return json({ ok: false, error: 'send_failed', status: r.status }, 200);
+      return json({ ok: true, sent: true });
+    } catch (e) {
+      return json({ ok: false, error: 'send_error' }, 200);
+    }
+  }
 
   // Build a tidy details table from whatever the form sent.
   const fields = [];
@@ -70,13 +124,15 @@ export async function onRequestPost({ request, env }) {
   </td></tr></table></body></html>`;
 
   const payload = {
-    from: env.RESEND_FROM || 'Rank Rebels <hello@rankrebels.ai>',
+    from,
     to: [email],
     reply_to: 'hello@rankrebels.ai',
     subject: `⚡ New ${kind} for ${biz} — see how it works`,
     html,
   };
-  if (env.DEMO_BCC) payload.bcc = [env.DEMO_BCC];
+  const bcc = [owner];
+  if (env.DEMO_BCC && env.DEMO_BCC !== owner) bcc.push(env.DEMO_BCC);
+  payload.bcc = bcc;
 
   try {
     const r = await fetch('https://api.resend.com/emails', {
