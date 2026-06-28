@@ -148,6 +148,85 @@ h2{font-size:clamp(26px,3.6vw,40px);font-weight:700;line-height:1.12;color:#fff}
 .dream .c .ic{width:38px;height:38px;border-radius:10px;background:rgba(79,195,232,.12);border:1px solid rgba(79,195,232,.28);display:grid;place-items:center;font-size:18px;margin-bottom:12px}
 .dream .c b{display:block;font-size:14.5px;color:#fff}
 .dream .c p{font-size:12.5px;color:var(--muted);margin-top:5px;line-height:1.5}
+/* interactive showcase */
+.ba-wrap{text-align:center;margin-bottom:6px}
+.ba-toggle{display:inline-flex;gap:4px;background:var(--navy-3);border:1px solid var(--line);border-radius:12px;padding:5px}
+.ba-toggle button{font:inherit;font-size:13px;font-weight:700;color:var(--muted);background:transparent;border:0;padding:9px 18px;border-radius:9px;cursor:pointer;transition:all .15s}
+.ba-toggle button.on{background:var(--cyan);color:#062033}
+.bw-screen{display:none}
+.bw-screen.on{display:block;animation:fade .35s ease}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.stage{display:none}
+.stage.on{display:block;animation:fade .3s ease}
+.stageback{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--cyan);cursor:pointer;padding:14px 22px 0}
+.stageback:hover{color:var(--cyan-2)}
+.bwn .cta,.bwh .b1,.bwh .b2,.bwcar .a{cursor:pointer}
+/* before / dated site */
+.old{background:#f3f3ef;min-height:560px}
+.old-top{background:#2c3e50;color:#cdd6df;padding:14px 22px;display:flex;justify-content:space-between;align-items:center;font-family:Arial,sans-serif}
+.old-top .ol{font-weight:700;font-size:16px;color:#fff;font-family:Georgia,serif}
+.old-top .om{font-size:11px;color:#9fb0c0}
+.old-nav{background:#34495e;padding:9px 22px;display:flex;gap:16px;font-size:12px;color:#aebccb;font-family:Arial,sans-serif}
+.old-hero{padding:36px 22px 26px;text-align:center}
+.old-hero .imgph{width:100%;max-width:420px;height:118px;background:repeating-linear-gradient(45deg,#dfe3e6,#dfe3e6 10px,#e9edf0 10px,#e9edf0 20px);border:1px solid #ccc;margin:0 auto 18px;display:flex;align-items:center;justify-content:center;color:#9aa4ab;font-size:12px;font-family:Arial,sans-serif}
+.old-hero h3{font-size:24px;color:#2c3e50;margin-bottom:8px;font-family:Georgia,serif}
+.old-hero p{font-size:13px;color:#6b7785;max-width:52ch;margin:0 auto 14px;line-height:1.55;font-family:Georgia,serif}
+.old-hero .phone{font-size:15px;color:#1c5f8b;font-weight:700;font-family:Arial,sans-serif}
+.old-cols{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;padding:8px 22px 24px;font-family:Arial,sans-serif}
+@media(max-width:680px){.old-cols{grid-template-columns:1fr}}
+.old-cols .oc{font-size:12px;color:#5a6672;line-height:1.5}.old-cols .oc b{display:block;color:#2c3e50;font-size:13px;margin-bottom:5px}
+.old-banner{background:#fdf0c8;border-top:1px solid #ecd99a;border-bottom:1px solid #ecd99a;color:#8a6d1c;font-size:12px;text-align:center;padding:8px;font-family:Arial,sans-serif}
+.old-foot{background:#2c3e50;color:#8b9aa8;font-size:10.5px;padding:13px 22px;text-align:center;font-family:Arial,sans-serif}
+.old-flags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:0 22px 24px}
+.old-flag{font-size:11px;color:#a23b2e;background:#fbe9e6;border:1px solid #f1cdc7;border-radius:6px;padding:5px 10px;font-family:Arial,sans-serif}
+/* demo stages */
+.demo{padding:22px 24px 30px}
+.demo .dh{font-family:'Space Grotesk',sans-serif;font-size:18px;color:#fff;font-weight:700}
+.demo .ds{font-size:12.5px;color:var(--muted);margin:4px 0 18px;line-height:1.5}
+.dform{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:560px){.dform{grid-template-columns:1fr}}
+.dform label{display:block;font-size:11px;color:var(--muted);font-weight:600;margin-bottom:5px}
+.dform input,.dform select,.dform textarea{width:100%;padding:10px 12px;border:1px solid var(--line-2);border-radius:9px;background:rgba(255,255,255,.03);color:var(--text);font:inherit;font-size:13px}
+.dform .full{grid-column:1/-1}
+.dbtn{background:var(--cyan);color:#062033;font-weight:700;font-size:13px;padding:11px 18px;border-radius:9px;border:0;cursor:pointer;font-family:inherit}
+.dbtn:hover{background:var(--cyan-2)}
+.dok{display:none;background:rgba(95,214,160,.1);border:1px solid rgba(95,214,160,.35);color:#9fe6c2;border-radius:10px;padding:13px 14px;font-size:12.5px;margin-top:14px;line-height:1.5}
+.dok.on{display:block;animation:fade .3s}
+.chat{display:flex;flex-direction:column;gap:9px;max-height:240px;overflow:auto;padding:4px 2px 8px}
+.bub{max-width:82%;font-size:12.5px;line-height:1.5;padding:9px 12px;border-radius:12px}
+.bub.u{align-self:flex-end;background:var(--blue);color:#fff;border-bottom-right-radius:4px}
+.bub.a{align-self:flex-start;background:rgba(255,255,255,.05);border:1px solid var(--line);color:#dbe7f5;border-bottom-left-radius:4px}
+.chatin{display:flex;gap:8px;margin-top:8px}
+.chatin input{flex:1;padding:10px 12px;border:1px solid var(--line-2);border-radius:9px;background:rgba(255,255,255,.03);color:var(--text);font:inherit;font-size:13px}
+.chips-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.chips-row button{font:inherit;font-size:11px;color:var(--cyan);background:rgba(79,195,232,.1);border:1px solid rgba(79,195,232,.3);border-radius:999px;padding:6px 11px;cursor:pointer}
+.jobs{display:flex;flex-direction:column;gap:9px}
+.job{display:flex;justify-content:space-between;align-items:center;gap:12px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:11px;padding:13px 15px}
+.job .jt{font-size:13.5px;font-weight:700;color:#fff}.job .jl{font-size:11px;color:var(--muted);margin-top:2px}
+.job button{font:inherit;font-size:11.5px;font-weight:700;background:var(--cyan);color:#062033;border:0;border-radius:8px;padding:8px 13px;cursor:pointer}
+.login{max-width:300px;margin:6px auto;text-align:center}
+.login .lk2{width:46px;height:46px;border-radius:12px;background:rgba(79,195,232,.12);border:1px solid rgba(79,195,232,.3);display:grid;place-items:center;font-size:22px;margin:0 auto 14px}
+.login input{width:100%;padding:11px 13px;border:1px solid var(--line-2);border-radius:9px;background:rgba(255,255,255,.03);color:var(--text);font:inherit;font-size:13px;margin-bottom:10px}
+.cap{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.cap .sheet{width:118px;height:152px;border-radius:8px;background:linear-gradient(160deg,#13325c,#0e2547);border:1px solid var(--line-2);padding:13px;flex:0 0 auto}
+.cap .sheet .bar{height:6px;border-radius:3px;background:rgba(255,255,255,.14);margin-bottom:7px}
+.cap .sheet .bar.t{width:80%;background:var(--cyan);height:9px;margin-bottom:11px}
+.cap .sheet .bar.s{width:55%}
+.proof{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:560px){.proof{grid-template-columns:1fr 1fr}}
+.proof .p{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:12px;padding:18px;text-align:center}
+.proof .p .n{font-family:'Space Grotesk',sans-serif;font-size:25px;font-weight:700;color:var(--cyan)}
+.proof .p .l{font-size:11px;color:var(--muted);margin-top:4px}
+.news{display:flex;flex-direction:column;gap:10px}
+.news .it{display:flex;gap:12px;align-items:flex-start;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:11px;padding:13px 15px}
+.news .dt2{font-size:10px;color:var(--cyan);font-weight:700;letter-spacing:.06em;text-transform:uppercase;flex:0 0 auto;width:64px;padding-top:2px}
+.news .nt{font-size:13px;color:#fff;font-weight:600}.news .nx{font-size:11.5px;color:var(--muted);margin-top:2px}
+.dream .c{cursor:pointer;transition:transform .15s,border-color .15s,box-shadow .15s}
+.dream .c:hover{transform:translateY(-3px);border-color:var(--cyan);box-shadow:0 20px 40px -28px rgba(79,195,232,.5)}
+.dream .c.on{border-color:var(--cyan);background:linear-gradient(165deg,rgba(79,195,232,.14),var(--navy-2))}
+.dream .c .see{font-size:11px;font-weight:700;color:var(--cyan);margin-top:9px;display:inline-flex;align-items:center;gap:5px}
+.bwmap .dot{cursor:pointer}
+.bwmap .dot:hover::after{content:attr(data-lbl);position:absolute;left:50%;bottom:18px;transform:translateX(-50%);white-space:nowrap;background:#08172e;border:1px solid var(--line-2);color:var(--cyan);font-size:10px;font-weight:700;padding:4px 8px;border-radius:6px;font-family:'Inter',sans-serif;z-index:3}
 .feat{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center}
 .feat.rev .feat-vis{order:-1}
 @media(max-width:880px){.feat{grid-template-columns:1fr;gap:32px}.feat.rev .feat-vis{order:0}}
@@ -293,74 +372,265 @@ footer a{color:var(--cyan)}
   </div>
 </section>
 
-<!-- NEW HOMEPAGE SHOWCASE -->
+<!-- NEW HOMEPAGE SHOWCASE (interactive) -->
 <section id="frontdoor" class="frontdoor">
   <div class="wrap center" style="max-width:780px;margin:0 auto">
     <div class="kick">Your new front door</div>
     <h2>A homepage that wins work — not just a brochure.</h2>
-    <p class="lead">The first thing a prime, a carrier, or a future crew lead does is look you up. Today that page should be selling TARO as the scaled, certified, safe partner it is — and turning that traffic into bids, applicants, and booked calls. Here's the redesign.</p>
+    <p class="lead">The first thing a prime, a carrier, or a future crew lead does is look you up. Slide between today's site and the redesign — then tap any feature below to see it working live inside the page.</p>
   </div>
   <div class="wrap">
-    <div class="bw">
-      <div class="bw-bar"><i></i><i></i><i></i><span class="url">🔒 <b>tarocommunications.com</b></span></div>
-      <div class="bwn">
-        <div class="lg"><span class="hx">⬡</span> TARO COMMUNICATIONS</div>
-        <div class="lk"><span>Capabilities</span><span>Work</span><span>Certifications</span><span>Careers</span><span>Client Login</span></div>
-        <div class="cta">Request a bid</div>
-      </div>
-      <div class="bwh">
-        <div class="tag">Engineering connectivity · constructing trust</div>
-        <h3>We design and build the networks <em>America runs on</em>.</h3>
-        <p>Wireline, wireless, GIS, and LiDAR — self-performed, certified, and safe. From the first design to the final as-built, TARO delivers.</p>
-        <div class="btns"><span class="b1">Request a bid →</span><span class="b2">Download capabilities</span></div>
-      </div>
-      <div class="bws">
-        <div><div class="n">6,000+</div><div class="l">projects delivered</div></div>
-        <div><div class="n">2,600+</div><div class="l">towers serviced</div></div>
-        <div><div class="n">3,000+ mi</div><div class="l">designed / year</div></div>
-        <div><div class="n">6</div><div class="l">crews live now</div></div>
-      </div>
-      <div class="bwg">
-        <div class="col l">
-          <div class="bw-h4">Live coverage &amp; active builds</div>
-          <div class="bwmap">
-            <span class="ln" style="left:18%;top:38%;width:120px;transform:rotate(18deg)"></span>
-            <span class="ln" style="left:46%;top:54%;width:90px;transform:rotate(-12deg)"></span>
-            <span class="dot" style="left:16%;top:36%"></span>
-            <span class="dot" style="left:44%;top:52%"></span>
-            <span class="dot" style="left:68%;top:42%"></span>
-            <span class="dot" style="left:78%;top:64%"></span>
-            <span class="dot" style="left:30%;top:70%"></span>
-            <span class="pill">6 active crews · 4 states</span>
-          </div>
-        </div>
-        <div class="col">
-          <div class="bw-h4">Certified &amp; safe to award</div>
-          <div class="bwcerts"><span>MBE</span><span>NMSDC</span><span>CPUC</span><span>GSA Schedule</span><span>SAM</span><span>E-Verify</span></div>
-          <div class="bwsafe">
-            <div><div class="n">0.74</div><div class="l">EMR</div></div>
-            <div><div class="n">1.2</div><div class="l">TRIR</div></div>
-            <div><div class="n">$XXM</div><div class="l">Bondable</div></div>
-          </div>
-        </div>
-      </div>
-      <div class="bwcl"><span>Comcast</span><span>Verizon</span><span>Astound</span><span>Dycom</span><span>Ziply</span><span>TDS</span></div>
-      <div class="bwcar">
-        <div><div class="t">👷 We're hiring crews across the Southeast</div><div class="s">Fiber techs, splicers, tower hands, PMs — apply in 60 seconds.</div></div>
-        <span class="a">View openings →</span>
+    <div class="ba-wrap">
+      <div class="ba-toggle" id="baToggle">
+        <button data-view="before">Before — today</button>
+        <button data-view="after" class="on">After — your new front door</button>
       </div>
     </div>
-    <p class="lead" style="text-align:center;max-width:680px;margin:34px auto 0">Every block above is a feature working for you. Here's what each one does — the dream stack for a CEO in connectivity infrastructure:</p>
-    <div class="dream">
-      <div class="c"><div class="ic">🎯</div><b>Request-a-bid portal</b><p>Scopes and RFPs land structured and routed to the right estimator — not lost in an inbox. Your homepage becomes a pipeline.</p></div>
-      <div class="c"><div class="ic">🗺️</div><b>Live coverage &amp; project map</b><p>A GIS-fed map of where you've built and where crews are working now. Proof of scale a prime can see in five seconds.</p></div>
-      <div class="c"><div class="ic">🛡️</div><b>Certifications &amp; safety wall</b><p>MBE/NMSDC/CPUC/GSA plus EMR &amp; TRIR — always current. The first thing a prime checks before they award.</p></div>
-      <div class="c"><div class="ic">👷</div><b>Careers &amp; crew recruiting</b><p>Your #1 bottleneck, solved at the front door: apply-in-60-seconds that feeds a real recruiting pipeline.</p></div>
-      <div class="c"><div class="ic">🔐</div><b>Client &amp; prime portal</b><p>Secure logins for as-builts, project status, and invoices. Stop emailing files — give partners self-serve access.</p></div>
-      <div class="c"><div class="ic">📄</div><b>One-click capability statement</b><p>An always-current capability statement and line card a prime can download instantly — generated from your real numbers.</p></div>
-      <div class="c"><div class="ic">🤖</div><b>AI site concierge</b><p>Answers "do you cover this region, are you bondable to $X, can you self-perform Y" 24/7 — and books the call.</p></div>
-      <div class="c"><div class="ic">📊</div><b>Real-time proof counters</b><p>Miles designed, towers serviced, crews live — pulled straight from the platform, never hand-edited or stale.</p></div>
-      <div class="c"><div class="ic">📰</div><b>Newsroom &amp; leadership</b><p>Awards, press, and your MBE/ESG story — the credibility primes, carriers, and municipalities look for.</p></div>
+    <div class="bw" id="bwFrame">
+      <div class="bw-bar"><i></i><i></i><i></i><span class="url">🔒 <b>tarocommunications.com</b></span></div>
+
+      <!-- BEFORE: dated site -->
+      <div class="bw-screen old" data-screen="before">
+        <div class="old-top"><span class="ol">TARO Communications, LLC</span><span class="om">📞 (317) 555-0182 · Mon–Fri 8–5</span></div>
+        <div class="old-nav"><span>Home</span><span>About Us</span><span>Services</span><span>Contact</span></div>
+        <div class="old-hero">
+          <div class="imgph">[ banner image ]</div>
+          <h3>Welcome to our website</h3>
+          <p>TARO Communications is a telecommunications contractor providing fiber and wireless services. We are committed to quality and customer satisfaction. Please call us for more information about our services.</p>
+          <div class="phone">Call us today: (317) 555-0182</div>
+        </div>
+        <div class="old-cols">
+          <div class="oc"><b>Services</b>Fiber. Wireless. Construction.</div>
+          <div class="oc"><b>About</b>We have been serving customers for many years with quality work.</div>
+          <div class="oc"><b>Contact</b>Email us and we will get back to you.</div>
+        </div>
+        <div class="old-flags">
+          <span class="old-flag">✕ No way to request a bid</span>
+          <span class="old-flag">✕ No certifications shown</span>
+          <span class="old-flag">✕ No careers / recruiting</span>
+          <span class="old-flag">✕ Not mobile-friendly</span>
+          <span class="old-flag">✕ No proof of scale</span>
+        </div>
+        <div class="old-banner">⚠ This site is best viewed in Internet Explorer · © 2016</div>
+        <div class="old-foot">Copyright TARO Communications. All rights reserved. · Last updated 2016</div>
+      </div>
+
+      <!-- AFTER: new site + interactive feature stages -->
+      <div class="bw-screen after on" data-screen="after">
+        <div class="bwn">
+          <div class="lg"><span class="hx">⬡</span> TARO COMMUNICATIONS</div>
+          <div class="lk"><span>Capabilities</span><span>Work</span><span>Certifications</span><span>Careers</span><span>Client Login</span></div>
+          <div class="cta" data-go="bid">Request a bid</div>
+        </div>
+
+        <!-- HOME stage -->
+        <div class="stage on" data-stage="home">
+          <div class="bwh">
+            <div class="tag">Engineering connectivity · constructing trust</div>
+            <h3>We design and build the networks <em>America runs on</em>.</h3>
+            <p>Wireline, wireless, GIS, and LiDAR — self-performed, certified, and safe. From the first design to the final as-built, TARO delivers.</p>
+            <div class="btns"><span class="b1" data-go="bid">Request a bid →</span><span class="b2" data-go="cap">Download capabilities</span></div>
+          </div>
+          <div class="bws">
+            <div><div class="n">6,000+</div><div class="l">projects delivered</div></div>
+            <div><div class="n">2,600+</div><div class="l">towers serviced</div></div>
+            <div><div class="n">3,000+ mi</div><div class="l">designed / year</div></div>
+            <div><div class="n">6</div><div class="l">crews live now</div></div>
+          </div>
+          <div class="bwg">
+            <div class="col l">
+              <div class="bw-h4">Live coverage &amp; active builds</div>
+              <div class="bwmap">
+                <span class="ln" style="left:18%;top:38%;width:120px;transform:rotate(18deg)"></span>
+                <span class="ln" style="left:46%;top:54%;width:90px;transform:rotate(-12deg)"></span>
+                <span class="dot" style="left:16%;top:36%" data-lbl="Charlotte, NC · Crew 7 · in progress"></span>
+                <span class="dot" style="left:44%;top:52%" data-lbl="Atlanta, GA · Crew 3 · QA"></span>
+                <span class="dot" style="left:68%;top:42%" data-lbl="Nashville, TN · splice · live"></span>
+                <span class="dot" style="left:78%;top:64%" data-lbl="Greenville, SC · make-ready"></span>
+                <span class="dot" style="left:30%;top:70%" data-lbl="Columbia, SC · design"></span>
+                <span class="pill">6 active crews · 4 states</span>
+              </div>
+            </div>
+            <div class="col">
+              <div class="bw-h4">Certified &amp; safe to award</div>
+              <div class="bwcerts"><span>MBE</span><span>NMSDC</span><span>CPUC</span><span>GSA Schedule</span><span>SAM</span><span>E-Verify</span></div>
+              <div class="bwsafe">
+                <div><div class="n">0.74</div><div class="l">EMR</div></div>
+                <div><div class="n">1.2</div><div class="l">TRIR</div></div>
+                <div><div class="n">$XXM</div><div class="l">Bondable</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="bwcl"><span>Comcast</span><span>Verizon</span><span>Astound</span><span>Dycom</span><span>Ziply</span><span>TDS</span></div>
+          <div class="bwcar">
+            <div><div class="t">👷 We're hiring crews across the Southeast</div><div class="s">Fiber techs, splicers, tower hands, PMs — apply in 60 seconds.</div></div>
+            <span class="a" data-go="careers">View openings →</span>
+          </div>
+        </div>
+
+        <!-- BID stage -->
+        <div class="stage" data-stage="bid">
+          <div class="stageback" data-back>‹ Back to homepage</div>
+          <div class="demo">
+            <div class="dh">Request a bid</div>
+            <div class="ds">Tell us the scope — it routes straight to the right estimator. No inbox black hole.</div>
+            <form class="dform" onsubmit="return fdBid(event)">
+              <div><label>Company</label><input required placeholder="Prime / carrier"></div>
+              <div><label>Region / market</label><input placeholder="State or metro"></div>
+              <div><label>Scope</label><select><option>Fiber design / engineering</option><option>OSP construction</option><option>Wireless / tower</option><option>LiDAR / GIS</option><option>Make-ready</option></select></div>
+              <div><label>Timeline</label><select><option>ASAP</option><option>1–3 months</option><option>This year</option></select></div>
+              <div class="full"><label>Details</label><textarea rows="2" placeholder="Miles, sites, units, deadlines…"></textarea></div>
+              <div class="full"><button class="dbtn" type="submit">Submit bid request →</button></div>
+            </form>
+            <div class="dok" id="fdBidOk">✓ Routed to the estimating team. In the live platform this opens a tracked opportunity and pings the right lead instantly — nothing slips.</div>
+          </div>
+        </div>
+
+        <!-- MAP stage -->
+        <div class="stage" data-stage="map">
+          <div class="stageback" data-back>‹ Back to homepage</div>
+          <div class="demo">
+            <div class="dh">Live coverage &amp; active builds</div>
+            <div class="ds">Every dot is a job. Hover one to see the crew and status — fed straight from GIS, never hand-placed.</div>
+            <div class="bwmap" style="height:236px">
+              <span class="ln" style="left:18%;top:34%;width:150px;transform:rotate(16deg)"></span>
+              <span class="ln" style="left:44%;top:50%;width:120px;transform:rotate(-10deg)"></span>
+              <span class="ln" style="left:30%;top:62%;width:130px;transform:rotate(-24deg)"></span>
+              <span class="dot" style="left:16%;top:32%" data-lbl="Charlotte, NC · Crew 7 · 1,240 ft placed today"></span>
+              <span class="dot" style="left:42%;top:48%" data-lbl="Atlanta, GA · Crew 3 · QA passed"></span>
+              <span class="dot" style="left:66%;top:38%" data-lbl="Nashville, TN · splice · ready to invoice"></span>
+              <span class="dot" style="left:80%;top:60%" data-lbl="Greenville, SC · make-ready · assigned"></span>
+              <span class="dot" style="left:30%;top:66%" data-lbl="Columbia, SC · design · in drafting"></span>
+              <span class="dot" style="left:54%;top:72%" data-lbl="Augusta, GA · tower TX-2241 · live"></span>
+              <span class="pill">6 active crews · 4 states · 312 mi in progress</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CERTS stage -->
+        <div class="stage" data-stage="certs">
+          <div class="stageback" data-back>‹ Back to homepage</div>
+          <div class="demo">
+            <div class="dh">Certifications &amp; safety</div>
+            <div class="ds">Always current — the wall a prime checks before they award. Renewal dates tracked so nothing lapses.</div>
+            <div class="dream" style="margin-top:0;grid-template-columns:repeat(3,1fr)">
+              <div class="c" style="cursor:default"><b>MBE · NMSDC</b><p>Minority Business Enterprise, nationally certified.</p></div>
+              <div class="c" style="cursor:default"><b>CPUC</b><p>California utility supplier clearinghouse.</p></div>
+              <div class="c" style="cursor:default"><b>GSA Schedule</b><p>Pre-negotiated federal contract vehicle.</p></div>
+              <div class="c" style="cursor:default"><b>SAM.gov</b><p>Active federal registration &amp; UEI.</p></div>
+              <div class="c" style="cursor:default"><b>E-Verify</b><p>Workforce eligibility verified.</p></div>
+              <div class="c" style="cursor:default"><b>Safety</b><p>EMR 0.74 · TRIR 1.2 · bondable to $XXM.</p></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CAREERS stage -->
+        <div class="stage" data-stage="careers">
+          <div class="stageback" data-back>‹ Back to homepage</div>
+          <div class="demo">
+            <div class="dh">Careers — we're hiring</div>
+            <div class="ds">Your #1 bottleneck, solved at the front door. Apply in 60 seconds; it feeds a real recruiting pipeline.</div>
+            <div class="jobs">
+              <div class="job"><div><div class="jt">Fiber Splicer</div><div class="jl">Charlotte, NC · Full-time · $28–38/hr</div></div><button onclick="fdApply(this)">Apply</button></div>
+              <div class="job"><div><div class="jt">Tower Hand / Climber</div><div class="jl">Atlanta, GA · Full-time · per diem</div></div><button onclick="fdApply(this)">Apply</button></div>
+              <div class="job"><div><div class="jt">OSP Project Manager</div><div class="jl">Remote · Southeast region</div></div><button onclick="fdApply(this)">Apply</button></div>
+              <div class="job"><div><div class="jt">GIS / Design Technician</div><div class="jl">Fishers, IN · Hybrid</div></div><button onclick="fdApply(this)">Apply</button></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PORTAL stage -->
+        <div class="stage" data-stage="portal">
+          <div class="stageback" data-back>‹ Back to homepage</div>
+          <div class="demo">
+            <div class="login">
+              <div class="lk2">🔐</div>
+              <div class="dh" style="font-size:16px">Client &amp; prime portal</div>
+              <div class="ds" style="margin-bottom:14px">As-builts, project status, and invoices — self-serve, no more emailing files.</div>
+              <input placeholder="you@prime.com"><input type="password" placeholder="Password">
+              <button class="dbtn" style="width:100%" onclick="fdPortal(event)">Sign in</button>
+              <div class="dok" id="fdPortalOk">✓ Demo only — in the live portal partners see live project status, download current as-builts, and pay invoices.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CAPABILITY stage -->
+        <div class="stage" data-stage="cap">
+          <div class="stageback" data-back>‹ Back to homepage</div>
+          <div class="demo">
+            <div class="dh">One-click capability statement</div>
+            <div class="ds">Always current. Generated from your real numbers — primes never get a stale PDF.</div>
+            <div class="cap">
+              <div class="sheet"><div class="bar t"></div><div class="bar"></div><div class="bar s"></div><div class="bar"></div><div class="bar s"></div><div class="bar"></div></div>
+              <div>
+                <button class="dbtn" onclick="fdCap(this)">⬇ Download capability statement</button>
+                <div class="dok" id="fdCapOk">✓ Generated <b>TARO_Capabilities_2026.pdf</b> — pulled live from your certs, NAICS codes, and project stats.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI stage -->
+        <div class="stage" data-stage="ai">
+          <div class="stageback" data-back>‹ Back to homepage</div>
+          <div class="demo">
+            <div class="dh">AI site concierge</div>
+            <div class="ds">Answers prime &amp; carrier questions 24/7 — and books the call. Try one:</div>
+            <div class="chips-row">
+              <button onclick="fdAsk('Do you cover North Carolina?')">Do you cover North Carolina?</button>
+              <button onclick="fdAsk('Are you bondable?')">Are you bondable?</button>
+              <button onclick="fdAsk('Can you self-perform fiber?')">Self-perform fiber?</button>
+            </div>
+            <div class="chat" id="fdChat">
+              <div class="bub a">Hi — I'm TARO's site assistant. Ask about coverage, certifications, bonding, or scope and I'll answer instantly.</div>
+            </div>
+            <div class="chatin"><input id="fdAiIn" placeholder="Type a question…" onkeydown="if(event.key==='Enter')fdAsk()"><button class="dbtn" onclick="fdAsk()">Send</button></div>
+          </div>
+        </div>
+
+        <!-- PROOF stage -->
+        <div class="stage" data-stage="proof">
+          <div class="stageback" data-back>‹ Back to homepage</div>
+          <div class="demo">
+            <div class="dh">Real-time proof counters</div>
+            <div class="ds">Pulled straight from the platform — never hand-edited or stale.</div>
+            <div class="proof">
+              <div class="p"><div class="n" data-to="6240" data-suf="+">0</div><div class="l">projects delivered</div></div>
+              <div class="p"><div class="n" data-to="2680" data-suf="+">0</div><div class="l">towers serviced</div></div>
+              <div class="p"><div class="n" data-to="3120" data-suf=" mi">0</div><div class="l">designed / year</div></div>
+              <div class="p"><div class="n" data-to="6">0</div><div class="l">crews live now</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NEWS stage -->
+        <div class="stage" data-stage="news">
+          <div class="stageback" data-back>‹ Back to homepage</div>
+          <div class="demo">
+            <div class="dh">Newsroom &amp; leadership</div>
+            <div class="ds">Awards, press, and the MBE/ESG story primes, carriers, and municipalities look for.</div>
+            <div class="news">
+              <div class="it"><div class="dt2">New</div><div><div class="nt">TARO awarded multi-year fiber design contract</div><div class="nx">Expanding broadband design across the Southeast region.</div></div></div>
+              <div class="it"><div class="dt2">Award</div><div><div class="nt">Recognized as a certified MBE supplier of the year</div><div class="nx">NMSDC regional council honors TARO's growth and safety record.</div></div></div>
+              <div class="it"><div class="dt2">Team</div><div><div class="nt">Leadership: 30+ years engineering connectivity</div><div class="nx">From early West-Coast fiber builds to 2,600+ towers serviced.</div></div></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <p class="lead" id="fdHint" style="text-align:center;max-width:680px;margin:32px auto 0">Tap any feature to watch it work inside the page — the dream stack for a CEO in connectivity infrastructure:</p>
+    <div class="dream" id="fdCards">
+      <div class="c" data-go="bid"><div class="ic">🎯</div><b>Request-a-bid portal</b><p>Scopes and RFPs land structured and routed to the right estimator — not lost in an inbox. Your homepage becomes a pipeline.</p><span class="see">▸ See it live</span></div>
+      <div class="c" data-go="map"><div class="ic">🗺️</div><b>Live coverage &amp; project map</b><p>A GIS-fed map of where you've built and where crews are working now. Proof of scale a prime can see in five seconds.</p><span class="see">▸ See it live</span></div>
+      <div class="c" data-go="certs"><div class="ic">🛡️</div><b>Certifications &amp; safety wall</b><p>MBE/NMSDC/CPUC/GSA plus EMR &amp; TRIR — always current. The first thing a prime checks before they award.</p><span class="see">▸ See it live</span></div>
+      <div class="c" data-go="careers"><div class="ic">👷</div><b>Careers &amp; crew recruiting</b><p>Your #1 bottleneck, solved at the front door: apply-in-60-seconds that feeds a real recruiting pipeline.</p><span class="see">▸ See it live</span></div>
+      <div class="c" data-go="portal"><div class="ic">🔐</div><b>Client &amp; prime portal</b><p>Secure logins for as-builts, project status, and invoices. Stop emailing files — give partners self-serve access.</p><span class="see">▸ See it live</span></div>
+      <div class="c" data-go="cap"><div class="ic">📄</div><b>One-click capability statement</b><p>An always-current capability statement and line card a prime can download instantly — generated from your real numbers.</p><span class="see">▸ See it live</span></div>
+      <div class="c" data-go="ai"><div class="ic">🤖</div><b>AI site concierge</b><p>Answers "do you cover this region, are you bondable to $X, can you self-perform Y" 24/7 — and books the call.</p><span class="see">▸ See it live</span></div>
+      <div class="c" data-go="proof"><div class="ic">📊</div><b>Real-time proof counters</b><p>Miles designed, towers serviced, crews live — pulled straight from the platform, never hand-edited or stale.</p><span class="see">▸ See it live</span></div>
+      <div class="c" data-go="news"><div class="ic">📰</div><b>Newsroom &amp; leadership</b><p>Awards, press, and your MBE/ESG story — the credibility primes, carriers, and municipalities look for.</p><span class="see">▸ See it live</span></div>
     </div>
   </div>
 </section>
@@ -742,6 +1012,57 @@ function submitIntake(e){
   document.getElementById('intake').scrollIntoView({behavior:'smooth',block:'center'});
   return false;
 }
+</script>
+<script>
+/* Interactive homepage showcase */
+(function(){
+  var fd=document.getElementById('frontdoor'); if(!fd) return;
+  var frame=document.getElementById('bwFrame');
+  var after=fd.querySelector('.bw-screen[data-screen="after"]');
+  function setView(v){
+    fd.querySelectorAll('#baToggle button').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-view')===v); });
+    fd.querySelectorAll('.bw-screen').forEach(function(s){ s.classList.toggle('on', s.getAttribute('data-screen')===v); });
+  }
+  function highlight(name){ fd.querySelectorAll('#fdCards .c').forEach(function(c){ c.classList.toggle('on', c.getAttribute('data-go')===name); }); }
+  function showStage(name){
+    after.querySelectorAll('.stage').forEach(function(s){ s.classList.toggle('on', s.getAttribute('data-stage')===name); });
+    highlight(name==='home'?null:name);
+    if(name==='proof') animate(after.querySelector('.stage[data-stage="proof"]'));
+  }
+  function goStage(name){ setView('after'); showStage(name); }
+  fd.querySelector('#baToggle').addEventListener('click',function(e){
+    var b=e.target.closest('button'); if(!b) return;
+    var v=b.getAttribute('data-view'); setView(v); if(v==='before') showStage('home');
+  });
+  fd.addEventListener('click',function(e){
+    var g=e.target.closest('[data-go]'); if(g){ goStage(g.getAttribute('data-go')); frame.scrollIntoView({behavior:'smooth',block:'start'}); return; }
+    if(e.target.closest('[data-back]')){ goStage('home'); frame.scrollIntoView({behavior:'smooth',block:'start'}); }
+  });
+  function animate(scope){ if(!scope) return; scope.querySelectorAll('[data-to]').forEach(function(el){
+    var to=+el.getAttribute('data-to'), suf=el.getAttribute('data-suf')||'', t0=null, dur=900;
+    function step(ts){ if(!t0)t0=ts; var p=Math.min(1,(ts-t0)/dur); var val=Math.floor(to*(0.1+0.9*p*(2-p)));
+      el.textContent=val.toLocaleString()+suf; if(p<1) requestAnimationFrame(step); else el.textContent=to.toLocaleString()+suf; }
+    requestAnimationFrame(step);
+  }); }
+  window.fdBid=function(e){ e.preventDefault(); document.getElementById('fdBidOk').classList.add('on'); var b=e.target.querySelector('button[type=submit]'); if(b)b.textContent='Submitted ✓'; return false; };
+  window.fdApply=function(b){ b.textContent='Applied ✓'; b.disabled=true; b.style.opacity='.7'; };
+  window.fdPortal=function(e){ e.preventDefault(); document.getElementById('fdPortalOk').classList.add('on'); };
+  window.fdCap=function(b){ var ok=document.getElementById('fdCapOk'); b.textContent='Generating…'; setTimeout(function(){ b.textContent='⬇ Download capability statement'; ok.classList.add('on'); },700); };
+  window.fdAsk=function(q){ var inp=document.getElementById('fdAiIn'); q=q||(inp?inp.value.trim():''); if(!q) return; if(inp)inp.value='';
+    var chat=document.getElementById('fdChat');
+    var u=document.createElement('div'); u.className='bub u'; u.textContent=q; chat.appendChild(u);
+    var a=document.createElement('div'); a.className='bub a'; a.textContent='…'; chat.appendChild(a); chat.scrollTop=chat.scrollHeight;
+    setTimeout(function(){ a.textContent=fdAnswer(q); chat.scrollTop=chat.scrollHeight; },450);
+  };
+  function fdAnswer(q){ q=q.toLowerCase();
+    if(/north carolina|\bnc\b|cover|region|where|state/.test(q)) return "Yes — we're active across the Southeast (NC, SC, GA, TN) with 6 crews live right now, and we mobilize into new markets for the right contract.";
+    if(/bond|bondable/.test(q)) return "Yes, TARO is bondable — single and aggregate limits available on request. Our EMR is 0.74 and TRIR is 1.2.";
+    if(/self.?perform|fiber|splice|osp|wireless|tower|lidar/.test(q)) return "We self-perform fiber design, OSP construction, and splicing — plus wireless/tower, LiDAR, and GIS. One certified team from design to as-built.";
+    if(/cert|mbe|gsa|nmsdc|cpuc|sam/.test(q)) return "We hold MBE/NMSDC, CPUC, SAM, E-Verify, and a GSA Schedule — all current. Want our capability statement?";
+    if(/price|cost|quote|bid/.test(q)) return "Happy to scope it — tap 'Request a bid' and it routes straight to our estimating team, or I can book a call now.";
+    return "Great question — I'll connect you with the TARO team. Want me to book a quick call or take your bid details?";
+  }
+})();
 </script>
 </body>
 </html>

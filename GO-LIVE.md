@@ -252,9 +252,18 @@ create policy rr_agree_sign on rr_agreements for insert to anon
 
 ## 6. Optional polish (not blocking)
 - ✅ Turnstile widget → bot protection (site key wired, secret key added)
+- ✅ Lead & intake email (Resend) — `RESEND_API_KEY` set in Cloudflare; verified sending — see notes below
 - ⬜ Email signatures (in `/signatures`) installed in Gmail
 - ⬜ Branded magic‑link email + point Supabase Auth SMTP at Resend (kills email rate limits)
 - ⬜ SPF / DKIM / DMARC for email deliverability (DNS records at Squarespace) — see notes below
+
+### Lead & intake email (Resend) — `/api/demo-lead`
+Powers the "try the form" hook on customer preview sites (Island Claw, Mi Casa) and the TARO discovery questionnaire.
+- **Sends from** `sales@rankrebels.ai` (set via the optional `RESEND_FROM` env var; this is the default). We do **not** use `hello@` — only `sales@`, `brandon@`, and `eric@`.
+- **Replies** go to `sales@rankrebels.ai` on booking/quote alerts; on intake submissions reply-to is the prospect, so hitting reply reaches them directly.
+- **Who gets notified:** both owners — `brandon@rankrebels.ai` and `eric@rankrebels.ai`. Booking/quote demos BCC them; intake answers email them directly. Controlled by the comma-separated `LEAD_NOTIFY` env var (default `brandon@rankrebels.ai,eric@rankrebels.ai`) — change it in Cloudflare to add/swap recipients without touching code.
+- **Required secret:** `RESEND_API_KEY` in Cloudflare → Pages → Settings → Variables and Secrets (then redeploy). When unset the form still shows success but no email sends. Verified working ✅.
+- `rankrebels.ai` must be a verified domain in Resend (covers `sales@`, `brandon@`, `eric@`).
 
 ### Email signatures (Gmail)
 For each person (brandon.html, eric.html, sales.html):
