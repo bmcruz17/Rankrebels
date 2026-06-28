@@ -146,8 +146,10 @@ h2{font-size:clamp(28px,4vw,44px);font-weight:800;letter-spacing:-.015em;line-he
 /* gallery */
 .gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:42px}
 @media(max-width:760px){.gallery-grid{grid-template-columns:1fr 1fr}}
-.gtile{position:relative;border-radius:18px;overflow:hidden;aspect-ratio:4/3;display:grid;place-items:center;background-size:cover;background-position:center;box-shadow:0 18px 40px -26px rgba(28,18,48,.4)}
-.gtile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.gtile{position:relative;border-radius:18px;overflow:hidden;aspect-ratio:4/5;display:grid;place-items:center;background-size:cover;background-position:center;box-shadow:0 18px 40px -26px rgba(28,18,48,.4)}
+.gtile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .4s}
+.gtile:hover img{transform:scale(1.05)}
+.gtile .gcapbar{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(transparent,rgba(20,8,30,.82));color:#fff;font-size:13px;font-weight:700;padding:26px 13px 11px;z-index:1}
 .gtile .gph{display:grid;place-items:center;gap:8px;color:#fff;text-align:center;padding:14px}
 .gtile .gph .gem{font-size:34px;opacity:.9}
 .gtile .gph .gcap{font-size:13px;font-weight:700;opacity:.95}
@@ -373,14 +375,13 @@ footer a{color:var(--aqua)}
   </div>
   <div class="wrap">
     <div class="gallery-grid">
-      <div class="gtile g1"><div class="gph"><div class="gem">🎉</div><div class="gcap">Party deployment</div></div></div>
-      <div class="gtile g2"><div class="gph"><div class="gem">🕹️</div><div class="gcap">Both machines side by side</div></div></div>
-      <div class="gtile g3"><div class="gph"><div class="gem">🎨</div><div class="gcap">Custom artwork wrap</div></div></div>
-      <div class="gtile g4"><div class="gph"><div class="gem">🏢</div><div class="gcap">Corporate activation</div></div></div>
-      <div class="gtile g5"><div class="gph"><div class="gem">🎁</div><div class="gcap">Prize-packed &amp; ready</div></div></div>
-      <div class="gtile g6"><div class="gph"><div class="gem">📸</div><div class="gcap">Guests grabbing wins</div></div></div>
+      <div class="gtile"><img src="/photos/claw-1.jpg" alt="Island Claw machine set up at a tiki party in Honolulu" loading="lazy"><span class="gcapbar">Tiki-party setup</span></div>
+      <div class="gtile"><img src="/photos/claw-2.jpg" alt="Both Island Claw machines side by side, a guest playing" loading="lazy"><span class="gcapbar">Both machines, side by side</span></div>
+      <div class="gtile"><img src="/photos/claw-3.jpg" alt="Custom Congratulations graduation claw machine wrap" loading="lazy"><span class="gcapbar">Custom graduation wrap</span></div>
+      <div class="gtile"><img src="/photos/claw-4.jpg" alt="Island Claw machines at a corporate ballroom event" loading="lazy"><span class="gcapbar">Corporate event</span></div>
+      <div class="gtile"><img src="/photos/claw-5.jpg" alt="Claw machine packed with plush prizes" loading="lazy"><span class="gcapbar">Packed with prizes</span></div>
+      <div class="gtile"><img src="/photos/claw-6.jpg" alt="Guests playing Island Claw machines at an evening event" loading="lazy"><span class="gcapbar">Guests grabbing wins</span></div>
     </div>
-    <p class="gnote">📷 Placeholder tiles — swap in real photos of your machines and events anytime.</p>
   </div>
 </section>
 
