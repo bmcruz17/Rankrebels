@@ -51,7 +51,15 @@ export async function onRequestPost({ request, env }) {
   }
 
   // 3) create the invoice (collects the pending items)
-  const inv = await sPost(env, 'invoices', { customer: custId, collection_method: 'send_invoice', days_until_due: 14, auto_advance: 'true' });
+  //    Offer financing / "pay over time" where eligible: card, bank, Klarna, Affirm,
+  //    Afterpay, Cash App, Link. If a method isn't activated on the account yet, Stripe
+  //    rejects the whole list — so we retry without it and fall back to the account default.
+  const invBase = { customer: custId, collection_method: 'send_invoice', days_until_due: 14, auto_advance: 'true' };
+  const PM = ['card', 'us_bank_account', 'klarna', 'affirm', 'afterpay_clearpay', 'cashapp', 'link'];
+  const withPM = Object.assign({}, invBase);
+  PM.forEach((t, i) => { withPM['payment_settings[payment_method_types][' + i + ']'] = t; });
+  let inv = await sPost(env, 'invoices', withPM);
+  if (!inv.ok) inv = await sPost(env, 'invoices', invBase); // a BNPL method may not be enabled yet
   if (!inv.ok) return json({ error: 'Stripe invoice error.', detail: (await inv.text()).slice(0, 300) }, 502);
   const invId = (await inv.json()).id;
 
