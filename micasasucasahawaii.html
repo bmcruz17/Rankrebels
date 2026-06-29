@@ -443,8 +443,8 @@ footer a{color:#7fd4e6}
     <div class="plan2">
       <div class="pn">Launch your site</div>
       <div class="ptag">Get found on Google for O‘ahu remodeling — and turn searches into estimates.</div>
-      <div class="pp">$<span data-pricespot="build">750</span> <small>build</small></div>
-      <div class="pm">then <b>$<span data-pricespot="monthly">199</span></b> / month</div>
+      <div class="pp">$750 <small>build</small></div>
+      <div class="pm">then <b>$199</b> / month</div>
       <ul><li>Custom website, built to convert</li><li>Local SEO for O‘ahu remodeling</li><li>Google Business Profile setup</li><li>Online estimate requests 24/7</li><li>Hosting, security &amp; updates</li></ul>
       <button class="btn" data-cta="Website + SEO">Start with the site →</button>
     </div>
@@ -591,19 +591,6 @@ function sendEstimate(e){
   document.getElementById('estOk').scrollIntoView({behavior:'smooth',block:'center'});
   return false;
 }
-
-/* Live pricing — fill the price spots from this customer's saved quote (if any).
-   Falls back silently to the sample numbers above until a quote is published. */
-(function(){
-  var slug=(location.pathname.split('/').filter(Boolean).pop()||'').replace(/\.html$/,'').toLowerCase();
-  if(!slug) return;
-  fetch('/api/proposal-quote?slug='+encodeURIComponent(slug)).then(function(r){return r.ok?r.json():null;}).then(function(d){
-    if(!d||!d.quoted) return;
-    function fmt(n){ n=Number(n)||0; return n%1?n.toFixed(2):n.toLocaleString('en-US'); }
-    if(d.build!=null) document.querySelectorAll('[data-pricespot="build"]').forEach(function(e){ e.textContent=fmt(d.build); });
-    if(d.monthly!=null) document.querySelectorAll('[data-pricespot="monthly"]').forEach(function(e){ e.textContent=fmt(d.monthly); });
-  }).catch(function(){});
-})();
 </script>
 </body>
 </html>
