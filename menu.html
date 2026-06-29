@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Rank Rebels — Service Menu & Job Quote Calculator (internal)</title>
+<link rel="icon" type="image/png" href="/og/icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f1f6f1;--panel:#fff;--line:#d7e2d8;--line-2:#e7efe8;
+  --text:#11241a;--muted:#50635a;--muted-2:#82938a;
+  --brand:#15803d;--brand-2:#1aa251;--brand-soft:#e8f4ec;--accent:#c79a1e;--accent-soft:#faf3df;
+  --ink:#0c1a12;--radius:16px;--shadow:0 18px 40px -18px rgba(20,50,30,.22);
+}
+body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:0 22px}
+a{color:var(--brand);text-decoration:none}
+h1,h2,h3{line-height:1.2}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--brand)}
+/* top bar */
+.top{background:linear-gradient(120deg,#0c2a17,#15803d);color:#fff;padding:26px 0}
+.top .wrap{display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between}
+.top h1{font-size:26px;font-weight:800}
+.top .sub{color:#bfe6cd;font-size:14px;margin-top:4px}
+.badge-int{display:inline-block;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:4px 12px;font-size:11.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+/* billing toggle */
+.billtoggle{display:inline-flex;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3);border-radius:12px;padding:4px;gap:4px}
+.billtoggle button{border:0;background:transparent;color:#dff0e6;font-weight:800;font-size:13.5px;padding:9px 16px;border-radius:9px;cursor:pointer;transition:.15s}
+.billtoggle button.on{background:#fff;color:var(--brand)}
+.billtoggle .save{display:block;font-size:10.5px;font-weight:700;color:var(--accent);margin-top:1px}
+section{padding:44px 0}
+.sec-head{max-width:680px;margin:0 auto 26px;text-align:center}
+.sec-head h2{font-size:25px;font-weight:800;margin-top:6px}
+.sec-head p{color:var(--muted);font-size:15px;margin-top:8px}
+/* tier cards */
+.tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;align-items:start}
+.tier{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:24px 22px;box-shadow:var(--shadow);display:flex;flex-direction:column;position:relative}
+.tier.pop{border:2px solid var(--brand);box-shadow:0 24px 48px -20px rgba(21,128,61,.4)}
+.tier .pin{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--brand);color:#fff;font-size:11.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:5px 14px;border-radius:999px}
+.tier .tname{font-size:19px;font-weight:800}
+.tier .ttag{color:var(--muted);font-size:13px;margin-top:3px;min-height:34px}
+.tier .build{margin-top:14px;font-size:32px;font-weight:800}
+.tier .build small{font-size:13px;color:var(--muted);font-weight:600}
+.tier .was{color:var(--muted-2);text-decoration:line-through;font-size:15px;font-weight:600;margin-left:6px}
+.tier .mo{margin-top:4px;font-size:15px;color:var(--text);font-weight:700}
+.tier .mo b{color:var(--brand)}
+.tier .mohint{font-size:12px;color:var(--muted-2);margin-top:2px}
+.tier ul{list-style:none;margin:16px 0 18px;display:flex;flex-direction:column;gap:9px}
+.tier li{font-size:13.3px;display:flex;gap:9px;align-items:flex-start;color:var(--text)}
+.tier li:before{content:"✓";color:var(--brand);font-weight:800;flex:0 0 auto}
+.tier li.star:before{content:"★";color:var(--accent)}
+.tier .pcalc{margin-top:auto;font-size:12px;color:var(--muted-2);border-top:1px dashed var(--line);padding-top:12px}
+/* rate card */
+.ratewrap{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+.ratecard{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+.ratecard h3{background:var(--brand-soft);color:var(--ink);font-size:15px;font-weight:800;padding:13px 18px;border-bottom:1px solid var(--line)}
+.ratecard h3.alt{background:var(--accent-soft)}
+.rrow{display:flex;justify-content:space-between;gap:14px;padding:11px 18px;border-bottom:1px solid var(--line-2);font-size:14px}
+.rrow:last-child{border-bottom:0}
+.rrow .rn{font-weight:600}
+.rrow .rd{color:var(--muted-2);font-size:12px;font-weight:500;display:block;margin-top:1px}
+.rrow .rp{font-weight:800;white-space:nowrap}
+.rrow .rp small{color:var(--muted);font-weight:600;font-size:11.5px}
+.note{max-width:980px;margin:22px auto 0;background:var(--accent-soft);border:1px solid #ecdcb0;border-radius:14px;padding:16px 20px;font-size:13.5px;color:var(--ink)}
+.note b{color:var(--accent)}
+/* calculator */
+.calc{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;max-width:1000px;margin:0 auto}
+.calc-controls{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-end;margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid var(--line)}
+.fld{display:flex;flex-direction:column;gap:5px}
+.fld label{font-size:12px;font-weight:700;color:var(--muted)}
+.fld input,.fld select{border:1px solid var(--line);border-radius:10px;padding:9px 12px;font:inherit;font-size:14px;background:#fff;color:var(--text)}
+.fld input[type=number]{width:110px}
+.lines{width:100%;border-collapse:collapse;font-size:14px}
+.lines th{text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted-2);font-weight:800;padding:6px 8px;border-bottom:1px solid var(--line)}
+.lines td{padding:7px 8px;border-bottom:1px solid var(--line-2);vertical-align:middle}
+.lines input,.lines select{border:1px solid var(--line);border-radius:8px;padding:7px 9px;font:inherit;font-size:13.5px;background:#fff;width:100%}
+.lines .num{width:88px}
+.lines .amt{font-weight:800;text-align:right;white-space:nowrap}
+.lines .del{background:none;border:0;color:var(--muted-2);font-size:18px;cursor:pointer;line-height:1;padding:0 4px}
+.lines .del:hover{color:#c0392b}
+.addline{margin-top:12px;display:flex;gap:10px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:7px;background:var(--brand);color:#fff;font-weight:800;font-size:14px;padding:11px 20px;border-radius:11px;border:0;cursor:pointer;transition:.15s}
+.btn:hover{background:var(--brand-2)}
+.btn.ghost{background:#fff;color:var(--brand);border:1.5px solid var(--line)}
+.btn.ghost:hover{background:var(--brand-soft)}
+.btn.sm{padding:8px 14px;font-size:13px}
+/* totals */
+.totals{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:22px}
+.tot{border:1.5px solid var(--line);border-radius:14px;padding:18px 20px}
+.tot.best{border-color:var(--brand);background:var(--brand-soft)}
+.tot .th{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
+.tot.best .th{color:var(--brand)}
+.tot .tag{font-size:10.5px;background:var(--brand);color:#fff;border-radius:999px;padding:3px 9px;letter-spacing:.05em}
+.tline{display:flex;justify-content:space-between;margin-top:12px;font-size:14.5px}
+.tline.big{font-size:18px;font-weight:800;border-top:1px solid var(--line);padding-top:11px;margin-top:13px}
+.tline .v{font-weight:800}
+.summary{margin-top:22px}
+.summary label{font-size:12px;font-weight:700;color:var(--muted);display:block;margin-bottom:6px}
+.summary textarea{width:100%;min-height:150px;border:1px solid var(--line);border-radius:12px;padding:14px;font:inherit;font-size:13px;color:var(--text);background:#fbfdfb;line-height:1.6;resize:vertical}
+.foot{padding:36px 0 50px;text-align:center;color:var(--muted-2);font-size:13px}
+@media(max-width:880px){.tiers,.ratewrap,.totals{grid-template-columns:1fr}.lines .num{width:70px}}
+</style>
+</head>
+<body>
+
+<div class="top"><div class="wrap">
+  <div>
+    <div class="badge-int">Internal · Rank Rebels</div>
+    <h1>Service Menu &amp; Job Quote Calculator</h1>
+    <div class="sub">Your rate card, package tiers, and a calculator that prices any job — built on $150/hr with always-on recurring revenue.</div>
+  </div>
+  <div style="text-align:right">
+    <div class="billtoggle" id="billToggle">
+      <button data-bill="annual" class="on">Annual commit<span class="save">save on build</span></button>
+      <button data-bill="m2m">Month-to-month</button>
+    </div>
+  </div>
+</div></div>
+
+<!-- TIERS -->
+<section><div class="wrap">
+  <div class="sec-head">
+    <span class="eyebrow">Present these three</span>
+    <h2>Package tiers</h2>
+    <p>Always lead with three. Most people pick the middle. Every tier is build fee <b>+ monthly recurring</b> — the monthly is the business. Toggle billing above to reprice.</p>
+  </div>
+  <div class="tiers" id="tiers"></div>
+  <div class="note" id="billNote"></div>
+</div></section>
+
+<!-- RATE CARD -->
+<section style="background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)"><div class="wrap">
+  <div class="sec-head">
+    <span class="eyebrow">À la carte</span>
+    <h2>Service rate card</h2>
+    <p>Bolt-ons and stand-alone services. One-time work is value-priced; recurring keeps the lights on. These feed the calculator below.</p>
+  </div>
+  <div class="ratewrap">
+    <div>
+      <div class="ratecard">
+        <h3>One-time builds &amp; creative</h3>
+        <div id="rateOnce"></div>
+      </div>
+      <div class="ratecard" style="margin-top:18px">
+        <h3 class="alt">App development · milestone-based</h3>
+        <div id="rateApp"></div>
+      </div>
+    </div>
+    <div>
+      <div class="ratecard">
+        <h3>Monthly recurring</h3>
+        <div id="rateMo"></div>
+      </div>
+      <div class="ratecard" style="margin-top:18px">
+        <h3 class="alt">Change requests &amp; rush</h3>
+        <div id="rateRush"></div>
+      </div>
+    </div>
+  </div>
+  <div class="note">
+    <b>How change requests work.</b> Base &amp; Grow include a set number of standard changes each month (normal turnaround). <b>Dominate includes unlimited changes delivered within 24 hours</b>, plus <b>3 express changes/month delivered within 3 hours</b>. Need something faster than your plan allows? A <b>$300 rush</b> buys a guaranteed 3-hour turnaround on any tier (and applies after Dominate's 3 express changes are used).
+  </div>
+</div></div></section>
+
+<!-- CALCULATOR -->
+<section><div class="wrap">
+  <div class="sec-head">
+    <span class="eyebrow">Quote any job</span>
+    <h2>Job quote calculator</h2>
+    <p>Add line items — pick a service from the menu, or price custom work by hours. Hour-based lines apply your rate + a risk markup. Totals show annual vs month-to-month side by side.</p>
+  </div>
+  <div class="calc">
+    <div class="calc-controls">
+      <div class="fld"><label>Your hourly rate</label><input type="number" id="rate" value="150" min="0" step="5"></div>
+      <div class="fld"><label>Risk markup on hourly work</label>
+        <select id="markup">
+          <option value="0">0% — straight cost</option>
+          <option value="0.2">20% — light</option>
+          <option value="0.3" selected>30% — standard</option>
+          <option value="0.4">40% — complex / app</option>
+          <option value="0.5">50% — high risk</option>
+        </select>
+      </div>
+      <div class="fld"><label>Client name (for summary)</label><input type="text" id="client" placeholder="e.g. Mi Casa Su Casa" style="width:200px"></div>
+    </div>
+
+    <table class="lines"><thead><tr>
+      <th style="width:34%">Line item</th><th style="width:16%">Type</th><th style="width:18%">Basis</th><th style="width:14%">Qty / hrs</th><th style="width:14%;text-align:right">Amount</th><th></th>
+    </tr></thead><tbody id="lineBody"></tbody></table>
+
+    <div class="addline">
+      <select id="presetPick" class="fld" style="min-width:240px;border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:14px;background:#fff"></select>
+      <button class="btn ghost sm" id="addPreset">+ Add from menu</button>
+      <button class="btn ghost sm" id="addCustom">+ Custom line</button>
+    </div>
+
+    <div class="totals" id="totals"></div>
+
+    <div class="summary">
+      <label>Quote summary — copy into a proposal or the Stripe invoice modal</label>
+      <textarea id="summaryText" readonly></textarea>
+      <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn sm" id="copyBtn">Copy summary</button>
+        <button class="btn ghost sm" id="resetBtn">Reset calculator</button>
+      </div>
+    </div>
+  </div>
+</div></section>
+
+<div class="foot">Rank Rebels internal tool · $150/hr basis · figures are starting points — adjust per deal. Not indexed.</div>
+
+<script>
+/* ---------- pricing model ---------- */
+var MODEL = {
+  annualBuildDiscount: 0.20,   // annual commit → 20% off the upfront
+  m2mMonthlyUplift: 0.15,      // month-to-month → monthly costs 15% more
+  rush: 300,
+  minMonths: 6
+};
+/* list prices: build = full (month-to-month) upfront; monthly = best (annual) rate */
+var TIERS = [
+  { name:'Launch', tag:'Get found and turn searches into calls.', build:750, monthly:199, pop:false,
+    feats:[ 'Custom 5-page website, built to convert','Local SEO foundation + Google Business setup','Lead/contact forms → instant alerts','Hosting, security &amp; updates','1 change request / month (standard turnaround)' ] },
+  { name:'Grow', tag:'The one most businesses should buy.', build:1500, monthly:399, pop:true,
+    feats:[ 'Everything in Launch, up to 12 pages','Ongoing SEO &amp; AI-search optimization','Review generation + monthly report','3 change requests / month (48-hr turnaround)',['star','1 express (3-hour) change / month included'] ] },
+  { name:'Dominate', tag:'White-glove. You never wait.', build:3000, monthly:799, pop:false,
+    feats:[ 'Everything in Grow, unlimited pages','Priority phone + email support','Quarterly strategy call',['star','Unlimited change requests — delivered within 24 hours'],['star','3 express (3-hour) changes / month included'],'Then $300/ea for extra 3-hour rushes' ] }
+];
+var RATE_ONCE = [
+  ['Logo &amp; apparel branding','Logo, color system, print-ready shirt/sign/vehicle art + vector files',750],
+  ['Vehicle &amp; jobsite signage','Truck decals + yard-sign designs',450],
+  ['Project photo &amp; video day','On-site shoot of finished work for site + socials',600],
+  ['Social media launch kit','Profiles, branded templates, 30-day calendar',600],
+  ['E-commerce &amp; booking setup','Sell or take deposits online, secure checkout',750],
+  ['Extra landing page','Campaign / service page add-on',250]
+];
+var RATE_MO = [
+  ['SEO &amp; AI search','Climb Google + surface in AI recommendations',270],
+  ['Google Business management','Win the local Map pack',149],
+  ['Review generation','Automated 5-star review requests',99],
+  ['App maintenance retainer','Updates, Apple fees, monitoring (from)',199]
+];
+var RATE_APP = [
+  ['App MVP — phase 1','Core flow shipped (e.g. LiDAR measure + quote). From',9000],
+  ['App phase 2','Projects, expenses, pipeline. From',7500],
+  ['App phase 3','Reviews, polish, store launch. From',6000]
+];
+var RATE_RUSH = [
+  ['Rush delivery (3-hour)','Guaranteed 3-hr turnaround on any tier',300],
+  ['Express change (Grow)','1/mo included, then $300 each',300],
+  ['Express change (Dominate)','3/mo included, then $300 each',300]
+];
+/* preset lines for the calculator: [label, type(once|monthly), fixedAmount] */
+var PRESETS = [
+  ['— Website packages —', null, null],
+  ['Launch — build', 'once', 750], ['Launch — monthly', 'monthly', 199],
+  ['Grow — build', 'once', 1500], ['Grow — monthly', 'monthly', 399],
+  ['Dominate — build', 'once', 3000], ['Dominate — monthly', 'monthly', 799],
+  ['— One-time creative —', null, null],
+  ['Logo & apparel branding', 'once', 750],
+  ['Vehicle & jobsite signage', 'once', 450],
+  ['Project photo & video day', 'once', 600],
+  ['Social media launch kit', 'once', 600],
+  ['E-commerce & booking setup', 'once', 750],
+  ['Extra landing page', 'once', 250],
+  ['— Monthly recurring —', null, null],
+  ['SEO & AI search', 'monthly', 270],
+  ['Google Business management', 'monthly', 149],
+  ['Review generation', 'monthly', 99],
+  ['App maintenance retainer', 'monthly', 199],
+  ['— App development —', null, null],
+  ['App MVP — phase 1', 'once', 9000],
+  ['App phase 2', 'once', 7500],
+  ['App phase 3', 'once', 6000],
+  ['— Add-ons —', null, null],
+  ['Rush delivery (3-hour)', 'once', 300]
+];
+
+/* ---------- state ---------- */
+var bill = 'annual';
+var lines = []; // {label, type:'once'|'monthly', basis:'fixed'|'hours', qty, fixed}
+var uid = 1;
+
+var $ = function(id){ return document.getElementById(id); };
+var money = function(n){ return '$' + Math.round(n).toLocaleString('en-US'); };
+
+/* ---------- tiers render ---------- */
+function tierPrices(t){
+  if(bill==='annual') return { build: Math.round(t.build*(1-MODEL.annualBuildDiscount)), wasBuild:t.build, monthly:t.monthly };
+  return { build:t.build, wasBuild:null, monthly: Math.round(t.monthly*(1+MODEL.m2mMonthlyUplift)) };
+}
+function renderTiers(){
+  $('tiers').innerHTML = TIERS.map(function(t){
+    var p = tierPrices(t);
+    var feats = t.feats.map(function(f){
+      if(Array.isArray(f)) return '<li class="'+f[0]+'">'+f[1]+'</li>';
+      return '<li>'+f+'</li>';
+    }).join('');
+    var was = p.wasBuild ? '<span class="was">'+money(p.wasBuild)+'</span>' : '';
+    var calcNote = bill==='annual'
+      ? '12-month commit · '+(MODEL.annualBuildDiscount*100)+'% off build · best monthly'
+      : 'No commitment · full build · monthly +'+(MODEL.m2mMonthlyUplift*100)+'% · '+MODEL.minMonths+'-mo minimum';
+    return '<div class="tier'+(t.pop?' pop':'')+'">'
+      + (t.pop?'<div class="pin">Most popular</div>':'')
+      + '<div class="tname">'+t.name+'</div>'
+      + '<div class="ttag">'+t.tag+'</div>'
+      + '<div class="build">'+money(p.build)+' '+was+'<small> build</small></div>'
+      + '<div class="mo">then <b>'+money(p.monthly)+'</b> / month</div>'
+      + '<div class="mohint">first-year total ~'+money(p.build + p.monthly*12)+'</div>'
+      + '<ul>'+feats+'</ul>'
+      + '<div class="pcalc">'+calcNote+'</div>'
+      + '</div>';
+  }).join('');
+  $('billNote').innerHTML = bill==='annual'
+    ? '<b>Annual commit (recommended pitch):</b> they save '+(MODEL.annualBuildDiscount*100)+'% on the upfront build and lock the best monthly rate, committed for 12 months (still billed monthly). This is your default — push it.'
+    : '<b>Month-to-month:</b> full build fee, monthly is '+(MODEL.m2mMonthlyUplift*100)+'% higher, '+MODEL.minMonths+'-month minimum then cancel anytime. The flexibility costs them — that\'s the point.';
+}
+
+/* ---------- rate card render ---------- */
+function rateRows(arr, suffix){
+  return arr.map(function(r){
+    return '<div class="rrow"><div><span class="rn">'+r[0]+'</span><span class="rd">'+r[1]+'</span></div>'
+      + '<div class="rp">'+money(r[2])+(suffix?' <small>'+suffix+'</small>':'')+'</div></div>';
+  }).join('');
+}
+$('rateOnce').innerHTML = rateRows(RATE_ONCE,'one-time');
+$('rateMo').innerHTML   = rateRows(RATE_MO,'/ mo');
+$('rateApp').innerHTML  = rateRows(RATE_APP,'');
+$('rateRush').innerHTML = rateRows(RATE_RUSH,'');
+
+/* ---------- calculator ---------- */
+function lineAmount(l){
+  if(l.basis==='hours'){
+    var rate = parseFloat($('rate').value)||0;
+    var mk = parseFloat($('markup').value)||0;
+    return (parseFloat(l.qty)||0) * rate * (1+mk);
+  }
+  return (parseFloat(l.fixed)||0) * (parseFloat(l.qty)||1);
+}
+function renderLines(){
+  var b = $('lineBody');
+  if(!lines.length){ b.innerHTML = '<tr><td colspan="6" style="color:var(--muted-2);padding:18px 8px">No line items yet — add one from the menu or a custom line below.</td></tr>'; compute(); return; }
+  b.innerHTML = lines.map(function(l){
+    return '<tr data-id="'+l.id+'">'
+      + '<td><input data-k="label" value="'+(l.label||'').replace(/"/g,'&quot;')+'" placeholder="Description"></td>'
+      + '<td><select data-k="type"><option value="once"'+(l.type==='once'?' selected':'')+'>One-time</option><option value="monthly"'+(l.type==='monthly'?' selected':'')+'>Monthly</option></select></td>'
+      + '<td><select data-k="basis"><option value="fixed"'+(l.basis==='fixed'?' selected':'')+'>Fixed $</option><option value="hours"'+(l.basis==='hours'?' selected':'')+'>Hours</option></select></td>'
+      + '<td>'+(l.basis==='hours'
+            ? '<input class="num" data-k="qty" type="number" min="0" step="0.5" value="'+(l.qty||0)+'">'
+            : '<input class="num" data-k="fixed" type="number" min="0" step="25" value="'+(l.fixed||0)+'">')
+      + '</td>'
+      + '<td class="amt">'+money(lineAmount(l))+(l.type==='monthly'?'<small style="color:var(--muted);font-weight:600">/mo</small>':'')+'</td>'
+      + '<td><button class="del" title="Remove">×</button></td>'
+      + '</tr>';
+  }).join('');
+  // wire inputs
+  b.querySelectorAll('tr').forEach(function(tr){
+    var id = +tr.getAttribute('data-id');
+    var l = lines.find(function(x){return x.id===id;});
+    tr.querySelectorAll('[data-k]').forEach(function(inp){
+      inp.addEventListener('input', function(){
+        var k = inp.getAttribute('data-k');
+        l[k] = inp.value;
+        if(k==='basis' || k==='type') renderLines(); else { tr.querySelector('.amt').innerHTML = money(lineAmount(l))+(l.type==='monthly'?'<small style="color:var(--muted);font-weight:600">/mo</small>':''); compute(); }
+      });
+    });
+    tr.querySelector('.del').addEventListener('click', function(){ lines = lines.filter(function(x){return x.id!==id;}); renderLines(); });
+  });
+  compute();
+}
+function compute(){
+  var once=0, mo=0;
+  lines.forEach(function(l){ var a=lineAmount(l); if(l.type==='monthly') mo+=a; else once+=a; });
+  // annual: build discounted, monthly best.  m2m: full build, monthly +uplift.
+  // round each figure to whole dollars so the displayed numbers and first-year totals stay consistent.
+  var aUp = Math.round(once*(1-MODEL.annualBuildDiscount)), aMo = Math.round(mo);
+  var mUp = Math.round(once), mMo = Math.round(mo*(1+MODEL.m2mMonthlyUplift));
+  $('totals').innerHTML =
+      totCard('Annual commit', aUp, aMo, true, (MODEL.annualBuildDiscount*100)+'% off build')
+    + totCard('Month-to-month', mUp, mMo, false, 'monthly +'+(MODEL.m2mMonthlyUplift*100)+'%');
+  buildSummary(once, mo, aUp, aMo, mUp, mMo);
+}
+function totCard(title, up, moAmt, best, tag){
+  return '<div class="tot'+(best?' best':'')+'">'
+    + '<div class="th">'+title+(best?'<span class="tag">push this</span>':'')+'</div>'
+    + '<div class="tline"><span>Upfront build</span><span class="v">'+money(up)+'</span></div>'
+    + '<div class="tline"><span>Recurring</span><span class="v">'+money(moAmt)+' / mo</span></div>'
+    + '<div class="tline big"><span>First-year total</span><span class="v">'+money(up + moAmt*12)+'</span></div>'
+    + '<div style="font-size:11.5px;color:var(--muted-2);margin-top:8px">'+tag+'</div>'
+    + '</div>';
+}
+function buildSummary(once, mo, aUp, aMo, mUp, mMo){
+  var client = $('client').value.trim();
+  var L = lines.map(function(l){ return '  • '+(l.label||'Item')+' — '+money(lineAmount(l))+(l.type==='monthly'?' / mo':''); }).join('\n');
+  var txt = 'RANK REBELS — QUOTE'+(client?' for '+client:'')+'\n'
+    + '----------------------------------------\n'
+    + (L||'  (no line items)')+'\n\n'
+    + 'OPTION A — Annual commit (recommended):\n'
+    + '  Upfront build: '+money(aUp)+'   (saves '+money(once-aUp)+')\n'
+    + '  Monthly: '+money(aMo)+' / month\n'
+    + '  First-year total: '+money(aUp + aMo*12)+'\n\n'
+    + 'OPTION B — Month-to-month:\n'
+    + '  Upfront build: '+money(mUp)+'\n'
+    + '  Monthly: '+money(mMo)+' / month ('+MODEL.minMonths+'-mo minimum)\n'
+    + '  First-year total: '+money(mUp + mMo*12)+'\n\n'
+    + 'Build fee can be split with Klarna / Affirm / Afterpay at checkout.';
+  $('summaryText').value = txt;
+}
+
+/* ---------- line add / presets ---------- */
+function addLine(l){ l.id = uid++; lines.push(l); renderLines(); }
+(function fillPresets(){
+  $('presetPick').innerHTML = PRESETS.map(function(p,i){
+    if(p[1]===null) return '<option disabled>'+p[0]+'</option>';
+    return '<option value="'+i+'">'+p[0]+' — '+(p[1]==='monthly'?money(p[2])+'/mo':money(p[2]))+'</option>';
+  }).join('');
+  // default to first real option
+  for(var i=0;i<PRESETS.length;i++){ if(PRESETS[i][1]!==null){ $('presetPick').value=i; break; } }
+})();
+$('addPreset').addEventListener('click', function(){
+  var i = +$('presetPick').value; var p = PRESETS[i]; if(!p || p[1]===null) return;
+  addLine({ label:p[0], type:p[1], basis:'fixed', fixed:p[2], qty:1 });
+});
+$('addCustom').addEventListener('click', function(){ addLine({ label:'', type:'once', basis:'hours', qty:1, fixed:0 }); });
+$('resetBtn').addEventListener('click', function(){ lines=[]; renderLines(); });
+$('rate').addEventListener('input', renderLines);
+$('markup').addEventListener('change', renderLines);
+$('client').addEventListener('input', compute);
+$('copyBtn').addEventListener('click', function(){
+  $('summaryText').select();
+  try{ document.execCommand('copy'); this.textContent='Copied ✓'; var b=this; setTimeout(function(){b.textContent='Copy summary';},1400); }catch(e){}
+});
+
+/* billing toggle */
+$('billToggle').addEventListener('click', function(e){
+  var b = e.target.closest('button'); if(!b) return;
+  bill = b.getAttribute('data-bill');
+  this.querySelectorAll('button').forEach(function(x){ x.classList.toggle('on', x===b); });
+  renderTiers();
+});
+
+/* init */
+renderTiers();
+addLine({ label:'Grow — build', type:'once', basis:'fixed', fixed:1500, qty:1 });
+addLine({ label:'Grow — monthly', type:'monthly', basis:'fixed', fixed:399, qty:1 });
+</script>
+</body>
+</html>
