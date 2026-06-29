@@ -45,6 +45,7 @@ alter table rr_clients  add column if not exists follow_up  date;
 alter table rr_clients  add column if not exists services   jsonb;
 alter table rr_clients  add column if not exists ga4_property_id     text; -- live reports (report.html)
 alter table rr_clients  add column if not exists search_console_site text; -- live reports (report.html)
+alter table rr_clients  add column if not exists hook_url            text; -- proposal/checkout "hook" page; "View hook" button on the tile
 alter table rr_clients  add column if not exists partner     text; -- reseller name (e.g. Ryzen Recruit)
 alter table rr_clients  add column if not exists partner_rep text; -- the rep who referred the lead
 alter table rr_clients  add column if not exists quote       jsonb; -- à la carte package builder (line items, term, discounts)

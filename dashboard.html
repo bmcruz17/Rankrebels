@@ -133,6 +133,8 @@
   .lead-cta .cta{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:8px 6px;border:1px solid var(--line);border-radius:9px;font-size:12.5px;font-weight:700;text-decoration:none;background:var(--panel);color:var(--muted);white-space:nowrap;transition:.12s}
   .lead-cta .cta:hover{border-color:var(--brand);color:var(--brand);background:rgba(21,128,61,.06)}
   .lead-cta .cta.call{background:rgba(21,128,61,.1);border-color:rgba(21,128,61,.32);color:var(--brand)}
+  .lead-cta .cta.hook{background:rgba(201,154,30,.12);border-color:rgba(201,154,30,.4);color:#9a7416;flex-basis:100%}
+  .lead-cta .cta.hook:hover{background:rgba(201,154,30,.2);border-color:rgba(201,154,30,.6);color:#7c5e10}
   /* secondary action row */
   .card-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px;padding-top:9px;border-top:1px solid var(--line)}
   .card-actions .ci{width:31px;height:31px;display:grid;place-items:center;border:1px solid var(--line);border-radius:8px;text-decoration:none;font-size:14px;background:var(--panel);transition:.12s}
@@ -583,6 +585,8 @@
     </div>
     <div class="field"><label>Monthly charge ($) <span style="color:var(--muted-2)">(after add-ons + term discount)</span></label><input id="c-monthly" type="number" min="0" step="0.01" placeholder="300" oninput="quoteManualEdit()"></div>
     <div id="quote-summary" class="quote-summary"></div>
+    <div class="field"><label>🪝 Proposal / hook page <span style="color:var(--muted-2)">(the page they checkout &amp; accept on — shows a "View hook" button on the tile)</span></label>
+      <input id="c-hook" placeholder="https://rankrebels.ai/islandclawmachineco" autocomplete="off" autocapitalize="off" spellcheck="false"></div>
     <div class="grid2">
       <div class="field"><label>Domain</label><input id="c-domain" placeholder="acme.com"></div>
       <div class="field"><label>Hosting</label><input id="c-hosting" placeholder="Cloudflare Pages"></div>
@@ -1781,6 +1785,7 @@ function callTextButtons(c){
     b+='<a class="cta" draggable="false" href="sms:'+telDigits(c.phone)+'" onclick="logActivity(\''+c.id+'\',\'text\');event.stopPropagation()">💬 Text</a>';
   }
   if(c.email){ b+='<a class="cta" draggable="false" href="#" onclick="emailLead(\''+c.id+'\');event.stopPropagation();return false">✉️ Email</a>'; }
+  if(c.hook_url){ b+='<a class="cta hook" draggable="false" href="'+esc(c.hook_url)+'" target="_blank" rel="noopener" title="Open their proposal hook — the page they checkout & accept on" onclick="logActivity(\''+c.id+'\',\'note\',\'Opened hook page\');event.stopPropagation()">🪝 View hook</a>'; }
   return b?'<div class="lead-cta">'+b+'</div>':'';
 }
 // Strip raw URLs and the boilerplate finder prefix so note previews read cleanly on the tile.
@@ -2361,6 +2366,7 @@ function openClient(id, presetStage){
   el('c-acq').value=c?c.acquired_by:(EMAIL_TO_ACQ[me]||'brandon');
   loadQuote(c);
   el('c-domain').value=c?(c.domain||''):''; el('c-hosting').value=c?(c.hosting||''):'';
+  el('c-hook').value=c?(c.hook_url||''):'';
   el('c-ga4').value=c?(c.ga4_property_id||''):''; el('c-sc').value=c?(c.search_console_site||''):'';
   var rl=el('c-report-link'); if(id){ rl.style.display='inline-flex'; rl.href='report.html?client='+encodeURIComponent(id); } else { rl.style.display='none'; }
   el('c-note-new').value='';
@@ -2596,6 +2602,7 @@ async function saveClient(){
     onboarding_fee:Number(el('c-onboard').value)||null, deal_value:Number(el('c-onboard').value)||null,
     monthly_charge:Number(el('c-monthly').value)||null,
     domain:el('c-domain').value.trim(), hosting:el('c-hosting').value.trim(),
+    hook_url:el('c-hook').value.trim()||null,
     ga4_property_id:el('c-ga4').value.trim()||null, search_console_site:el('c-sc').value.trim()||null,
     credentials:collectCreds(), services:selectedServices(), quote:buildQuote(),
     follow_up: el('c-followup').value || null
@@ -2604,7 +2611,7 @@ async function saveClient(){
   async function run(p){ return editingId ? sb.from('rr_clients').update(p).eq('id',editingId).select().single() : sb.from('rr_clients').insert(p).select().single(); }
   var r=await run(rec);
   // Degrade gracefully if optional columns haven't been added to the table yet
-  for(var i=0;i<5 && r.error && /services|follow_up|ga4_property_id|search_console_site|quote|description|column|schema cache/i.test(r.error.message||'');i++){
+  for(var i=0;i<5 && r.error && /services|follow_up|ga4_property_id|search_console_site|quote|description|hook_url|column|schema cache/i.test(r.error.message||'');i++){
     var m=r.error.message||'';
     if(/services/i.test(m)) delete rec.services;
     if(/follow_up/i.test(m)) delete rec.follow_up;
@@ -2612,7 +2619,8 @@ async function saveClient(){
     if(/search_console_site/i.test(m)) delete rec.search_console_site;
     if(/quote/i.test(m)) delete rec.quote;
     if(/description/i.test(m)) delete rec.description;
-    if(!/services|follow_up|ga4_property_id|search_console_site|quote|description/i.test(m)){ delete rec.services; delete rec.follow_up; delete rec.ga4_property_id; delete rec.search_console_site; delete rec.quote; delete rec.description; }
+    if(/hook_url/i.test(m)) delete rec.hook_url;
+    if(!/services|follow_up|ga4_property_id|search_console_site|quote|description|hook_url/i.test(m)){ delete rec.services; delete rec.follow_up; delete rec.ga4_property_id; delete rec.search_console_site; delete rec.quote; delete rec.description; delete rec.hook_url; }
     r=await run(rec);
   }
   if(r.error){ alert(r.error.message); return; }
