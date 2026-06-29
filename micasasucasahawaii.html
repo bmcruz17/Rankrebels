@@ -192,6 +192,29 @@ footer a{color:#7fd4e6}
 .plan2 .btn{width:100%;justify-content:center;margin-top:auto}
 .billn{max-width:760px;margin:30px auto 0;background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px 24px;font-size:14px;color:var(--ink);line-height:1.6}
 .billn b{color:var(--teal)}
+/* à la carte add-on picker */
+.addons2{max-width:980px;margin:44px auto 0}
+.addons2 .ah{text-align:center;max-width:620px;margin:0 auto 22px}
+.addons2 .ah h3{font-size:26px;font-weight:800;margin-top:6px}
+.addons2 .ah p{color:var(--muted);font-size:15px;margin-top:8px}
+.agrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.aopt{position:relative;display:flex;flex-direction:column;gap:6px;background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:18px 18px 16px;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .15s}
+.aopt:hover{transform:translateY(-2px);box-shadow:0 16px 34px -22px rgba(14,116,144,.45)}
+.aopt.on{border-color:var(--teal);box-shadow:0 0 0 1.5px var(--teal) inset,0 16px 34px -22px rgba(14,116,144,.5)}
+.aopt .aic{font-size:22px}
+.aopt .atop{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-top:2px}
+.aopt .aname{font-weight:800;font-size:15.5px;line-height:1.25}
+.aopt .aprice{font-weight:800;color:var(--teal);font-size:15px;white-space:nowrap}
+.aopt .aprice small{color:var(--muted);font-weight:600;font-size:11.5px}
+.aopt .adesc{font-size:12.8px;color:var(--muted);line-height:1.5}
+.aopt .achk{margin-top:8px;display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:800;color:var(--teal)}
+.aopt .achk .box{width:18px;height:18px;border-radius:6px;border:1.5px solid var(--teal);display:grid;place-items:center;font-size:12px;color:#fff;line-height:1}
+.aopt.on .achk .box{background:var(--teal)}
+.aopt.on .achk .lbl-add{display:none}.aopt .achk .lbl-on{display:none}.aopt.on .achk .lbl-on{display:inline}
+.abar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;max-width:760px;margin:22px auto 0;background:var(--sand);border:1px solid var(--line);border-radius:14px;padding:15px 20px}
+.abar .asel{font-size:14px}.abar .asel b{color:var(--teal)}
+.abar .asel .amt{color:var(--muted);font-size:12.5px;display:block;margin-top:2px}
+@media(max-width:820px){.agrid{grid-template-columns:1fr;max-width:420px;margin:0 auto}}
 .okmsg2{display:none;background:#e9fbf2;border:1px solid #b7ecd2;color:#0a7a4a;border-radius:12px;padding:13px;font-size:14px;font-weight:600;margin-top:8px}
 .hp{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);opacity:0}
 </style>
@@ -401,6 +424,7 @@ footer a{color:#7fd4e6}
   </div>
   <form class="form" id="estForm" onsubmit="return sendEstimate(event)">
     <input type="text" name="company_url" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true">
+    <input type="hidden" name="addons" id="estAddons">
     <h3>Request a free estimate</h3>
     <div class="sub">We’ll get back to you within one business day.</div>
     <input required name="name" placeholder="Your name">
@@ -443,6 +467,53 @@ footer a{color:#7fd4e6}
     </div>
   </div>
   <div class="billn">Your build fee starts the project. Once your site is live, your first monthly payment is due <b>30 days after go-live</b>, and we email your invoice <b>15 days before</b> each automatic payment — no surprises. <b>6-month minimum</b> to start, then month-to-month.<br><br>💳 Prefer to spread the build fee out? <b>Klarna, Affirm &amp; Afterpay</b> are available at checkout — pay over time, get started now.</div>
+
+  <!-- À LA CARTE ADD-ONS (customer-selectable) -->
+  <div class="addons2" id="addons">
+    <div class="ah"><div class="kick">Make it yours</div><h3>À la carte add-ons</h3><p>Tap any extras you'd like to fold in. They come through with your request and we'll include them on your quote — no commitment.</p></div>
+    <div class="agrid">
+      <div class="aopt" data-name="Logo &amp; apparel branding" data-price="$750 one-time">
+        <div class="aic">🎨</div>
+        <div class="atop"><span class="aname">Logo &amp; apparel branding</span><span class="aprice">$750 <small>one-time</small></span></div>
+        <span class="adesc">Custom logo + color system, plus print-ready shirt &amp; jobsite artwork (black/white, vector files for your printer).</span>
+        <span class="achk"><span class="box">✓</span><span class="lbl-add">Add</span><span class="lbl-on">Added</span></span>
+      </div>
+      <div class="aopt" data-name="Vehicle &amp; jobsite signage" data-price="$450 one-time">
+        <div class="aic">🚚</div>
+        <div class="atop"><span class="aname">Vehicle &amp; jobsite signage</span><span class="aprice">$450 <small>one-time</small></span></div>
+        <span class="adesc">Truck-decal and yard-sign designs that turn every job into a rolling billboard around the neighborhood.</span>
+        <span class="achk"><span class="box">✓</span><span class="lbl-add">Add</span><span class="lbl-on">Added</span></span>
+      </div>
+      <div class="aopt" data-name="Project photo &amp; video day" data-price="$600 one-time">
+        <div class="aic">📸</div>
+        <div class="atop"><span class="aname">Project photo &amp; video day</span><span class="aprice">$600 <small>one-time</small></span></div>
+        <span class="adesc">A shoot of your finished remodels — pro before/after photos and short clips to fill your site and socials.</span>
+        <span class="achk"><span class="box">✓</span><span class="lbl-add">Add</span><span class="lbl-on">Added</span></span>
+      </div>
+      <div class="aopt" data-name="Online booking &amp; deposits" data-price="$750 one-time">
+        <div class="aic">🗓️</div>
+        <div class="atop"><span class="aname">Online booking &amp; deposits</span><span class="aprice">$750 <small>one-time</small></span></div>
+        <span class="adesc">Let customers book a consult and put a deposit down online — secure checkout built right into the site.</span>
+        <span class="achk"><span class="box">✓</span><span class="lbl-add">Add</span><span class="lbl-on">Added</span></span>
+      </div>
+      <div class="aopt" data-name="Google Business management" data-price="$149 / month">
+        <div class="aic">📍</div>
+        <div class="atop"><span class="aname">Google Business management</span><span class="aprice">$149 <small>/ mo</small></span></div>
+        <span class="adesc">We manage your listing to win the O‘ahu Map pack and drive calls, directions, and estimate requests.</span>
+        <span class="achk"><span class="box">✓</span><span class="lbl-add">Add</span><span class="lbl-on">Added</span></span>
+      </div>
+      <div class="aopt" data-name="Review generation" data-price="$99 / month">
+        <div class="aic">⭐</div>
+        <div class="atop"><span class="aname">Review generation</span><span class="aprice">$99 <small>/ mo</small></span></div>
+        <span class="adesc">Automated review requests after each job to build the 5-star reputation homeowners check before they call.</span>
+        <span class="achk"><span class="box">✓</span><span class="lbl-add">Add</span><span class="lbl-on">Added</span></span>
+      </div>
+    </div>
+    <div class="abar">
+      <div class="asel">Add-ons selected: <b id="acount">0</b><span class="amt" id="asel-list">Tap the extras you'd like — optional.</span></div>
+      <button class="btn sun" type="button" id="aGo">Add to my request →</button>
+    </div>
+  </div>
 </div></section>
 
 <footer>
@@ -474,6 +545,36 @@ document.querySelectorAll('[data-cta]').forEach(function(b){
   });
 });
 
+/* À la carte add-ons → toggle, keep a live tally, feed the request */
+(function(){
+  var opts=[].slice.call(document.querySelectorAll('.aopt'));
+  if(!opts.length) return;
+  var countEl=document.getElementById('acount'), listEl=document.getElementById('asel-list'),
+      hidden=document.getElementById('estAddons'), go=document.getElementById('aGo');
+  function selected(){ return opts.filter(function(o){ return o.classList.contains('on'); }); }
+  function sync(){
+    var s=selected();
+    countEl.textContent=s.length;
+    if(s.length){
+      listEl.textContent=s.map(function(o){ return o.getAttribute('data-name').replace('&amp;','&')+' ('+o.getAttribute('data-price')+')'; }).join(' · ');
+    } else { listEl.textContent="Tap the extras you'd like — optional."; }
+    if(hidden) hidden.value=s.map(function(o){ return o.getAttribute('data-name').replace('&amp;','&')+' — '+o.getAttribute('data-price'); }).join('; ');
+  }
+  opts.forEach(function(o){ o.addEventListener('click',function(){ o.classList.toggle('on'); sync(); }); });
+  if(go) go.addEventListener('click',function(){
+    var s=selected();
+    var msg=document.querySelector('#estForm textarea[name="msg"]');
+    if(msg){
+      var line= s.length ? "I'd like to add: "+s.map(function(o){ return o.getAttribute('data-name').replace('&amp;','&'); }).join(', ')+'.'
+                         : '';
+      var base=(msg.value||'').replace(/\s*I'd like to add:[^\n]*\.?/,'').trim();
+      msg.value=(base ? base+(line?'\n':'') : '')+line;
+    }
+    document.getElementById('contact').scrollIntoView({behavior:'smooth'});
+    if(msg) setTimeout(function(){ try{ msg.focus(); }catch(e){} },600);
+  });
+})();
+
 /* Estimate form → fire the instant lead-alert hook, then confirm */
 function sendEstimate(e){
   e.preventDefault(); var f=e.target;
@@ -481,6 +582,7 @@ function sendEstimate(e){
     var o={ source:'estimate', brand:'Mi Casa Su Casa Hawaii', business:'Mi Casa Su Casa Hawaii',
       cta:location.origin+location.pathname+'#plan',
       name:f.name.value.trim(), email:(f.email.value||'').trim(), phone:f.phone.value.trim(), notes:f.msg.value.trim(),
+      addons:(f.addons?f.addons.value:''),
       company_url:(f.company_url?f.company_url.value:'') };
     fetch('/api/demo-lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(o)}).catch(function(){});
   }catch(_){}

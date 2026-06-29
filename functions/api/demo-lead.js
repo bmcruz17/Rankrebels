@@ -91,6 +91,7 @@ export async function onRequestPost({ request, env }) {
   add('Event type', b.etype);
   add('Machines', b.machines);
   add('Interested in', b.interest);
+  add('Add-ons requested', b.addons);
   add('Message', b.notes);
 
   // If no key configured, succeed silently (form still shows its success message).
