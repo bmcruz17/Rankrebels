@@ -46,6 +46,7 @@ alter table rr_clients  add column if not exists services   jsonb;
 alter table rr_clients  add column if not exists ga4_property_id     text; -- live reports (report.html)
 alter table rr_clients  add column if not exists search_console_site text; -- live reports (report.html)
 alter table rr_clients  add column if not exists hook_url            text; -- proposal/checkout "hook" page; "View hook" button on the tile
+alter table rr_clients  add column if not exists followups           jsonb; -- auto follow-up drip state {enrolled_at,step,last_sent_at,paused,done}
 alter table rr_clients  add column if not exists partner     text; -- reseller name (e.g. Ryzen Recruit)
 alter table rr_clients  add column if not exists partner_rep text; -- the rep who referred the lead
 alter table rr_clients  add column if not exists quote       jsonb; -- à la carte package builder (line items, term, discounts)
@@ -254,6 +255,15 @@ create policy rr_agree_sign on rr_agreements for insert to anon
 ## 6. Optional polish (not blocking)
 - ✅ Turnstile widget → bot protection (site key wired, secret key added)
 - ✅ Lead & intake email (Resend) — `RESEND_API_KEY` set in Cloudflare; verified sending — see notes below
+- ⬜ Auto follow-up drip — see notes below
+
+### Auto follow-up sequence (`/api/followups/run`)
+Reminds un-closed proposals automatically. Any customer in **Leads** or **Contacted** with an **email** + a **hook page** gets up to 4 hand-written reminder emails (days 2, 5, 10, 21), from `sales@rankrebels.ai`. It **stops on its own** the moment they move to Accepted/In-Build/etc., are archived, or you hit **Pause** on their tile/modal.
+- **Run once:** the migration adds `rr_clients.followups` (jsonb) — already in the SQL block above.
+- **Turn it on:** add this to the same daily cron that runs `/api/google/run-scheduled` (GitHub Action / cron-job.org):
+  `curl -fsS "https://rankrebels.ai/api/followups/run?secret=$SCHED_SECRET"`  (once a day is plenty).
+- **Test safely first:** `…/api/followups/run?secret=…&dry=1` lists who *would* get which email and sends nothing.
+- Uses the existing `SCHED_SECRET` + `SUPABASE_SERVICE_ROLE_KEY` + `RESEND_API_KEY`. Until it's in the cron, nothing sends (off by default).
 - ⬜ Email signatures (in `/signatures`) installed in Gmail
 - ⬜ Branded magic‑link email + point Supabase Auth SMTP at Resend (kills email rate limits)
 - ⬜ SPF / DKIM / DMARC for email deliverability (DNS records at Squarespace) — see notes below
