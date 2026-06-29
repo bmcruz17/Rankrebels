@@ -468,6 +468,27 @@ footer a{color:var(--cyan)}
 .watermark{position:fixed;right:14px;bottom:14px;z-index:40;background:rgba(6,20,43,.9);color:#fff;font-size:11.5px;font-weight:600;padding:8px 14px;border-radius:999px;border:1px solid var(--line-2);backdrop-filter:blur(6px)}
 .watermark b{color:var(--cyan)}
 @media(max-width:560px){.watermark{display:none}}
+/* à la carte platform-module picker */
+.addons2{padding:64px 0;background:var(--navy-2);border-top:1px solid var(--line)}
+.addons2 .ah{text-align:center;max-width:640px;margin:0 auto 26px}
+.agrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:1000px;margin:0 auto}
+.aopt{position:relative;display:flex;flex-direction:column;gap:7px;background:var(--panel);border:1.5px solid var(--line);border-radius:16px;padding:20px 20px 17px;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .15s}
+.aopt:hover{transform:translateY(-2px);border-color:var(--line-2);box-shadow:0 18px 40px -24px rgba(0,0,0,.6)}
+.aopt.on{border-color:var(--cyan);box-shadow:0 0 0 1.5px var(--cyan) inset,0 18px 40px -22px rgba(79,195,232,.3)}
+.aopt .aic{width:42px;height:42px;border-radius:11px;background:rgba(79,195,232,.12);display:grid;place-items:center;margin-bottom:2px}
+.aopt .aic svg{width:22px;height:22px;fill:none;stroke:var(--cyan);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.aopt .atop{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.aopt .aname{font-weight:800;font-size:15.5px;line-height:1.25;color:var(--text)}
+.aopt .atag{font-weight:700;color:var(--cyan);font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
+.aopt .adesc{font-size:12.8px;color:var(--muted);line-height:1.55}
+.aopt .achk{margin-top:9px;display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:800;color:var(--cyan)}
+.aopt .achk .box{width:18px;height:18px;border-radius:6px;border:1.5px solid var(--cyan);display:grid;place-items:center;font-size:12px;color:var(--navy);line-height:1}
+.aopt.on .achk .box{background:var(--cyan)}
+.aopt.on .achk .lbl-add{display:none}.aopt .achk .lbl-on{display:none}.aopt.on .achk .lbl-on{display:inline}
+.abar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px;max-width:780px;margin:24px auto 0;background:var(--panel);border:1px solid var(--line-2);border-radius:14px;padding:16px 22px}
+.abar .asel{font-size:14px;color:var(--text)}.abar .asel b{color:var(--cyan)}
+.abar .asel .amt{color:var(--muted);font-size:12.5px;display:block;margin-top:2px}
+@media(max-width:820px){.agrid{grid-template-columns:1fr;max-width:440px}}
 </style>
 </head>
 <body>
@@ -994,6 +1015,59 @@ footer a{color:var(--cyan)}
   </div>
 </section>
 
+<!-- À LA CARTE PLATFORM MODULES (selectable) -->
+<section class="addons2" id="addons">
+  <div class="wrap">
+    <div class="ah">
+      <div class="kick">Build your platform</div>
+      <h2>Which modules should KERN include?</h2>
+      <p class="lead">KERN is modular — start with the core and switch on what TARO needs. Tap the pieces that matter most and they'll come through with your discovery so we scope the right build.</p>
+    </div>
+    <div class="agrid">
+      <div class="aopt" data-name="GIS &amp; asset mapping">
+        <div class="aic"><svg viewBox="0 0 24 24"><path d="M9 3 3 6v15l6-3 6 3 6-3V3l-6 3-6-3Z"/><path d="M9 3v15M15 6v15"/></svg></div>
+        <div class="atop"><span class="aname">GIS &amp; asset mapping</span><span class="atag">Core</span></div>
+        <span class="adesc">Live network map, as-builts, and pole-load data — every plant asset in one place across all 13 states.</span>
+        <span class="achk"><span class="box">✓</span><span class="lbl-add">Add module</span><span class="lbl-on">Included</span></span>
+      </div>
+      <div class="aopt" data-name="Field crew mobile app">
+        <div class="aic"><svg viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 18h2"/></svg></div>
+        <div class="atop"><span class="aname">Field crew mobile app</span><span class="atag">Module</span></div>
+        <span class="adesc">Daily reports, redlines, and geotagged photos from the field — works offline, syncs when there's signal.</span>
+        <span class="achk"><span class="box">✓</span><span class="lbl-add">Add module</span><span class="lbl-on">Included</span></span>
+      </div>
+      <div class="aopt" data-name="Design → as-built → invoice">
+        <div class="aic"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg></div>
+        <div class="atop"><span class="aname">Design → as-built → invoice</span><span class="atag">Module</span></div>
+        <span class="adesc">One thread from the GIS plan to the as-built to the invoice — no re-keying between five systems.</span>
+        <span class="achk"><span class="box">✓</span><span class="lbl-add">Add module</span><span class="lbl-on">Included</span></span>
+      </div>
+      <div class="aopt" data-name="Executive dashboards & reporting">
+        <div class="aic"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg></div>
+        <div class="atop"><span class="aname">Executive dashboards</span><span class="atag">Module</span></div>
+        <span class="adesc">Margin, crew utilization, and backlog by state and program — the numbers leadership actually wants.</span>
+        <span class="achk"><span class="box">✓</span><span class="lbl-add">Add module</span><span class="lbl-on">Included</span></span>
+      </div>
+      <div class="aopt" data-name="Safety &amp; compliance">
+        <div class="aic"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3Z"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <div class="atop"><span class="aname">Safety &amp; compliance</span><span class="atag">Module</span></div>
+        <span class="adesc">Inspections, crew certifications, and incident logging tracked in one auditable place — OSHA-ready.</span>
+        <span class="achk"><span class="box">✓</span><span class="lbl-add">Add module</span><span class="lbl-on">Included</span></span>
+      </div>
+      <div class="aopt" data-name="Integrations & accounting sync">
+        <div class="aic"><svg viewBox="0 0 24 24"><path d="M10 7H7a5 5 0 0 0 0 10h3M14 7h3a5 5 0 0 1 0 10h-3M8 12h8"/></svg></div>
+        <div class="atop"><span class="aname">Integrations &amp; accounting</span><span class="atag">Module</span></div>
+        <span class="adesc">Sync payroll, accounting, and your existing ESRI / Vetro stack so KERN fits the tools TARO already runs.</span>
+        <span class="achk"><span class="box">✓</span><span class="lbl-add">Add module</span><span class="lbl-on">Included</span></span>
+      </div>
+    </div>
+    <div class="abar">
+      <div class="asel">Modules selected: <b id="acount">0</b><span class="amt" id="asel-list">Tap the modules TARO needs — optional, helps us scope.</span></div>
+      <a class="btn red" href="#intake" id="aGo">Take these into discovery →</a>
+    </div>
+  </div>
+</section>
+
 <!-- QUESTIONNAIRE / INTAKE -->
 <section id="intake" class="intake">
   <div class="wrap center">
@@ -1194,9 +1268,27 @@ function picked(group){
 function pickedRadio(name){ var el=document.querySelector('[data-radio="'+name+'"] .radio.sel'); return el?el.getAttribute('data-v'):''; }
 function val(n){ var el=document.querySelector('[name="'+n+'"]'); return el?el.value.trim():''; }
 
+/* À la carte module picker → toggle + live tally; selections fold into discovery */
+function taroModules(){
+  return [].slice.call(document.querySelectorAll('.aopt.on')).map(function(o){ return o.getAttribute('data-name').replace('&amp;','&'); });
+}
+(function(){
+  var opts=[].slice.call(document.querySelectorAll('.aopt'));
+  if(!opts.length) return;
+  var countEl=document.getElementById('acount'), listEl=document.getElementById('asel-list');
+  function sync(){
+    var s=taroModules();
+    countEl.textContent=s.length;
+    listEl.textContent = s.length ? s.join(' · ') : "Tap the modules TARO needs — optional, helps us scope.";
+  }
+  opts.forEach(function(o){ o.addEventListener('click',function(){ o.classList.toggle('on'); sync(); }); });
+})();
+
 function submitIntake(e){
   e.preventDefault();
+  var mods=taroModules();
   var lines=[
+    'MODULES OF INTEREST: '+(mods.join(', ')||'—'),
     'BACK-OFFICE MANAGED: '+(picked('manage').join(', ')||'—'),
     'SUBSCRIPTIONS: '+(val('subs')||'—'),
     'CURRENT VISIBILITY: '+(picked('see').join(', ')||'—'),
