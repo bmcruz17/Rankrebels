@@ -860,7 +860,7 @@ footer a{color:var(--aqua)}
     <div class="plans">
       <div class="plan">
         <h3>Launch</h3>
-        <div class="pp">$500 <small>one-time</small></div>
+        <div class="pp">$<span data-pricespot="build">500</span> <small>one-time</small></div>
         <div class="pd">We design and build your complete site, set up your booking, store, and dashboard, and get you live.</div>
         <ul>
           <li>Full custom website</li>
@@ -872,7 +872,7 @@ footer a{color:var(--aqua)}
       </div>
       <div class="plan hot">
         <h3>Manage &amp; Grow</h3>
-        <div class="pp">from $149 <small>/ month</small></div>
+        <div class="pp">from $<span data-pricespot="monthly">149</span> <small>/ month</small></div>
         <div class="pd">We host it, keep it fast and found on Google, post updates, and manage your pipeline so nothing slips.</div>
         <ul>
           <li>Hosting, security &amp; updates</li>
@@ -897,12 +897,12 @@ footer a{color:var(--aqua)}
     </div>
     <div style="text-align:center;margin-top:40px">
       <a class="btn sun" id="buildPay" href="#contact">Let's build it →</a>
-      <div style="font-size:13px;color:#9fb4cf;margin-top:12px">$500 build fee at checkout · then from $149/mo after you're live</div>
+      <div style="font-size:13px;color:#9fb4cf;margin-top:12px">$<span data-pricespot="build">500</span> build fee at checkout · then from $<span data-pricespot="monthly">149</span>/mo after you're live</div>
       <div style="font-size:12.5px;color:#9fb4cf;margin-top:6px">💳 Or split it up — <b style="color:#fff">Klarna, Affirm &amp; Afterpay</b> available at checkout</div>
     </div>
     <div style="max-width:760px;margin:30px auto 0;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:22px 26px">
       <div style="font-size:12.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--sun);font-weight:800;margin-bottom:10px">How billing works</div>
-      <p style="font-size:14.5px;color:#dde8f3;line-height:1.65;margin:0">Your <b>$500 build fee</b> is paid today to kick things off. Once your site is published and live, your <b>first monthly payment is due 30 days after the go-live date</b> — and we email your invoice <b>15 days before</b> each automatic payment is withdrawn, so there's never a surprise. <b>6-month minimum</b> to start, then month-to-month.</p>
+      <p style="font-size:14.5px;color:#dde8f3;line-height:1.65;margin:0">Your <b>$<span data-pricespot="build">500</span> build fee</b> is paid today to kick things off. Once your site is published and live, your <b>first monthly payment is due 30 days after the go-live date</b> — and we email your invoice <b>15 days before</b> each automatic payment is withdrawn, so there's never a surprise. <b>6-month minimum</b> to start, then month-to-month.</p>
     </div>
   </div>
 </section>
@@ -1107,6 +1107,19 @@ document.querySelectorAll('[data-buy]').forEach(function(b){ b.addEventListener(
 document.querySelectorAll('[data-quote]').forEach(function(b){ b.addEventListener('click',function(){ setInterestAndScroll(b.getAttribute('data-quote').indexOf('Corporate')>=0?'Corporate activation':'Custom / branded build'); }); });
 document.querySelectorAll('[data-fr]').forEach(function(b){ b.addEventListener('click',function(){ setInterestAndScroll('Franchise / startup package'); }); });
 document.querySelectorAll('[data-interest]').forEach(function(b){ b.addEventListener('click',function(){ setInterestAndScroll(b.getAttribute('data-interest').replace('&amp;','&')); }); });
+
+/* Live pricing — fill the price spots from this customer's saved quote (if any).
+   Falls back silently to the sample numbers above until a quote is published. */
+(function(){
+  var slug=(location.pathname.split('/').filter(Boolean).pop()||'').replace(/\.html$/,'').toLowerCase();
+  if(!slug) return;
+  fetch('/api/proposal-quote?slug='+encodeURIComponent(slug)).then(function(r){return r.ok?r.json():null;}).then(function(d){
+    if(!d||!d.quoted) return;
+    function fmt(n){ n=Number(n)||0; return n%1?n.toFixed(2):n.toLocaleString('en-US'); }
+    if(d.build!=null) document.querySelectorAll('[data-pricespot="build"]').forEach(function(e){ e.textContent=fmt(d.build); });
+    if(d.monthly!=null) document.querySelectorAll('[data-pricespot="monthly"]').forEach(function(e){ e.textContent=fmt(d.monthly); });
+  }).catch(function(){});
+})();
 </script>
 </body>
 </html>

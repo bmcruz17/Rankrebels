@@ -264,6 +264,12 @@ Reminds un-closed proposals automatically. Any customer in **Leads** or **Contac
   `curl -fsS "https://rankrebels.ai/api/followups/run?secret=$SCHED_SECRET"`  (once a day is plenty).
 - **Test safely first:** `…/api/followups/run?secret=…&dry=1` lists who *would* get which email and sends nothing.
 - Uses the existing `SCHED_SECRET` + `SUPABASE_SERVICE_ROLE_KEY` + `RESEND_API_KEY`. Until it's in the cron, nothing sends (off by default).
+
+### Live proposal pricing (`/api/proposal-quote`)
+Customer proposal pages (Mi Casa, Island Claw) now read their **own saved quote** and fill the build-fee + monthly price spots automatically. Nothing to configure — it reuses `SUPABASE_SERVICE_ROLE_KEY` and the existing `onboarding_fee` / `monthly_charge` / `quote` / `hook_url` columns.
+- **How it links:** the page matches itself to a customer by its URL slug appearing in that customer's `hook_url`. So set the customer's **Hook** field to their page (e.g. `https://rankrebels.ai/micasasucasahawaii`) and build a quote in their modal — Save publishes the numbers to the page.
+- **Until quoted:** the page shows its built-in sample numbers; only a real saved quote (non-zero build or monthly) overrides them. Half-built drafts never leak — the endpoint returns `quoted:false` until a price is set.
+- **Whitelisted only:** returns build fee, monthly, term label, and included-service labels — never margins, costs, credentials, or contacts.
 - ⬜ Email signatures (in `/signatures`) installed in Gmail
 - ⬜ Branded magic‑link email + point Supabase Auth SMTP at Resend (kills email rate limits)
 - ⬜ SPF / DKIM / DMARC for email deliverability (DNS records at Squarespace) — see notes below
