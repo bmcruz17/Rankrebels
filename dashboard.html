@@ -230,6 +230,20 @@
   .term-opt .to-t{font-weight:700;font-size:13.5px}
   .term-opt .to-s{font-size:11.5px;color:var(--muted);margin-top:2px}
   .term-note{font-size:12px;color:var(--muted);margin-top:8px}
+  /* new-customer wizard */
+  .wiz-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:4px}
+  .wiz-dots{display:flex;gap:6px}
+  .wiz-dots span{width:8px;height:8px;border-radius:50%;background:var(--line)}
+  .wiz-dots span.on{background:var(--brand)}
+  .wiz-step{padding:6px 0 2px}
+  .wiz-step .wiz-q{display:block;font-size:17px;font-weight:800;margin:8px 0 10px}
+  .wiz-sub{display:block;font-size:12px;color:var(--muted-2);font-weight:600;margin-bottom:3px}
+  .wiz-hint{font-size:12.5px;color:var(--muted);margin-top:8px}
+  .wiz-opt{font-size:11px;font-weight:700;color:var(--muted-2);background:var(--panel-2);border:1px solid var(--line);border-radius:999px;padding:2px 8px;margin-left:6px;vertical-align:middle}
+  .wiz-review{font-size:13.5px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:6px 14px}
+  .wiz-review .r{display:flex;justify-content:space-between;gap:12px;padding:7px 0;border-bottom:1px solid var(--line)}
+  .wiz-review .r:last-child{border-bottom:0}
+  .wiz-review .k{color:var(--muted-2)}
   .quote-summary{margin-top:6px}
   .quote-summary table{width:100%;border-collapse:collapse;font-size:13px;background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow:hidden}
   .quote-summary td{padding:7px 11px;border-bottom:1px solid var(--line)}
@@ -352,7 +366,7 @@
         </div>
         <button class="btn btn-ghost btn-sm" id="legend-btn" onclick="toggleLegend()" title="What does each icon mean?">❔ Legend</button>
         <button class="btn btn-ghost btn-sm" id="bulk-btn" onclick="toggleBulkMode()" title="Select multiple leads and schedule AI emails to all of them">☑︎ Bulk email</button>
-        <button class="btn btn-primary" onclick="openClient()">+ Add customer</button>
+        <button class="btn btn-primary" onclick="openWizard()">+ Add customer</button>
       </div>
     </div>
     <div id="pipe-owner-sum" class="sub" style="margin:2px 0 10px"></div>
@@ -591,6 +605,14 @@
     </div>
     <div class="field"><label>Monthly charge ($) <span style="color:var(--muted-2)">(after add-ons + term discount)</span></label><input id="c-monthly" type="number" min="0" step="0.01" placeholder="300" oninput="quoteManualEdit()"></div>
     <div id="quote-summary" class="quote-summary"></div>
+    <div class="field"><label>📄 Agreement extras <span style="color:var(--muted-2)">(optional — these fill the signed agreement; leave blank until the terms are agreed)</span></label>
+      <label style="font-size:12px;color:var(--muted-2);font-weight:600;margin:6px 0 3px;display:block">Payment schedule — one per line: <code>When | Label | Amount</code></label>
+      <textarea id="c-schedule" rows="3" placeholder="Jul 1, 2026 | Deposit | 2000&#10;Aug 1, 2026 | Installment 1 of 5 | 800"></textarea>
+      <label style="font-size:12px;color:var(--muted-2);font-weight:600;margin:8px 0 3px;display:block">Service terms / SLA — one bullet per line</label>
+      <textarea id="c-terms" rows="3" placeholder="Up to 3 update submissions per business day (Mon–Fri), each within 24 hours.&#10;3 urgent requests per month for updates submitted on a weekend, within 6 hours."></textarea>
+      <label style="font-size:12px;color:var(--muted-2);font-weight:600;margin:8px 0 3px;display:block">Payment precedence note <span style="font-weight:400">(optional)</span></label>
+      <input id="c-override" placeholder="Fees are due per the schedule above, which controls over Sections 2.1–2.2.">
+    </div>
     <div class="field"><label>🪝 Proposal / hook page <span style="color:var(--muted-2)">(the page they checkout &amp; accept on — shows a "View hook" button on the tile)</span></label>
       <input id="c-hook" placeholder="https://rankrebels.ai/islandclawmachineco" autocomplete="off" autocapitalize="off" spellcheck="false"></div>
     <div class="field" id="followup-box" style="display:none"><label>✉️ Auto follow-up sequence <span style="color:var(--muted-2)">(reminder emails while they're un-closed with a hook — stops automatically when they accept)</span></label>
@@ -668,6 +690,72 @@
       <div style="display:flex;gap:10px">
         <button class="btn btn-ghost" onclick="closeModal('m-client')">Cancel</button>
         <button class="btn btn-primary" onclick="saveClient()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NEW CUSTOMER WIZARD (guided, click-through) -->
+<div class="modal-bg" id="m-wizard" onclick="if(event.target===this)closeModal('m-wizard')">
+  <div class="modal" style="max-width:560px">
+    <div class="wiz-head"><h3 id="wiz-title">New customer</h3><div class="wiz-dots" id="wiz-dots"></div></div>
+
+    <div class="wiz-step" data-wstep="0">
+      <label class="wiz-q">What's the business name?</label>
+      <input id="wiz-business" placeholder="Acme Plumbing">
+      <p class="wiz-hint">The only thing required to start — everything else you can fill in now or later.</p>
+    </div>
+    <div class="wiz-step" data-wstep="1" hidden>
+      <label class="wiz-q">Where are they located?</label>
+      <input id="wiz-address" placeholder="123 Main St, City ST">
+      <p class="wiz-hint">Skip if you don't have it yet.</p>
+    </div>
+    <div class="wiz-step" data-wstep="2" hidden>
+      <label class="wiz-q">Main contact</label>
+      <input id="wiz-contact" placeholder="Contact name">
+      <input id="wiz-email" placeholder="Email" style="margin-top:8px">
+      <input id="wiz-phone" placeholder="Phone" style="margin-top:8px">
+    </div>
+    <div class="wiz-step" data-wstep="3" hidden>
+      <label class="wiz-q">The deal</label>
+      <div class="grid2">
+        <div class="field" style="margin:0"><label class="wiz-sub">Build / setup fee ($)</label><input id="wiz-build" type="number" min="0" step="0.01" placeholder="2000"></div>
+        <div class="field" style="margin:0"><label class="wiz-sub">Monthly ($)</label><input id="wiz-monthly" type="number" min="0" step="0.01" placeholder="300"></div>
+      </div>
+      <label class="wiz-sub" style="margin-top:10px">Term</label>
+      <select id="wiz-term"><option value="m2m">Month-to-month</option><option value="1yr">1-year</option><option value="2yr" selected>2-year</option></select>
+      <p class="wiz-hint">Fine-tune the à la carte line items later in the full customer view.</p>
+    </div>
+    <div class="wiz-step" data-wstep="4" hidden>
+      <label class="wiz-q">Payment schedule <span class="wiz-opt">optional</span></label>
+      <p class="wiz-hint" style="margin-top:0">One per line: <code>When | Label | Amount</code>. Leave blank for pay-in-full.</p>
+      <textarea id="wiz-schedule" rows="4" placeholder="Jul 1, 2026 | Deposit | 2000&#10;Aug 1, 2026 | Installment 1 of 5 | 800"></textarea>
+    </div>
+    <div class="wiz-step" data-wstep="5" hidden>
+      <label class="wiz-q">Service terms / SLA <span class="wiz-opt">optional</span></label>
+      <p class="wiz-hint" style="margin-top:0">One bullet per line — whatever you agreed. Blank until you know.</p>
+      <textarea id="wiz-terms" rows="4" placeholder="Up to 3 update submissions per business day (Mon–Fri), within 24 hours.&#10;3 urgent requests per month for weekend submissions, within 6 hours."></textarea>
+      <label class="wiz-sub" style="margin-top:8px">Precedence note (optional)</label>
+      <input id="wiz-override" placeholder="Fees are due per the schedule above, which controls over Sections 2.1–2.2.">
+    </div>
+    <div class="wiz-step" data-wstep="6" hidden>
+      <label class="wiz-q">Review &amp; create</label>
+      <div id="wiz-review" class="wiz-review"></div>
+      <label class="wiz-sub" style="margin-top:10px">🪝 Hook / proposal page (optional)</label>
+      <input id="wiz-hook" placeholder="https://rankrebels.ai/acme">
+    </div>
+
+    <div id="wiz-done" hidden>
+      <div style="text-align:center;padding:6px 0 2px"><div style="font-size:34px">✅</div><h3 style="margin:6px 0 4px">Customer created</h3></div>
+      <div id="wiz-done-body" style="font-size:13.5px;color:var(--muted);text-align:center"></div>
+      <div id="wiz-done-actions" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:14px"></div>
+    </div>
+
+    <div class="modal-actions" id="wiz-nav">
+      <button class="btn btn-ghost" id="wiz-back" onclick="wizBack()">Back</button>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-ghost" onclick="closeModal('m-wizard')">Cancel</button>
+        <button class="btn btn-primary" id="wiz-next" onclick="wizNext()">Next →</button>
       </div>
     </div>
   </div>
@@ -1721,7 +1809,7 @@ function renderBoard(){
     var col = document.createElement('div'); col.className='col'; col.dataset.stage=stage.id;
     col.innerHTML='<div class="col-head"><div class="name"><span class="swatch" style="background:'+stage.color+'"></span>'+stage.name+'</div><span class="pill">'+items.length+'</span></div>';
     items.forEach(function(c){ col.appendChild(leadCard(c)); });
-    var add=document.createElement('button'); add.className='add-card'; add.textContent='+ Add'; add.onclick=function(){ openClient(null, stage.id); };
+    var add=document.createElement('button'); add.className='add-card'; add.textContent='+ Add'; add.onclick=function(){ openWizard(stage.id); };
     col.appendChild(add);
     col.addEventListener('dragover', function(ev){ ev.preventDefault(); col.classList.add('drag-over'); });
     col.addEventListener('dragleave', function(){ col.classList.remove('drag-over'); });
@@ -2392,9 +2480,21 @@ function buildQuote(){
   ADDONS.forEach(function(g){ g.items.forEach(function(s){ if(keys.indexOf(s.key)>=0){ var dd=ld[s.key]||null, da=discAmt(s.price,dd); lines.push({key:s.key,label:s.label,kind:s.kind,price:s.price,discount:da,disc_v:dd?dd.v:0,disc_mode:dd?dd.mode:'amt',net:Math.max(0,s.price-da)}); }});});
   customAddons.forEach(function(a){ var p=Number(a.price)||0; if(!p&&!a.label) return; var dd={v:Number(a.discount)||0,mode:a.discMode||'amt'}, da=discAmt(p,dd); lines.push({key:'custom',label:a.label||'Custom add-on',kind:a.kind,price:p,discount:da,disc_v:dd.v,disc_mode:dd.mode,net:Math.max(0,p-da),custom:true}); });
   var term=TERMS[quoteTerm];
-  return { lines:lines, term:quoteTerm, term_months:term.months, term_label:term.label, warranty:term.warranty,
+  var q={ lines:lines, term:quoteTerm, term_months:term.months, term_label:term.label, warranty:term.warranty,
     setup_discount:Number(el('c-setup-disc').value)||0,
     setup_total:Number(el('c-onboard').value)||0, monthly_total:Number(el('c-monthly').value)||0 };
+  // Agreement extras (optional) — payment schedule, service terms/SLA, and precedence note.
+  // These flow straight into the signed agreement's Exhibit A. Blank = omitted.
+  var sch=(el('c-schedule')?el('c-schedule').value:'').split('\n').map(function(ln){
+    var p=ln.split('|').map(function(s){return s.trim();}); if(!p[0]||p.length<2) return null;
+    return { when:p[0], label:p[1]||'', amount:Number((p[2]||'').replace(/[^0-9.]/g,''))||0 };
+  }).filter(Boolean);
+  var tms=(el('c-terms')?el('c-terms').value:'').split('\n').map(function(s){return s.trim();}).filter(Boolean);
+  var ovr=el('c-override')?el('c-override').value.trim():'';
+  if(sch.length) q.schedule=sch;
+  if(tms.length) q.terms=tms;
+  if(ovr) q.override=ovr;
+  return q;
 }
 function loadQuote(c){
   customAddons=[]; quoteManual={setup:false,monthly:false};
@@ -2415,6 +2515,11 @@ function loadQuote(c){
     if(c&&(c.onboarding_fee||c.monthly_charge)){ quoteManual.setup=true; quoteManual.monthly=true; }
     recalcQuote();
   }
+  // Restore agreement extras (payment schedule / service terms / precedence).
+  var qq=(c&&c.quote)||null;
+  if(el('c-schedule')) el('c-schedule').value = (qq&&qq.schedule) ? qq.schedule.map(function(s){return [s.when,s.label,s.amount].join(' | ');}).join('\n') : '';
+  if(el('c-terms')) el('c-terms').value = (qq&&qq.terms) ? qq.terms.join('\n') : '';
+  if(el('c-override')) el('c-override').value = (qq&&qq.override) || '';
 }
 function openClient(id, presetStage){
   fillStageSelect(); editingId=id||null;
@@ -2709,6 +2814,88 @@ async function deleteClient(){
   if(confirm('Delete this customer permanently?')){ await sb.from('rr_clients').delete().eq('id',editingId); closeModal('m-client'); await loadAll(); }
 }
 function closeModal(id){ el(id).classList.remove('open'); }
+
+/* ===== new-customer wizard (guided, click-through) ===== */
+var wizStep=0, wizStage='lead', WIZ_STEPS=7;
+function openWizard(presetStage){
+  wizStage = (typeof presetStage==='string' && presetStage) ? presetStage : 'lead';
+  ['business','address','contact','email','phone','build','monthly','schedule','terms','override','hook'].forEach(function(k){ var e=el('wiz-'+k); if(e) e.value=''; });
+  if(el('wiz-term')) el('wiz-term').value='2yr';
+  el('wiz-done').hidden=true; el('wiz-nav').style.display='';
+  if(el('wiz-next')) el('wiz-next').disabled=false;
+  wizStep=0; wizRender();
+  el('m-wizard').classList.add('open');
+  setTimeout(function(){ try{ el('wiz-business').focus(); }catch(e){} }, 60);
+}
+function wizDots(){ var h=''; for(var i=0;i<WIZ_STEPS;i++){ h+='<span class="'+(i<=wizStep?'on':'')+'"></span>'; } el('wiz-dots').innerHTML=h; }
+function wizRender(){
+  for(var i=0;i<WIZ_STEPS;i++){ var s=document.querySelector('.wiz-step[data-wstep="'+i+'"]'); if(s) s.hidden=(i!==wizStep); }
+  el('wiz-back').style.visibility = wizStep===0 ? 'hidden':'visible';
+  el('wiz-next').textContent = wizStep===WIZ_STEPS-1 ? 'Create customer' : 'Next →';
+  if(wizStep===WIZ_STEPS-1) wizBuildReview();
+  wizDots();
+}
+function wizBack(){ if(wizStep>0){ wizStep--; wizRender(); } }
+function wizNext(){
+  if(wizStep===0 && !el('wiz-business').value.trim()){ alert('Business name is required.'); return; }
+  if(wizStep<WIZ_STEPS-1){ wizStep++; wizRender(); return; }
+  wizFinish();
+}
+function wizBuildReview(){
+  function row(k,v){ return v ? '<div class="r"><span class="k">'+k+'</span><span>'+esc(v)+'</span></div>' : ''; }
+  var termLbl={m2m:'Month-to-month','1yr':'1-year','2yr':'2-year'}[el('wiz-term').value]||'';
+  var sch=el('wiz-schedule').value.trim().split('\n').filter(function(s){return s.trim();}).length;
+  var tms=el('wiz-terms').value.trim().split('\n').filter(function(s){return s.trim();}).length;
+  el('wiz-review').innerHTML =
+    row('Business', el('wiz-business').value.trim()) +
+    row('Contact', [el('wiz-contact').value.trim(), el('wiz-email').value.trim(), el('wiz-phone').value.trim()].filter(Boolean).join(' · ')) +
+    row('Location', el('wiz-address').value.trim()) +
+    row('Build fee', el('wiz-build').value?('$'+Number(el('wiz-build').value).toLocaleString()):'') +
+    row('Monthly', el('wiz-monthly').value?('$'+Number(el('wiz-monthly').value).toLocaleString()+'/mo'):'') +
+    row('Term', termLbl) +
+    row('Payment schedule', sch?(sch+' payment'+(sch>1?'s':'')):'—') +
+    row('Service terms', tms?(tms+' term'+(tms>1?'s':'')):'—');
+}
+async function wizFinish(){
+  var name=el('wiz-business').value.trim();
+  if(!name){ wizStep=0; wizRender(); alert('Business name is required.'); return; }
+  var before=clients.map(function(c){return c.id;});
+  el('wiz-next').disabled=true;
+  // Reuse the tested reset + save path: open the client modal (hidden behind the wizard), fill, save.
+  openClient(null);
+  el('c-business').value=name;
+  el('c-contact').value=el('wiz-contact').value.trim();
+  el('c-email').value=el('wiz-email').value.trim();
+  el('c-phone').value=el('wiz-phone').value.trim();
+  el('c-address').value=el('wiz-address').value.trim();
+  el('c-onboard').value=el('wiz-build').value||''; el('c-monthly').value=el('wiz-monthly').value||'';
+  quoteManual={setup:true,monthly:true};
+  quoteTerm=el('wiz-term').value||'2yr'; if(typeof renderTermPick==='function') renderTermPick();
+  el('c-schedule').value=el('wiz-schedule').value;
+  el('c-terms').value=el('wiz-terms').value;
+  el('c-override').value=el('wiz-override').value.trim();
+  el('c-hook').value=el('wiz-hook').value.trim();
+  el('c-stage').value=wizStage||'lead';
+  await saveClient(); // closes m-client + reloads
+  el('wiz-next').disabled=false;
+  var neu=clients.find(function(c){ return before.indexOf(c.id)<0; });
+  wizShowDone(neu);
+}
+function wizShowDone(c){
+  el('wiz-nav').style.display='none';
+  for(var i=0;i<WIZ_STEPS;i++){ var s=document.querySelector('.wiz-step[data-wstep="'+i+'"]'); if(s) s.hidden=true; }
+  el('wiz-done').hidden=false;
+  el('wiz-done-body').textContent = c ? ((c.business_name||'The customer')+' is now in your pipeline. Anything you left blank you can fill in later from the customer view.') : 'Saved to your pipeline.';
+  var acts='';
+  if(c){
+    var link=agreementLink(c);
+    acts += '<button class="btn btn-primary btn-sm" onclick="copyText(\''+link+'\',this)">🔗 Copy agreement link</button>';
+    acts += '<a class="btn btn-ghost btn-sm" href="'+esc(link)+'" target="_blank" rel="noopener">Open agreement</a>';
+    acts += '<button class="btn btn-ghost btn-sm" onclick="closeModal(\'m-wizard\');openClient(\''+c.id+'\')">Open customer</button>';
+  }
+  acts += '<button class="btn btn-ghost btn-sm" onclick="closeModal(\'m-wizard\')">Done</button>';
+  el('wiz-done-actions').innerHTML=acts;
+}
 
 /* ===== CUSTOMERS ===== */
 function setCustSort(s){ custSort=s; document.querySelectorAll('#cust-sort button').forEach(function(b,i){ b.classList.toggle('on', (s==='name'&&i===0)||(s==='date'&&i===1)); }); renderCustomers(); }
