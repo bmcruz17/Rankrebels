@@ -2452,7 +2452,14 @@ function agreementLink(c){
 function renderAgreementStatus(c){
   var box=el('agreement-status'); if(!box) return;
   var a=agreementFor(c);
-  if(a){ box.innerHTML='<span style="color:var(--brand);font-weight:700">✅ Signed by '+esc(a.signer_name||'')+'</span> on '+(a.signed_at?new Date(a.signed_at).toLocaleDateString():'')+(a.monthly_fee?(' · '+money(a.monthly_fee)+'/mo'):''); }
+  if(a){
+    var base='https://rankrebels.ai/agreement.html?token='+encodeURIComponent(a.token||'');
+    if(a.status==='executed'){
+      box.innerHTML='<span style="color:var(--brand);font-weight:700">✅ Executed</span> — '+esc(a.signer_name||'')+' &amp; countersigned'+(a.monthly_fee?(' · '+money(a.monthly_fee)+'/mo'):'')+' · <a href="'+base+'&mode=view" target="_blank" rel="noopener">View</a>';
+    } else {
+      box.innerHTML='<span style="color:#a87f14;font-weight:700">⏳ Signed by '+esc(a.signer_name||'')+' — awaiting your countersignature</span> · <a href="'+base+'&mode=countersign" target="_blank" rel="noopener">Countersign →</a>';
+    }
+  }
   else { box.innerHTML='<span style="color:var(--muted)">Not signed yet. Send the '+clientTermLabel(c)+' agreement for e-signature.</span>'; }
 }
 function clientTermLabel(c){ var m=(c&&c.quote&&c.quote.term_months); return m===0?'month-to-month':((m||24)+'-month'); }
