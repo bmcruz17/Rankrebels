@@ -325,7 +325,7 @@
   <header class="top">
     <div class="wrap top-inner">
       <a class="logo" href="/" title="Back to the public site"><span class="mark"><img src="/brand/rr-mark.png" alt="Rank Rebels"></span> Rank<span class="grad-text">Rebels</span></a>
-      <div class="who"><span id="who-email"></span><a class="btn btn-ghost btn-sm" href="/menu" target="_blank" rel="noopener" title="Service menu, package tiers & job quote calculator">💲 Pricing</a><button id="gbtn" class="btn btn-ghost btn-sm" onclick="connectGoogle()">🔗 Connect Google</button><button class="btn btn-ghost btn-sm" onclick="reportBug()" title="Report a bug or request a fix">🐞 Bug</button><button id="clockBtn" class="btn btn-ghost btn-sm" onclick="toggleClock()" title="Track your time worked">⏱ Clock in</button><button class="btn btn-ghost btn-sm" onclick="signOut()">Sign out</button><button id="rrAskBtn" onclick="rrAskToggle()">✨ Ask AI</button></div>
+      <div class="who"><span id="who-email"></span><a class="btn btn-ghost btn-sm" href="/menu" target="_blank" rel="noopener" title="Service menu, package tiers & job quote calculator">💲 Pricing</a><button id="gbtn" class="btn btn-ghost btn-sm" onclick="connectGoogle()">🔗 Connect Google</button><button class="btn btn-ghost btn-sm" onclick="resetRep()" title="Generate a password-reset link for a rep and send it to them">🔑 Reset a rep</button><button class="btn btn-ghost btn-sm" onclick="reportBug()" title="Report a bug or request a fix">🐞 Bug</button><button id="clockBtn" class="btn btn-ghost btn-sm" onclick="toggleClock()" title="Track your time worked">⏱ Clock in</button><button class="btn btn-ghost btn-sm" onclick="signOut()">Sign out</button><button id="rrAskBtn" onclick="rrAskToggle()">✨ Ask AI</button></div>
     </div>
   </header>
   <div class="tabs wrap" style="max-width:1280px">
@@ -852,6 +852,17 @@ async function setNewPassword(){
   alert(error ? ('Could not set password: '+error.message) : 'Password set — you can now sign in with it.');
 }
 async function signOut(){ await sb.auth.signOut(); location.reload(); }
+// Admin: generate a one-time reset link for a rep and hand it to them (no reliance on the auth mailer).
+async function resetRep(){
+  var email=prompt('Reset password for which rep?\nEnter their login email:'); if(email==null) return;
+  email=email.trim().toLowerCase(); if(!email) return;
+  var t=await authToken(); if(!t){ alert('Please sign in again.'); return; }
+  var r=await fetch('/api/admin/reset-user',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+t},body:JSON.stringify({email:email})});
+  var d=await r.json().catch(function(){return {};});
+  if(!d.ok){ alert((d.error||'Could not generate a reset link.')+(d.hint?('\n\n'+d.hint):'')); return; }
+  try{ navigator.clipboard.writeText(d.link); }catch(e){}
+  prompt('One-time password-reset link for '+email+' (copied to clipboard).\nText or email it to them — they open it and choose a new password:', d.link);
+}
 function reportBug(){
   var subj=encodeURIComponent('Rank Rebels dashboard — bug / fix request');
   var body=encodeURIComponent('What happened (and what you expected):\n\n\n\n---\nReported by: '+(me||'(not signed in)')+'\nPage: '+location.href+'\nWhen: '+new Date().toString());
