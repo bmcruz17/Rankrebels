@@ -90,6 +90,12 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';</script>
   .co .ok .big{font-size:34px}
   .co.paid .co-form{display:none}.co.paid .ok{display:block}
   .demo .note{color:#bcd8bb;font-size:12.5px;text-align:center;margin-top:14px}
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:6px 0 18px}
+  @media(max-width:680px){.steps{grid-template-columns:1fr}}
+  .step{background:var(--cream);border:1px solid var(--line);border-radius:14px;padding:16px}
+  .step .sn{width:26px;height:26px;border-radius:50%;background:var(--green);color:#fff;font-family:'Baloo 2',sans-serif;font-weight:800;display:grid;place-items:center;font-size:14px;margin-bottom:8px}
+  .step b{display:block;font-size:15px;margin-bottom:2px}
+  .step span{font-size:12.8px;color:var(--muted)}
   /* SEO block */
   .seo-wrap{margin-top:18px;background:var(--cream);border:1px solid var(--line);border-radius:18px;padding:22px 24px}
   .seo-row{display:grid;grid-template-columns:minmax(160px,1fr) 2fr auto;gap:14px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)}
@@ -149,7 +155,7 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';</script>
   <h2>Great milk. But the money comes after the work.</h2>
   <p>The herd needs feeding every single day — that cost never pauses. Yet sales run through Facebook comments and DMs, pickups get paid (or not) in person, and new members can only find you if they already know your name. The result: cash shows up <em>after</em> you've already fed the cows, and plenty of demand never finds you at all.</p>
   <div class="see-grid">
-    <div class="see prob"><h3>▲ The squeeze today</h3><p>Orders live in DMs, payment happens at pickup (with no-shows and "I'll get you next time"), and there's no single page that shows up when someone Googles raw milk on O'ahu.</p></div>
+    <div class="see prob"><h3>▲ The squeeze today</h3><p>Every pickup, 10–20 people line up to pay one at a time — cash, Venmo, or Zelle. Orders live in DMs, there are no-shows and "I'll get you next time," and nobody new finds you on Google.</p></div>
     <div class="see fix"><h3>◆ What changes</h3><p>Members join and <strong>prepay online</strong>, a real website ranks for the searches people already type, and pickup becomes hand-off only. Predictable cash, in advance — the pastures stay full.</p></div>
   </div>
 </div></section>
@@ -160,7 +166,7 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';</script>
   <h2>Your farm, online and earning</h2>
   <div class="grid2">
     <div class="card"><div class="ic">🔎</div><h3>A site people can find</h3><p>Built to rank for "raw milk O'ahu," "herd share Hawaii," and "farm-fresh milk near me" — so new members find you on Google, not just word of mouth.</p></div>
-    <div class="card tint"><div class="ic">🛒</div><h3>Prepaid herd-share checkout</h3><p>Members buy their share and pay their boarding fee online. Money lands before pickup — so pickup day is just handing over the milk, not collecting cash.</p></div>
+    <div class="card tint"><div class="ic">🛒</div><h3>Prepaid checkout &amp; express pickup</h3><p>Members order and pay online — card, Apple Pay, Google Pay, not just cash/Venmo/Zelle. Money lands before pickup, so pickup is grab-and-go with no line.</p></div>
     <div class="card"><div class="ic">🔁</div><h3>Recurring, automatic</h3><p>Weekly or monthly boarding fees bill on their own. Steady, predictable income to feed the herd — no chasing, no reminders.</p></div>
     <div class="card"><div class="ic">🚚</div><h3>Pickup &amp; delivery, organized</h3><p>Members pick their pickup spot or O'ahu delivery window at checkout. You get a clean list for each run instead of a pile of DMs.</p></div>
     <div class="card"><div class="ic">📣</div><h3>More than a Facebook page</h3><p>A real home base your Facebook and Instagram point to — with a share page, waitlist, and story that makes Ka'ala look as established as it is.</p></div>
@@ -171,24 +177,31 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';</script>
 <!-- Prepaid checkout demo -->
 <section><div class="wrap">
   <div class="s-eye">See it work</div>
-  <h2>Paid before they show up</h2>
-  <p>Here's the member's side — join the herd share, prepay, done. Try it:</p>
+  <h2>Order online. Pay online. Skip the line.</h2>
+  <p>No more 10–20 people lined up paying one at a time. Members order and pay in under a minute, then walk up to <strong>express pickup</strong> and go — the money's already in your account.</p>
+  <div class="steps">
+    <div class="step"><div class="sn">1</div><b>Order online</b><span>Pick cow or A2 goat, size, and pickup day.</span></div>
+    <div class="step"><div class="sn">2</div><b>Pay online</b><span>Card, Apple Pay or Google Pay — done before they arrive.</span></div>
+    <div class="step"><div class="sn">3</div><b>Express pickup</b><span>Name's on the list — grab and go, no line, no cash.</span></div>
+  </div>
   <div class="demo">
-    <div class="lab">Ka'ala Creamery · Join the herd share</div>
-    <h3>Reserve this week's share</h3>
-    <div class="sub">Prepay your boarding fee — pick up Saturday, no cash needed. Cow or A2 goat.</div>
+    <div class="lab">Ka'ala Creamery · Order &amp; prepay</div>
+    <h3>Reserve this week's milk</h3>
+    <div class="sub">Pay now, skip the line — express pickup Saturday in Waianae. Cow or A2 goat.</div>
     <div class="co" id="co">
       <div class="co-form">
-        <div class="row"><span>Cow milk share · half-gallon / week</span><span>$18.00</span></div>
-        <div class="row"><span>Pickup · Waianae Saturday</span><span>Free</span></div>
-        <div class="row tot"><span>Due today</span><span>$18.00</span></div>
+        <div class="row"><span>Cow milk · half-gallon</span><span>$25.00</span></div>
+        <div class="row"><span>Mason jar deposit <em style="font-style:normal;color:var(--muted)">· refundable</em></span><span>$12.00</span></div>
+        <div class="row"><span>Express pickup · Waianae Sat</span><span>Free</span></div>
+        <div class="row tot"><span>Due today</span><span>$37.00</span></div>
         <div class="field"><label>Name</label><input id="co-name" placeholder="Your name"></div>
-        <div class="field"><label>Card</label><input id="co-card" placeholder="4242 4242 4242 4242"></div>
-        <button class="pay" id="co-pay" onclick="coPay()">Prepay $18 &amp; reserve</button>
+        <div class="field"><label>Card / Apple Pay</label><input id="co-card" placeholder="4242 4242 4242 4242"></div>
+        <button class="pay" id="co-pay" onclick="coPay()">Pay $37 &amp; reserve</button>
+        <div style="font-size:11.5px;color:var(--muted);text-align:center;margin-top:8px">Bring your jar back and the $12 comes right off next time.</div>
       </div>
-      <div class="ok"><div class="big">✅</div><div style="font-weight:800;margin:6px 0 2px">Paid — you're on the list!</div><div style="font-size:13px;color:var(--muted)">Pickup Saturday, Waianae. Just show up — it's already paid.</div></div>
+      <div class="ok"><div class="big">✅</div><div style="font-weight:800;margin:6px 0 2px">Paid — express pickup ready!</div><div style="font-size:13px;color:var(--muted)">Saturday in Waianae. Skip the line — your name's on the list.</div></div>
     </div>
-    <div class="note">Demo only — on your live site this is real, secure checkout, and the money's in your account before pickup.</div>
+    <div class="note">Demo only — the live site takes real cards, Apple Pay &amp; Google Pay, and you're paid before pickup.</div>
   </div>
 </div></section>
 
