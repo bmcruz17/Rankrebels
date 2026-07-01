@@ -9,13 +9,12 @@
 ## 🎯 Your open action items (do these to stay on track)
 Ordered roughly by priority.
 
-- [ ] **⏰ Get Eric's booking link (promised tomorrow, 6/27)** — Eric creates a Google Calendar **Appointment schedule** → Share → copy the `calendar.app.google/...` link. Paste it into `dashboard.html` `var BOOKING={…eric:'…'}` and deploy so AI emails/texts/call-scripts offer "Book with Eric" next to Brandon. (Brandon's is already wired in.)
 - [ ] **Run the latest SQL** (GO-LIVE.md §2) — now also adds `quote`, `partner`/`partner_rep`, `rr_partners`, and **`rr_blog_posts`** (blog). Re-run the whole §2 block; it's idempotent.
 - [ ] **Turn on the daily blog** — add GitHub repo secrets `ANTHROPIC_API_KEY` + `SUPABASE_SERVICE_ROLE_KEY`, then run the **Daily blog post** Action once (Actions tab) to publish the first post.
 - [ ] **Send the Google review link** — still a placeholder on the homepage + ⭐ pipeline button; paste the link and I'll wire it everywhere.
 - [ ] **(If wanted) Instagram** — make the account, send me the handle, and I'll add the icon/link to the site footer + nav.
 - [ ] **Turn on live reports** — in Google Cloud enable **Analytics Data API** + **Search Console API**, add scopes `analytics.readonly` + `webmasters.readonly`, then **disconnect/reconnect Google** in the dashboard. Per client: Edit customer → fill GA4 property ID + Search Console site. (Until then, reports show labelled sample data.)
-- [ ] **Verify Google Business Profile** — Eric, in Utah, under the Rank Rebels Google account (remove the Heliode draft first so there's no duplicate).
+- [ ] **Verify Google Business Profile** — in Utah, under the Rank Rebels Google account (remove the Heliode draft first so there's no duplicate).
 - [ ] **Send Claude your Google review link** (Business Profile → Ask for reviews) → it gets wired into the homepage + the ⭐ pipeline review button.
 - [ ] **Add `SERPER_API_KEY`** in Cloudflare (free at serper.dev) → turns on lead enrichment (find email/socials for no-website leads).
 - [ ] **Install email signatures in Gmail** (open `signatures/*.html` → copy rendered → Gmail signature settings).
@@ -50,7 +49,7 @@ Ordered roughly by priority.
 - Stripe invoicing, e-sign agreements, customer portal, partner reimbursements, Find Leads, Gmail/Calendar, AI bots & drafting
 
 ## ⛔ Blockers / waiting on
-- GBP can't be verified until Eric is in Utah (no storefront access from Hawaii).
+- GBP can't be verified until Brandon can verify in Utah (no storefront access from Hawaii).
 - Lead enrichment needs the SERPER_API_KEY before it returns results.
 
 ## 💡 Backlog / ideas (not started)

@@ -41,7 +41,7 @@ export async function onRequestPost({ request, env }) {
     "- If 'has_website' is false: helpfully (never insultingly) point out that despite their great reputation and following they don't have a website — so they're likely losing customers who search for them and find nothing, or find a competitor. Frame a website as capturing demand they've already earned.",
     "- If they HAVE a website: focus on getting found on Google/AI search and the Map pack instead.",
     "Goal: a soft, low-pressure invite to a quick chat or a free audit. Do NOT mention pricing, do NOT guarantee rankings or '#1 on Google'. Do NOT invent facts — only use details present in the data. Sign off as 'The Rank Rebels Team'.",
-    "BOOKING: If a 'booking' object with links is provided, end the email by offering the reader an easy choice to grab a quick 15-minute call, e.g. 'Grab a time that works for you: Book with Brandon: <link> or Book with Eric: <link>'. Include only the links that are present. If no booking links are provided, just invite them to reply.",
+    "BOOKING: If a 'booking' object with links is provided, end the email by offering the reader an easy choice to grab a quick 15-minute call, e.g. 'Grab a time that works for you: Book with Brandon: <link>'. Include only the links that are present. If no booking links are provided, just invite them to reply.",
     'Return ONLY valid JSON, no markdown: {"subject": "...", "body": "..."}. The body is plain text with real line breaks, ready to send.'
   ].join('\n');
 

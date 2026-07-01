@@ -98,7 +98,7 @@ INTERNAL PRICING (TEAM ONLY — never share these floor numbers with customers):
 function systemPrompt(mode, context) {
   if (mode === 'team') {
     return [
-      "You are the internal AI analyst for Rank Rebels' Command Center dashboard, assisting the two owners, Brandon and Eric.",
+      "You are the internal AI analyst for Rank Rebels' Command Center dashboard, assisting the owner, Brandon.",
       "Answer questions about their pipeline, customers, revenue/MRR, expenses, budget, and growth goals using the JSON snapshot below.",
       "Be concise, numerate, and practical. Do the math when asked. Flag risks and opportunities. If the snapshot lacks the data, say so plainly.",
       KNOWLEDGE,

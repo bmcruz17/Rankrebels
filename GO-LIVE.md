@@ -34,9 +34,8 @@ create or replace function public.rr_is_team() returns boolean
 language sql stable security definer set search_path = public, auth as $$
   select coalesce(
     lower(auth.jwt() ->> 'email') in (
-      'brandonmcruz@mac.com','eric.paul.ellsworth@gmail.com',
-      'brandon@rankrebels.ai','eric@rankrebels.ai'
-    ) or lower(auth.jwt() ->> 'email') like '%@rankrebels.ai', false);
+      'brandonmcruz@mac.com','brandon@rankrebels.ai'
+    ), false);
 $$;
 
 -- 2) Clients: extra columns + full team access
@@ -54,7 +53,7 @@ alter table rr_clients  add column if not exists description text;  -- business 
 -- allow partner-sourced leads through the acquired_by check constraint
 alter table rr_clients  drop constraint if exists rr_clients_acquired_by_check;
 alter table rr_clients  add  constraint rr_clients_acquired_by_check
-  check (acquired_by is null or acquired_by in ('brandon','eric','website','partner'));
+  check (acquired_by is null or acquired_by in ('brandon','website','partner'));
 create index if not exists rr_clients_partner_idx on rr_clients(partner);
 drop policy if exists rr_clients_team_all on rr_clients;
 create policy rr_clients_team_all on rr_clients for all to authenticated
@@ -119,7 +118,7 @@ alter table rr_expenses add column if not exists paid_by   text;
 -- 4) Settings: expense-split share
 alter table rr_settings add column if not exists exp_eric_share numeric;
 
--- 5) Partner reimbursements (Brandon <-> Eric)
+-- 5) Partner reimbursements
 create table if not exists rr_reimbursements (
   id uuid primary key default gen_random_uuid(),
   from_partner text not null, to_partner text not null,
@@ -218,7 +217,7 @@ create policy rr_agree_sign on rr_agreements for insert to anon
 ## 3. Supabase — Auth settings
 - **Authentication → URL Configuration → Redirect URLs:** add
   `https://rankrebels.ai/dashboard.html` and `https://rankrebels.ai/portal.html`
-- Each teammate: open the dashboard → **"Set or reset password"** → set a password. Eric signs in as `eric@rankrebels.ai`.
+- Open the dashboard → **"Set or reset password"** → set a password.
 
 ---
 
@@ -270,14 +269,14 @@ Reminds un-closed proposals automatically. Any customer in **Leads** or **Contac
 
 ### Lead & intake email (Resend) — `/api/demo-lead`
 Powers the "try the form" hook on customer preview sites (Island Claw, Mi Casa) and the TARO discovery questionnaire.
-- **Sends from** `sales@rankrebels.ai` (set via the optional `RESEND_FROM` env var; this is the default). We do **not** use `hello@` — only `sales@`, `brandon@`, and `eric@`.
+- **Sends from** `sales@rankrebels.ai` (set via the optional `RESEND_FROM` env var; this is the default). We do **not** use `hello@` — only `sales@` and `brandon@`.
 - **Replies** go to `sales@rankrebels.ai` on booking/quote alerts; on intake submissions reply-to is the prospect, so hitting reply reaches them directly.
-- **Who gets notified:** both owners — `brandon@rankrebels.ai` and `eric@rankrebels.ai`. Booking/quote demos BCC them; intake answers email them directly. Controlled by the comma-separated `LEAD_NOTIFY` env var (default `brandon@rankrebels.ai,eric@rankrebels.ai`) — change it in Cloudflare to add/swap recipients without touching code.
+- **Who gets notified:** `brandon@rankrebels.ai`. Booking/quote demos BCC them; intake answers email them directly. Controlled by the comma-separated `LEAD_NOTIFY` env var (default `brandon@rankrebels.ai`) — change it in Cloudflare to add/swap recipients without touching code.
 - **Required secret:** `RESEND_API_KEY` in Cloudflare → Pages → Settings → Variables and Secrets (then redeploy). When unset the form still shows success but no email sends. Verified working ✅.
-- `rankrebels.ai` must be a verified domain in Resend (covers `sales@`, `brandon@`, `eric@`).
+- `rankrebels.ai` must be a verified domain in Resend (covers `sales@`, `brandon@`).
 
 ### Email signatures (Gmail)
-For each person (brandon.html, eric.html, sales.html):
+For each person (brandon.html, sales.html):
 1. Open the signature file in a browser (or have Claude render it).
 2. Select all (Cmd+A) and copy the **rendered** signature (not the raw HTML).
 3. Gmail → ⚙️ → See all settings → General → Signature → Create new → paste → Save.

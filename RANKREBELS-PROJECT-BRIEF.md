@@ -14,10 +14,8 @@ Positioning/hook: **"When customers search, your business is the answer"** — f
 Website: **rankrebels.ai**. Based in Utah; works remotely with clients across the U.S.
 
 ## 2. The people
-- **Brandon Cruz** — co-owner. Email brandon@rankrebels.ai. Operates remotely (often from Hawaii).
-- **Eric Ellsworth** — co-owner. Email eric@rankrebels.ai. Likes the brand colors green, gold, white.
-- Ownership: a Wyoming corporation (Brandon's) owns ~65% of the Utah LLC; Eric ~35%.
-- **Pay split:** Eric earns a flat **35% of all revenue**; Brandon keeps 65% but is **guaranteed at least $6,000/mo** (topped up from Eric's share only in lean months). Website/inbound revenue splits the same 65/35.
+- **Brandon Cruz** — owner (sole). Email brandon@rankrebels.ai. Operates remotely (often from Hawaii). Brand colors: green, gold, white.
+- Ownership: **Brandon owns 100%** of the business.
 
 ## 3. Services & pricing (standard list)
 - **Website build:** $2,000 one-time. If financed at +$85/mo instead of paid in full, **collect a minimum $399 upfront**.

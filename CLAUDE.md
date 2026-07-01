@@ -5,7 +5,7 @@ when you need detail. Keep replies concrete; match the existing code.
 
 ## What this is
 Rank Rebels (rankrebels.ai) — a web/SEO/software agency run by **Brandon Cruz**
-(brandon@rankrebels.ai) and **Eric Ellsworth** (eric@rankrebels.ai). This repo is
+(brandon@rankrebels.ai), sole owner. This repo is
 both the public site **and** the internal system that runs the business.
 
 Two halves:
@@ -28,7 +28,7 @@ Deeper context: **`RANKREBELS-PROJECT-BRIEF.md`** (business, pricing, brand, voi
 - **Database** = Supabase (Postgres), project `eejmocneacfleltspedl`. Tables prefixed
   `rr_` (rr_clients, rr_blog_posts, rr_scheduled_emails, …). RLS-gated; the anon key is
   public, the **service role key lives only in Cloudflare secrets**.
-- **Email** = Resend, from `sales@rankrebels.ai` (owners brandon@/eric@).
+- **Email** = Resend, from `sales@rankrebels.ai` (owner brandon@).
 - **Payments** = Stripe; one-time charges offer Klarna/Affirm/Afterpay.
 - **Reports** = GA4 Data API + Search Console API via Google OAuth.
 - Rendering/screenshots for assets: Playwright + Chromium via
