@@ -468,6 +468,19 @@ footer a{color:var(--cyan)}
 .watermark{position:fixed;right:14px;bottom:14px;z-index:40;background:rgba(6,20,43,.9);color:#fff;font-size:11.5px;font-weight:600;padding:8px 14px;border-radius:999px;border:1px solid var(--line-2);backdrop-filter:blur(6px)}
 .watermark b{color:var(--cyan)}
 @media(max-width:560px){.watermark{display:none}}
+/* search demand / SEO block (reusable hook-page pattern) */
+.seo-wrap{margin-top:32px;background:var(--navy-3);border:1px solid var(--line);border-radius:18px;padding:24px 26px 26px}
+.seo-row{display:grid;grid-template-columns:minmax(190px,1.1fr) 2fr auto;gap:16px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.seo-row:last-child{border-bottom:0}
+.seo-kw{font-size:14px;font-weight:600;color:var(--text)}
+.seo-kw small{display:block;color:var(--muted-2);font-size:11.5px;font-weight:500;margin-top:1px}
+.seo-track{height:12px;background:rgba(255,255,255,.07);border-radius:7px;overflow:hidden}
+.seo-fill{display:block;height:100%;width:0;border-radius:7px;background:linear-gradient(90deg,var(--blue),var(--cyan));transition:width 1.1s cubic-bezier(.2,.7,.2,1)}
+.seo-vol{font-family:'Space Grotesk',sans-serif;font-weight:700;color:var(--cyan);font-size:15px;white-space:nowrap;text-align:right;min-width:70px}
+.seo-note{margin-top:16px;font-size:12px;color:var(--muted-2);line-height:1.5}
+.seo-cta{margin-top:20px;background:linear-gradient(120deg,rgba(43,127,224,.14),rgba(79,195,232,.10));border:1px solid var(--line-2);border-radius:14px;padding:18px 20px;font-size:14.5px;color:var(--text);line-height:1.55}
+.seo-cta b{color:var(--cyan)}
+@media(max-width:640px){.seo-row{grid-template-columns:1fr auto;grid-template-areas:"kw vol" "bar bar";row-gap:9px}.seo-kw{grid-area:kw}.seo-vol{grid-area:vol}.seo-track{grid-area:bar}}
 /* à la carte platform-module picker */
 .addons2{padding:64px 0;background:var(--navy-2);border-top:1px solid var(--line)}
 .addons2 .ah{text-align:center;max-width:640px;margin:0 auto 26px}
@@ -1014,6 +1027,35 @@ footer a{color:var(--cyan)}
     </div>
   </div>
 </section>
+
+<!-- SEARCH DEMAND / SEO (reusable hook-page pattern) -->
+<section id="search">
+  <div class="wrap">
+    <div class="kick">06 · Get found &amp; win more work</div>
+    <h2>The contracts are already searching — most never find TARO.</h2>
+    <p class="lead">Every week, general contractors, carriers, developers, and municipalities type these into Google looking for exactly what TARO does. An optimized website + SEO puts TARO on page one nationwide — turning that demand into inbound RFQs, on top of the outbound engine above.</p>
+    <div class="seo-wrap" id="seoBars">
+      <div class="seo-row"><div class="seo-kw">Fiber optic cable contractor<small>+ your 13 active states</small></div><div class="seo-track"><span class="seo-fill" data-w="100"></span></div><div class="seo-vol">2,900/mo</div></div>
+      <div class="seo-row"><div class="seo-kw">OSP engineering services<small>outside-plant design &amp; permitting</small></div><div class="seo-track"><span class="seo-fill" data-w="46"></span></div><div class="seo-vol">1,300/mo</div></div>
+      <div class="seo-row"><div class="seo-kw">Fiber network construction company<small>turnkey build partners</small></div><div class="seo-track"><span class="seo-fill" data-w="31"></span></div><div class="seo-vol">880/mo</div></div>
+      <div class="seo-row"><div class="seo-kw">Utility GIS mapping &amp; as-built services<small>ESRI / Vetro deliverables</small></div><div class="seo-track"><span class="seo-fill" data-w="20"></span></div><div class="seo-vol">590/mo</div></div>
+      <div class="seo-row"><div class="seo-kw">Small-cell &amp; DAS installation contractor<small>wireless densification</small></div><div class="seo-track"><span class="seo-fill" data-w="17"></span></div><div class="seo-vol">480/mo</div></div>
+      <div class="seo-note">Estimated U.S. monthly search volume for representative terms. People searching these are actively sourcing a partner — not cold leads. Actual volumes vary by market; we build the keyword map to your services and states.</div>
+    </div>
+    <div class="seo-cta"><b>Page-one rankings = a pipeline that fills itself.</b> Your KERN platform becomes the front door; the Outreach &amp; growth engine works outbound. Together, inbound search demand and proactive BD keep crews booked — coast to coast.</div>
+  </div>
+</section>
+<script>
+(function(){
+  var box=document.getElementById('seoBars'); if(!box) return;
+  var fills=box.querySelectorAll('.seo-fill');
+  function run(){ fills.forEach(function(f){ f.style.width=(f.getAttribute('data-w')||0)+'%'; }); }
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ run(); io.disconnect(); } }); },{threshold:.25});
+    io.observe(box);
+  } else { run(); }
+})();
+</script>
 
 <!-- À LA CARTE PLATFORM MODULES (selectable) -->
 <section class="addons2" id="addons">
