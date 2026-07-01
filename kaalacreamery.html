@@ -119,10 +119,56 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';</script>
   .watermark{position:fixed;right:14px;bottom:14px;z-index:40;background:rgba(20,52,26,.92);color:#fff;font-size:11.5px;font-weight:600;padding:8px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.18)}
   .watermark b{color:#a6d8a0}
   @media(max-width:560px){.watermark{display:none}.bar .brand span{display:none}}
+  /* exclusive access gate (teaser + unlock) */
+  #gate{min-height:100vh;display:flex;flex-direction:column}
+  .gate-hero{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;padding:60px 22px 40px;color:#fff;
+    background:radial-gradient(120% 90% at 50% -10%,#7fc0e6 0%,#4f9a49 42%,#2f5f2c 100%)}
+  .gate-hero .gwrap{max-width:640px}
+  .geyebrow{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;color:#fbe7a6;background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:6px 14px;display:inline-block}
+  .gate-hero h1{font-size:clamp(2rem,5vw,3rem);font-weight:800;margin:16px 0 12px;color:#fff}
+  .gate-hero h1 em{font-style:normal;color:#fbe7a6}
+  .gate-hero p{font-size:1.12rem;color:#eaf6ea;max-width:52ch;margin:0 auto 18px}
+  .gate-hero .gbadges{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:18px 0 26px}
+  .gate-hero .gbadges span{font-size:12.5px;font-weight:600;color:#0e3a17;background:rgba(255,255,255,.9);border-radius:999px;padding:6px 12px}
+  .gscroll{display:inline-flex;align-items:center;gap:8px;color:#fff;font-family:'Baloo 2',sans-serif;font-weight:700;border:1.5px solid rgba(255,255,255,.6);border-radius:999px;padding:11px 22px}
+  .gscroll:hover{background:rgba(255,255,255,.14);color:#fff}
+  .gate-lock{background:var(--cream);border-top:1px solid var(--line);padding:52px 22px 70px;display:flex;justify-content:center}
+  .lockcard{background:#fff;border:1px solid var(--line);border-radius:20px;padding:32px 30px;max-width:420px;width:100%;text-align:center;box-shadow:0 26px 60px -30px rgba(20,52,26,.4)}
+  .lockic{font-size:34px}
+  .lockcard h2{font-size:1.4rem;font-weight:800;margin:8px 0 6px}
+  .lockcard p{font-size:.95rem;color:var(--muted);margin-bottom:16px}
+  .lockcard input{width:100%;border:1px solid var(--line);border-radius:11px;padding:13px;font:inherit;font-size:15px;margin-bottom:10px}
+  .lockcard input:focus{outline:none;border-color:var(--green2);box-shadow:0 0 0 3px var(--green-tint)}
+  .lockcard button{width:100%;background:var(--green);color:#fff;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:15px;border:0;border-radius:11px;padding:14px;cursor:pointer;margin-top:4px}
+  .lockcard button:hover{background:var(--green2)}
+  .gerr{min-height:20px;margin-top:10px;font-size:13px;font-weight:600;color:#c0392b}
+  .lockcard .ghelp{font-size:12px;color:var(--faint);margin-top:12px}
 </style>
 </head>
 <body>
 
+<!-- EXCLUSIVE ACCESS GATE (teaser, no login) -->
+<div id="gate">
+  <div class="gate-hero"><div class="gwrap">
+    <div class="geyebrow">Private preview · by invitation</div>
+    <h1>Ka'ala Creamery, <em>reimagined online</em></h1>
+    <p>A first look at what your website and prepaid pickup could feel like — designed just for you. Take the tour, then unlock your full interactive preview.</p>
+    <div class="gbadges"><span>🐄 Cow &amp; A2 goat</span><span>🛒 Prepaid pickup</span><span>🔎 Found on Google</span></div>
+    <a class="gscroll" href="#unlock">Take the tour ↓</a>
+  </div></div>
+  <div class="gate-lock" id="unlock"><div class="lockcard">
+    <div class="lockic">🔒</div>
+    <h2>Enter your private access</h2>
+    <p>This preview is exclusive to Ka'ala Creamery. Enter the username &amp; password Rank Rebels sent you to unlock the full interactive page.</p>
+    <input id="gu" placeholder="Username" autocomplete="off" autocapitalize="off" spellcheck="false" onkeydown="if(event.key==='Enter')document.getElementById('gp').focus()">
+    <input id="gp" type="password" placeholder="Password" autocomplete="off" onkeydown="if(event.key==='Enter')gateTry()">
+    <button onclick="gateTry()">Unlock my preview →</button>
+    <div id="gerr" class="gerr"></div>
+    <div class="ghelp">Don't have access? Text Rank Rebels at 808-265-5339.</div>
+  </div></div>
+</div>
+
+<div id="site" hidden>
 <div class="bar"><div class="bar-in">
   <span class="brand"><span class="dot"></span><span>Ka'ala Creamery × Rank Rebels</span></span>
   <div class="bar-actions">
@@ -268,6 +314,27 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';</script>
   <div style="margin-top:10px;color:var(--faint)">Proposal crafted by <a href="https://rankrebels.ai">Rank Rebels</a> · concept mock-up for your review.</div>
 </footer>
 <div class="watermark noprint">🔒 Proposal by <b>Rank Rebels</b></div>
+</div><!-- /#site -->
+
+<script>
+/* exclusive access gate — teaser is public; the full interactive page unlocks with the private login */
+(function(){
+  var GATE_USER='kaala-devin';
+  var GATE_HASH='c9ee31124554efc2551af0ffaf8e223dcf6dbd48092f5f51f318bc7790c814fd';
+  function reveal(){ var g=document.getElementById('gate'), s=document.getElementById('site'); if(g)g.style.display='none'; if(s)s.hidden=false; }
+  if(sessionStorage.getItem('kaala_ok')==='1'){ reveal(); }
+  // compact SHA-256 (works on http/https/file — no secure-context dependency)
+  function sha256(ascii){function r(v,a){return(v>>>a)|(v<<(32-a));}var mp=Math.pow,mw=mp(2,32),res='';var w=[],abl=ascii.length*8;var h=sha256.h=sha256.h||[],k=sha256.k=sha256.k||[],pc=k.length;var ic={};for(var ca=2;pc<64;ca++){if(!ic[ca]){for(var i=0;i<313;i+=ca){ic[i]=ca;}h[pc]=(mp(ca,.5)*mw)|0;k[pc++]=(mp(ca,1/3)*mw)|0;}}ascii+='\x80';while(ascii.length%64-56)ascii+='\x00';for(i=0;i<ascii.length;i++){var j=ascii.charCodeAt(i);if(j>>8)return;w[i>>2]|=j<<((3-i)%4)*8;}w[w.length]=((abl/mw)|0);w[w.length]=(abl);for(var jj=0;jj<w.length;){var ww=w.slice(jj,jj+=16);var oh=h;h=h.slice(0,8);for(i=0;i<64;i++){var w15=ww[i-15],w2=ww[i-2];var a=h[0],e=h[4];var t1=h[7]+(r(e,6)^r(e,11)^r(e,25))+((e&h[5])^((~e)&h[6]))+k[i]+(ww[i]=i<16?ww[i]:(ww[i-16]+(r(w15,7)^r(w15,18)^(w15>>>3))+ww[i-7]+(r(w2,17)^r(w2,19)^(w2>>>10)))|0);var t2=(r(a,2)^r(a,13)^r(a,22))+((a&h[1])^(a&h[2])^(h[1]&h[2]));h=[(t1+t2)|0].concat(h);h[4]=(h[4]+t1)|0;}for(i=0;i<8;i++){h[i]=(h[i]+oh[i])|0;}}for(i=0;i<8;i++){for(j=3;j+1;j--){var b=(h[i]>>(j*8))&255;res+=((b<16)?0:'')+b.toString(16);}}return res;}
+  window.gateTry=function(){
+    var u=(document.getElementById('gu').value||'').trim().toLowerCase();
+    var p=document.getElementById('gp').value||'';
+    var err=document.getElementById('gerr');
+    if(!u||!p){ err.textContent='Enter your username and password.'; return; }
+    if(u===GATE_USER && sha256(p)===GATE_HASH){ try{ sessionStorage.setItem('kaala_ok','1'); }catch(e){} location.reload(); }
+    else { err.textContent='That username or password isn’t right — double-check what Rank Rebels sent you.'; }
+  };
+})();
+</script>
 
 <script>
 // prepaid checkout demo
