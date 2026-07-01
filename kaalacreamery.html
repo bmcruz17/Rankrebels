@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<script>/* Always open at the top, even if the shared link carries a #hash. */
+if(location.hash){try{history.replaceState(null,'',location.pathname+location.search);}catch(e){}}
+if('scrollRestoration' in history)history.scrollRestoration='manual';</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>Proposal — Ka'ala Creamery · Rank Rebels</title>
+<meta name="description" content="A searchable website + prepaid herd-share checkout for Ka'ala Creamery — get found on Google, get paid before pickup, and keep the pastures full.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Rank Rebels — Proposal for Ka'ala Creamery">
+<meta property="og:description" content="Get found on Google. Get paid before pickup. A searchable site + prepaid herd-share checkout, built & run for you.">
+<meta property="og:url" content="https://rankrebels.ai/kaalacreamery.html">
+<meta property="og:image" content="https://rankrebels.ai/brand/og-home.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/svg+xml" href="/brand/app-icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --green:#3f7d3a;--green2:#4f9a49;--green-d:#2f5f2c;--gold:#c99a2e;--gold-d:#a67f18;
+    --ink:#241d13;--muted:#6b6152;--faint:#928873;
+    --cream:#faf6ec;--line:#ece3d1;--card:#ffffff;--bg:#ffffff;--sky:#6fa8cf;
+    --green-tint:rgba(79,154,73,.09);--gold-tint:rgba(201,154,46,.12);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;color:var(--ink);line-height:1.62;background:var(--bg);-webkit-font-smoothing:antialiased}
+  h1,h2,h3,.disp{font-family:'Baloo 2','Plus Jakarta Sans',sans-serif;letter-spacing:-.01em;line-height:1.15}
+  a{color:var(--green);text-decoration:none}
+  .wrap{max-width:900px;margin:0 auto;padding:0 22px}
+  .bar{position:sticky;top:0;z-index:40;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .bar-in{max-width:900px;margin:0 auto;padding:12px 22px;display:flex;align-items:center;justify-content:space-between;gap:14px}
+  .bar .brand{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:16px;display:inline-flex;align-items:center;gap:9px}
+  .bar .brand .dot{width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,var(--green2),var(--green-d));display:inline-block}
+  .bar-actions{display:flex;gap:9px;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:14.5px;padding:10px 18px;border-radius:11px;border:0;cursor:pointer;transition:transform .14s, box-shadow .14s}
+  .btn:hover{transform:translateY(-1px)}
+  .btn-green{background:var(--green);color:#fff;box-shadow:0 12px 26px -12px rgba(63,125,58,.6)}
+  .btn-ghost{background:#fff;color:var(--green-d);border:1.5px solid var(--line)}
+  .btn-gold{background:var(--gold);color:#3a2c07;box-shadow:0 12px 26px -12px rgba(201,154,46,.6)}
+  /* cover */
+  .cover{padding:52px 0 32px;border-bottom:1px solid var(--line);background:radial-gradient(120% 80% at 85% 0%,var(--green-tint),transparent 60%)}
+  .eyebrow{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-d)}
+  .cover h1{font-size:2.7rem;font-weight:800;margin:12px 0 12px;color:var(--ink)}
+  .cover h1 em{font-style:normal;color:var(--green)}
+  .cover .sub{font-size:1.16rem;color:var(--muted);max-width:60ch}
+  .cover .meta{margin-top:22px;display:flex;flex-wrap:wrap;gap:10px 26px;font-size:.92rem;color:var(--faint)}
+  .cover .meta b{color:var(--ink);font-weight:700}
+  .badges{margin-top:18px;display:flex;flex-wrap:wrap;gap:8px}
+  .badges span{font-size:12.5px;font-weight:600;color:var(--green-d);background:var(--green-tint);border:1px solid rgba(79,154,73,.22);border-radius:999px;padding:6px 12px}
+  section{padding:34px 0;border-bottom:1px solid var(--line)}
+  .s-eye{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--green);margin-bottom:7px}
+  h2{font-size:1.6rem;font-weight:800;margin-bottom:12px}
+  p{margin-bottom:12px;color:#3b342a}
+  ul{margin:8px 0 14px;padding-left:0;list-style:none}
+  ul li{position:relative;padding-left:26px;margin-bottom:10px;color:#3b342a}
+  ul li:before{content:"";position:absolute;left:3px;top:9px;width:9px;height:9px;border-radius:50%;background:var(--green2)}
+  strong{color:var(--ink);font-weight:700}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px}
+  @media(max-width:680px){.grid2{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px 22px}
+  .card.tint{background:var(--green-tint);border-color:rgba(79,154,73,.22)}
+  .card .ic{font-size:22px;margin-bottom:6px}
+  .card h3{font-size:1.06rem;font-weight:800;margin-bottom:5px}
+  .card p{font-size:.95rem;color:var(--muted);margin:0}
+  /* problem/fix */
+  .see-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px}
+  @media(max-width:680px){.see-grid{grid-template-columns:1fr}}
+  .see{border-radius:16px;padding:20px 22px;border:1px solid var(--line)}
+  .see.prob{background:#fbf3ee;border-color:#efd9cb}
+  .see.fix{background:var(--green-tint);border-color:rgba(79,154,73,.25)}
+  .see h3{font-size:1.05rem;margin-bottom:7px;display:flex;gap:8px;align-items:center}
+  .see p{font-size:.95rem;color:var(--muted);margin:0}
+  /* checkout demo */
+  .demo{background:linear-gradient(160deg,#12341a,#0c2413);border-radius:22px;padding:26px;color:#eaf3ea}
+  .demo .lab{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#a6d8a0}
+  .demo h3{color:#fff;font-size:1.35rem;margin:6px 0 4px}
+  .demo .sub{color:#bcd8bb;font-size:.95rem;margin-bottom:16px}
+  .co{background:#fff;color:var(--ink);border-radius:16px;padding:20px;max-width:420px;margin:0 auto;box-shadow:0 24px 50px -24px rgba(0,0,0,.5)}
+  .co .row{display:flex;justify-content:space-between;font-size:14px;padding:8px 0;border-bottom:1px solid var(--line)}
+  .co .row.tot{font-weight:800;border-bottom:0;font-size:16px;padding-top:12px}
+  .co .field{margin:12px 0}
+  .co label{font-size:12px;font-weight:700;color:var(--muted);display:block;margin-bottom:4px}
+  .co input{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px;font:inherit;font-size:14px}
+  .co .pay{width:100%;background:var(--green);color:#fff;font-family:'Baloo 2',sans-serif;font-weight:700;font-size:15px;border:0;border-radius:11px;padding:13px;cursor:pointer;margin-top:6px}
+  .co .ok{display:none;text-align:center;padding:8px 0}
+  .co .ok .big{font-size:34px}
+  .co.paid .co-form{display:none}.co.paid .ok{display:block}
+  .demo .note{color:#bcd8bb;font-size:12.5px;text-align:center;margin-top:14px}
+  /* SEO block */
+  .seo-wrap{margin-top:18px;background:var(--cream);border:1px solid var(--line);border-radius:18px;padding:22px 24px}
+  .seo-row{display:grid;grid-template-columns:minmax(160px,1fr) 2fr auto;gap:14px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)}
+  .seo-row:last-child{border-bottom:0}
+  .seo-kw{font-size:14px;font-weight:700;color:var(--ink)}
+  .seo-kw small{display:block;color:var(--faint);font-size:11.5px;font-weight:500;margin-top:1px}
+  .seo-track{height:12px;background:rgba(63,125,58,.12);border-radius:7px;overflow:hidden}
+  .seo-fill{display:block;height:100%;width:0;border-radius:7px;background:linear-gradient(90deg,var(--green2),var(--gold));transition:width 1.1s cubic-bezier(.2,.7,.2,1)}
+  .seo-vol{font-family:'Baloo 2',sans-serif;font-weight:700;color:var(--green-d);font-size:15px;white-space:nowrap;text-align:right;min-width:66px}
+  .seo-note{margin-top:14px;font-size:12px;color:var(--faint);line-height:1.5}
+  @media(max-width:620px){.seo-row{grid-template-columns:1fr auto;grid-template-areas:"kw vol" "bar bar";row-gap:8px}.seo-kw{grid-area:kw}.seo-vol{grid-area:vol}.seo-track{grid-area:bar}}
+  /* investment */
+  .accept{background:linear-gradient(135deg,var(--green) 0%,var(--green-d) 100%);border-radius:20px;padding:32px 28px;color:#fff;text-align:center;margin:30px 0 8px}
+  .accept h2{color:#fff;margin-bottom:8px}
+  .accept p{color:rgba(255,255,255,.9);max-width:56ch;margin:0 auto 18px}
+  .accept .btn-green{background:#fff;color:var(--green-d)}
+  .accept .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  .fine{font-size:12.5px;color:var(--faint)}
+  .fine li:before{background:var(--faint);width:6px;height:6px;top:9px}
+  footer{padding:30px 0 46px;text-align:center;color:var(--faint);font-size:13px}
+  .watermark{position:fixed;right:14px;bottom:14px;z-index:40;background:rgba(20,52,26,.92);color:#fff;font-size:11.5px;font-weight:600;padding:8px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.18)}
+  .watermark b{color:#a6d8a0}
+  @media(max-width:560px){.watermark{display:none}.bar .brand span{display:none}}
+</style>
+</head>
+<body>
+
+<div class="bar"><div class="bar-in">
+  <span class="brand"><span class="dot"></span><span>Ka'ala Creamery × Rank Rebels</span></span>
+  <div class="bar-actions">
+    <button class="btn btn-ghost noprint" onclick="window.print()">Print / Save PDF</button>
+    <a class="btn btn-green noprint" href="#accept">Approve proposal</a>
+  </div>
+</div></div>
+
+<!-- Cover -->
+<div class="cover"><div class="wrap">
+  <div class="eyebrow">Proposal · prepared for Ka'ala Creamery</div>
+  <h1>Get found on Google. <em>Get paid before pickup.</em></h1>
+  <p class="sub">A searchable website and a prepaid herd-share checkout — so members join and pay online, the money's in before you pour a drop, and pickup day is just pickup. Built, hosted, and grown for you.</p>
+  <div class="meta">
+    <span>Prepared for <b>Devin Bull</b></span>
+    <span>From <b>Rank Rebels</b></span>
+    <span>Waianae, Hawai'i · delivered across O'ahu</span>
+  </div>
+  <div class="badges">
+    <span>🐄 Cow &amp; A2 goat milk</span>
+    <span>🌿 Small-batch, no-kill farm</span>
+    <span>🚫 No antibiotics or hormones</span>
+    <span>🕑 Bottled 1–2 days fresh</span>
+  </div>
+</div></div>
+
+<!-- The challenge -->
+<section><div class="wrap">
+  <div class="s-eye">Where it stands</div>
+  <h2>Great milk. But the money comes after the work.</h2>
+  <p>The herd needs feeding every single day — that cost never pauses. Yet sales run through Facebook comments and DMs, pickups get paid (or not) in person, and new members can only find you if they already know your name. The result: cash shows up <em>after</em> you've already fed the cows, and plenty of demand never finds you at all.</p>
+  <div class="see-grid">
+    <div class="see prob"><h3>▲ The squeeze today</h3><p>Orders live in DMs, payment happens at pickup (with no-shows and "I'll get you next time"), and there's no single page that shows up when someone Googles raw milk on O'ahu.</p></div>
+    <div class="see fix"><h3>◆ What changes</h3><p>Members join and <strong>prepay online</strong>, a real website ranks for the searches people already type, and pickup becomes hand-off only. Predictable cash, in advance — the pastures stay full.</p></div>
+  </div>
+</div></section>
+
+<!-- What we build -->
+<section><div class="wrap">
+  <div class="s-eye">What we build</div>
+  <h2>Your farm, online and earning</h2>
+  <div class="grid2">
+    <div class="card"><div class="ic">🔎</div><h3>A site people can find</h3><p>Built to rank for "raw milk O'ahu," "herd share Hawaii," and "farm-fresh milk near me" — so new members find you on Google, not just word of mouth.</p></div>
+    <div class="card tint"><div class="ic">🛒</div><h3>Prepaid herd-share checkout</h3><p>Members buy their share and pay their boarding fee online. Money lands before pickup — so pickup day is just handing over the milk, not collecting cash.</p></div>
+    <div class="card"><div class="ic">🔁</div><h3>Recurring, automatic</h3><p>Weekly or monthly boarding fees bill on their own. Steady, predictable income to feed the herd — no chasing, no reminders.</p></div>
+    <div class="card"><div class="ic">🚚</div><h3>Pickup &amp; delivery, organized</h3><p>Members pick their pickup spot or O'ahu delivery window at checkout. You get a clean list for each run instead of a pile of DMs.</p></div>
+    <div class="card"><div class="ic">📣</div><h3>More than a Facebook page</h3><p>A real home base your Facebook and Instagram point to — with a share page, waitlist, and story that makes Ka'ala look as established as it is.</p></div>
+    <div class="card"><div class="ic">🛡️</div><h3>Built &amp; run for you</h3><p>We design it, host it, keep it fast and secure, and make changes for you. You focus on the cows and the milk.</p></div>
+  </div>
+</div></section>
+
+<!-- Prepaid checkout demo -->
+<section><div class="wrap">
+  <div class="s-eye">See it work</div>
+  <h2>Paid before they show up</h2>
+  <p>Here's the member's side — join the herd share, prepay, done. Try it:</p>
+  <div class="demo">
+    <div class="lab">Ka'ala Creamery · Join the herd share</div>
+    <h3>Reserve this week's share</h3>
+    <div class="sub">Prepay your boarding fee — pick up Saturday, no cash needed. Cow or A2 goat.</div>
+    <div class="co" id="co">
+      <div class="co-form">
+        <div class="row"><span>Cow milk share · half-gallon / week</span><span>$18.00</span></div>
+        <div class="row"><span>Pickup · Waianae Saturday</span><span>Free</span></div>
+        <div class="row tot"><span>Due today</span><span>$18.00</span></div>
+        <div class="field"><label>Name</label><input id="co-name" placeholder="Your name"></div>
+        <div class="field"><label>Card</label><input id="co-card" placeholder="4242 4242 4242 4242"></div>
+        <button class="pay" id="co-pay" onclick="coPay()">Prepay $18 &amp; reserve</button>
+      </div>
+      <div class="ok"><div class="big">✅</div><div style="font-weight:800;margin:6px 0 2px">Paid — you're on the list!</div><div style="font-size:13px;color:var(--muted)">Pickup Saturday, Waianae. Just show up — it's already paid.</div></div>
+    </div>
+    <div class="note">Demo only — on your live site this is real, secure checkout, and the money's in your account before pickup.</div>
+  </div>
+</div></section>
+
+<!-- SEO / search demand -->
+<section id="search"><div class="wrap">
+  <div class="s-eye">Get found</div>
+  <h2>People are already searching for you</h2>
+  <p>Every week, O'ahu families type these into Google looking for exactly what Ka'ala offers. Right now they find directories and dead ends. An optimized site puts you first — and turns that demand into paid members.</p>
+  <div class="seo-wrap" id="seoBars">
+    <div class="seo-row"><div class="seo-kw">raw milk O'ahu<small>ready-to-buy intent</small></div><div class="seo-track"><span class="seo-fill" data-w="100"></span></div><div class="seo-vol">1,600/mo</div></div>
+    <div class="seo-row"><div class="seo-kw">herd share Hawaii<small>looking to join</small></div><div class="seo-track"><span class="seo-fill" data-w="34"></span></div><div class="seo-vol">540/mo</div></div>
+    <div class="seo-row"><div class="seo-kw">farm fresh milk near me<small>local + delivery</small></div><div class="seo-track"><span class="seo-fill" data-w="53"></span></div><div class="seo-vol">850/mo</div></div>
+    <div class="seo-row"><div class="seo-kw">raw milk delivery Honolulu<small>your O'ahu routes</small></div><div class="seo-track"><span class="seo-fill" data-w="22"></span></div><div class="seo-vol">350/mo</div></div>
+    <div class="seo-row"><div class="seo-kw">where to buy raw milk Hawaii<small>high buy intent</small></div><div class="seo-track"><span class="seo-fill" data-w="28"></span></div><div class="seo-vol">450/mo</div></div>
+    <div class="seo-note">Estimated U.S. monthly search volume for representative terms; actual O'ahu volume varies. People searching these are ready to join — we build the keyword map to your herd share and routes.</div>
+  </div>
+</div></section>
+
+<!-- Why it pays -->
+<section><div class="wrap">
+  <div class="s-eye">Why it pays for itself</div>
+  <h2>Cash in before you feed the cows</h2>
+  <ul>
+    <li><strong>Money up front.</strong> Prepaid shares mean income arrives <em>before</em> the week's feed bill — the exact problem that keeps the pastures tight.</li>
+    <li><strong>Fewer no-shows.</strong> Already paid = they show up. And if they don't, you're not out the milk or the cash.</li>
+    <li><strong>Recurring by default.</strong> Weekly/monthly boarding fees renew automatically — predictable revenue you can plan feed around.</li>
+    <li><strong>New members from Google.</strong> Every person who finds you searching is a member you'd never have reached in the comments.</li>
+  </ul>
+</div></section>
+
+<!-- Accept -->
+<div class="accept" id="accept">
+  <h2>Ready to fill the pastures?</h2>
+  <p>Approve to review &amp; sign your agreement, then we build your searchable site and prepaid herd-share checkout — and start bringing paid members in.</p>
+  <div class="row">
+    <a class="btn btn-green" href="/agreement?b=Ka%27ala%20Creamery&c=Devin%20Bull&plan=Kaala%20Creamery%20%E2%80%94%20site%20%26%20herd-share%20checkout">Approve &amp; review agreement →</a>
+    <a class="btn btn-ghost" style="background:transparent;color:#fff;border-color:rgba(255,255,255,.5)" href="tel:+18082655339">Questions? Call / text 808-265-5339</a>
+  </div>
+</div>
+<section style="border-bottom:0"><div class="wrap">
+  <div class="s-eye">The fine print</div>
+  <ul class="fine">
+    <li>This is a concept proposal prepared by Rank Rebels for Ka'ala Creamery. Final scope, pricing, and terms are set out in the service agreement.</li>
+    <li>Rank Rebels builds and manages the website, checkout, and hosting; Ka'ala Creamery operates the herd share and fulfills pickups and deliveries.</li>
+    <li>Online checkout collects herd-share membership and boarding fees in advance; it is not a sale of raw milk.</li>
+  </ul>
+</div></section>
+
+<footer>
+  <div style="font-family:'Baloo 2',sans-serif;font-weight:800;color:var(--green-d)">Ka'ala Creamery</div>
+  <div style="margin-top:4px">Raw milk herd share · delivered across O'ahu</div>
+  <div style="margin-top:10px;color:var(--faint)">Proposal crafted by <a href="https://rankrebels.ai">Rank Rebels</a> · concept mock-up for your review.</div>
+</footer>
+<div class="watermark noprint">🔒 Proposal by <b>Rank Rebels</b></div>
+
+<script>
+// prepaid checkout demo
+function coPay(){
+  var n=document.getElementById('co-name').value.trim();
+  var btn=document.getElementById('co-pay'); btn.textContent='Processing…'; btn.disabled=true;
+  setTimeout(function(){ document.getElementById('co').classList.add('paid'); }, 900);
+}
+// search-demand bars animate on scroll
+(function(){
+  var box=document.getElementById('seoBars'); if(!box) return;
+  var fills=box.querySelectorAll('.seo-fill');
+  function run(){ fills.forEach(function(f){ f.style.width=(f.getAttribute('data-w')||0)+'%'; }); }
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ run(); io.disconnect(); } }); },{threshold:.25});
+    io.observe(box);
+  } else { run(); }
+})();
+</script>
+</body>
+</html>
