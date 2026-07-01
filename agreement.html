@@ -37,6 +37,15 @@
 .done{display:none;text-align:center;padding:30px}.done .big{font-size:42px}.done h2{color:var(--brand)}
 .msg{font-size:13px;margin-top:8px;color:#c0392b;display:none}
 .fine{font-size:11.5px;color:var(--muted);margin-top:10px}
+@media print{
+  body{background:#fff}
+  .wrap{max-width:none;padding:0}
+  .card{box-shadow:none;border:none;border-radius:0}
+  .terms{max-height:none!important;overflow:visible!important;border:none;padding:0}
+  .sumbox{break-inside:avoid}
+  .terms h3.sec{break-after:avoid}
+  .noprint,.msg{display:none!important}
+}
 </style></head><body>
 <div class="wrap"><div class="card">
   <div class="hd"><div class="logo">Rank<span style="opacity:.92">Rebels</span></div><div class="sub">Master Service Agreement · RankRebels.AI LLC</div></div>
@@ -415,7 +424,7 @@ if(TOKEN){ (async function(){
   var sig='<div class="sumbox" style="margin-top:18px"><div class="sumrow"><span class="k">Client signature</span><span class="v">'+escTxt(a.signer_name||'—')+'</span></div><div class="sumrow"><span class="k">Signed</span><span class="v">'+(a.signed_at?new Date(a.signed_at).toLocaleString():'—')+'</span></div>';
   if(a.status==='executed'){
     sig+='<div class="sumrow"><span class="k">Rank Rebels signature</span><span class="v">'+escTxt(a.countersigned_by||'—')+'</span></div><div class="sumrow"><span class="k">Countersigned</span><span class="v">'+(a.countersigned_at?new Date(a.countersigned_at).toLocaleString():'—')+'</span></div></div>';
-    panel.innerHTML='<div style="text-align:center;margin:20px 0 8px"><div style="font-size:34px">✅</div><h2 style="color:var(--brand);margin:6px 0">Fully executed</h2><p style="color:#50635a;font-size:13px;margin:0 0 12px">Signed by both parties. Use your browser to Print / Save as PDF for your records.</p><button class="btn" style="max-width:280px" onclick="window.print()">Print / Save PDF</button></div>'+sig;
+    panel.innerHTML='<div style="text-align:center;margin:20px 0 8px"><div style="font-size:34px">✅</div><h2 style="color:var(--brand);margin:6px 0">Fully executed</h2><p style="color:#50635a;font-size:13px;margin:0 0 12px">Signed by both parties. Use your browser to Print / Save as PDF for your records.</p><button class="btn noprint" style="max-width:280px" onclick="window.print()">Print / Save PDF</button></div>'+sig;
   } else {
     sig+='</div>';
     if(MODE==='countersign'){
