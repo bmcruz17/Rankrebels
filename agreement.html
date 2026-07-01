@@ -53,8 +53,8 @@
 <p>A Utah Limited Liability Company</p>
 <p>(&quot;RankRebels&quot; or &quot;Company&quot;)</p>
 <h3 class="sec">CLIENT</h3>
-<p>Business Name: _____________________________</p>
-<p>Contact Name:  _____________________________</p>
+<p>Business Name: <b id="cl-biz">_____________________________</b></p>
+<p>Contact Name:  <b id="cl-contact">_____________________________</b></p>
 <p>(&quot;Client&quot;)</p>
 <p>RankRebels and Client are each referred to herein individually as a &quot;Party&quot; and collectively as the &quot;Parties.&quot;</p>
 <h3 class="sec">SECTION 1 — SERVICES</h3>
@@ -176,7 +176,7 @@
 <p>Date: ________________________________</p>
 <h3 class="sec">CLIENT</h3>
 <p>Signature: ___________________________</p>
-<p>Printed Name: ________________________</p>
+<p>Printed Name: <b id="cl-printed">________________________</b></p>
 <p>Title / Role: ________________________</p>
 <p>Date: ________________________________</p>
 <h3 class="sec">EXHIBIT A — STATEMENT OF WORK &amp; ORDER FORM</h3>
@@ -269,6 +269,9 @@ document.getElementById('s-contact').textContent=(P.contact||'')+(P.email?(' · 
 document.getElementById('s-setup').textContent=money(setupVal);
 document.getElementById('s-monthly').textContent=monthlyVal?(money(monthlyVal)+'/mo'):'—';
 document.getElementById('s-term').textContent = termMonths===0 ? 'Month-to-month' : (termMonths+' months');
+// Auto-fill the client's business & contact name into the agreement body.
+(function(){ function fill(id,val){ var e=document.getElementById(id); if(e&&val){ e.textContent=val; e.style.textDecoration='none'; } }
+  fill('cl-biz', P.biz); fill('cl-contact', P.contact); fill('cl-printed', P.contact); })();
 
 // itemized lines in the summary box
 function lineRows(){
