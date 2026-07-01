@@ -241,6 +241,7 @@
       <div class="msg" id="msg"></div>
       <div class="fine">By typing your name and clicking above, you agree this constitutes a legally binding electronic signature under the E-SIGN Act.</div>
     </div>
+    <div id="cs-panel"></div>
   </div>
   <div class="done" id="done"><div class="big">✅</div><h2>Agreement signed!</h2><p>Thank you — a copy has been recorded and the Rank Rebels team has been notified. The last step is your onboarding deposit, applied straight to your project.</p><div id="pay-next" style="margin-top:14px"></div></div>
 </div></div>
@@ -249,6 +250,8 @@
 var SB_URL='https://eejmocneacfleltspedl.supabase.co';
 var SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVlam1vY25lYWNmbGVsdHNwZWRsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyNDQ3MTMsImV4cCI6MjA5NzgyMDcxM30.dXJTMFp_d9JRlXkesVPCUj6tBi3qphxxOu3v-Cuw7_Y';
 var sb=window.supabase.createClient(SB_URL,SB_KEY);
+var TOKEN=new URLSearchParams(location.search).get('token')||''; var MODE=new URLSearchParams(location.search).get('mode')||'';
+if(TOKEN){ var _f0=document.getElementById('form'); if(_f0) _f0.style.visibility='hidden'; }
 function qp(n){ return new URLSearchParams(location.search).get(n)||''; }
 function money(n){ n=Number(n||0); return n?('$'+n.toLocaleString(undefined,{maximumFractionDigits:2})):'—'; }
 var P={ cid:qp('cid'), biz:qp('b'), contact:qp('c'), email:qp('e'), setup:qp('setup'), monthly:qp('monthly'), plan:qp('plan'), pay:qp('pay') };
@@ -352,13 +355,82 @@ function buildPayNext(){
 }
 async function signAgreement(){
   var btn=document.getElementById('signbtn'); btn.disabled=true; var m=document.getElementById('msg'); m.style.display='none';
+  var snapshot=Object.assign({}, Q||{}, { biz:P.biz, contact:P.contact, email:P.email, setup_total:setupVal, monthly_total:monthlyVal, term_months:termMonths });
   var rec={ client_id:P.cid||null, client_email:P.email||null, business_name:P.biz||null,
     signer_name:document.getElementById('signer').value.trim(),
-    setup_fee:setupVal||null, monthly_fee:monthlyVal||null, terms_version:'MSA-2024 ('+(termMonths===0?'M2M':termMonths+'mo')+')', user_agent:navigator.userAgent.slice(0,300) };
-  var r=await sb.from('rr_agreements').insert(rec);
+    setup_fee:setupVal||null, monthly_fee:monthlyVal||null, terms_version:'MSA-2024 ('+(termMonths===0?'M2M':termMonths+'mo')+')', user_agent:navigator.userAgent.slice(0,300),
+    status:'awaiting_countersign', snapshot:snapshot };
+  var r=await sb.from('rr_agreements').insert(rec).select('token').single();
   if(r.error){ m.textContent='Could not record signature: '+r.error.message+' — please contact sales@rankrebels.ai.'; m.style.display='block'; btn.disabled=false; return; }
   document.getElementById('form').style.display='none'; document.getElementById('done').style.display='block';
   try{ window.scrollTo({top:0,behavior:'smooth'}); }catch(e){ window.scrollTo(0,0); }
   buildPayNext();
+  // Notify Rank Rebels to countersign (server-side email; no-ops until RESEND is configured).
+  try{ if(r.data&&r.data.token) fetch('/api/agreement/notify',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({token:r.data.token})}); }catch(e){}
 }
+
+/* ===================== Countersign / executed-view modes ===================== */
+function renderExhibitAT(Qd, setupV, monthlyV, termM){
+  var ex=document.getElementById('exhibit-a'); if(!ex) return;
+  var rows = Qd&&Qd.lines&&Qd.lines.length
+    ? Qd.lines.map(function(l){ return '<tr><td>'+escTxt(l.label)+'</td><td>'+(l.kind==='mo'?'Monthly':'One-time')+'</td><td style="text-align:right">'+money(l.net)+(l.kind==='mo'?'/mo':'')+'</td></tr>'; }).join('')
+    : '<tr><td>Services as discussed</td><td>—</td><td style="text-align:right">—</td></tr>';
+  var scheduleBlock='';
+  if(Qd&&Qd.schedule&&Qd.schedule.length){
+    scheduleBlock='<p style="margin-top:16px;font-weight:700">Payment Schedule</p><table style="width:100%;border-collapse:collapse;margin:6px 0;font-size:14px"><thead><tr><th style="text-align:left;border-bottom:1px solid #ccc;padding:6px">Due</th><th style="text-align:left;border-bottom:1px solid #ccc;padding:6px">Item</th><th style="text-align:right;border-bottom:1px solid #ccc;padding:6px">Amount</th></tr></thead><tbody>'+Qd.schedule.map(function(s){ return '<tr><td style="padding:6px">'+escTxt(s.when)+'</td><td style="padding:6px">'+escTxt(s.label)+'</td><td style="padding:6px;text-align:right">'+money(s.amount)+'</td></tr>'; }).join('')+'<tr><td colspan="2" style="padding:6px;text-align:right;font-weight:700;border-top:1px solid #ccc">Total</td><td style="padding:6px;text-align:right;font-weight:700;border-top:1px solid #ccc">'+money(Qd.schedule.reduce(function(a,s){return a+Number(s.amount||0);},0))+'</td></tr></tbody></table>';
+  }
+  var termsBlock='';
+  if(Qd&&Qd.terms&&Qd.terms.length){ termsBlock='<p style="margin-top:16px;font-weight:700">Service Terms</p><ul style="margin:6px 0 0;padding-left:20px">'+Qd.terms.map(function(t){ return '<li style="margin-bottom:6px">'+escTxt(t)+'</li>'; }).join('')+'</ul>'; }
+  var overrideBlock = (Qd&&Qd.override) ? '<p style="margin-top:16px"><b>Payment &amp; precedence.</b> '+escTxt(Qd.override)+'</p>' : '';
+  ex.innerHTML='<table style="width:100%;border-collapse:collapse;margin:10px 0;font-size:14px"><thead><tr><th style="text-align:left;border-bottom:1px solid #ccc;padding:6px">Item</th><th style="text-align:left;border-bottom:1px solid #ccc;padding:6px">Type</th><th style="text-align:right;border-bottom:1px solid #ccc;padding:6px">Price</th></tr></thead><tbody>'+rows+'<tr><td colspan="2" style="padding:6px;text-align:right;font-weight:700">One-time total</td><td style="padding:6px;text-align:right;font-weight:700">'+money(setupV)+'</td></tr><tr><td colspan="2" style="padding:6px;text-align:right;font-weight:700">Monthly subscription total</td><td style="padding:6px;text-align:right;font-weight:700">'+money(monthlyV)+'/mo</td></tr><tr><td colspan="2" style="padding:6px;text-align:right">Initial term</td><td style="padding:6px;text-align:right">'+(termM===0?'Month-to-month':termM+' months')+'</td></tr></tbody></table>'+scheduleBlock+termsBlock+overrideBlock;
+}
+if(TOKEN){ (async function(){
+  var card=document.querySelector('.card');
+  var d=null; try{ var rr=await fetch('/api/agreement/get?token='+encodeURIComponent(TOKEN)); d=await rr.json(); }catch(e){ d=null; }
+  if(!d||!d.ok){ if(card) card.innerHTML='<div style="padding:44px 26px;text-align:center;color:#50635a">This agreement link is invalid or has expired.</div>'; return; }
+  var a=d.agreement, snap=a.snapshot||{};
+  var setupV = snap.setup_total!=null?snap.setup_total:(a.setup_fee||0);
+  var monthlyV = snap.monthly_total!=null?snap.monthly_total:(a.monthly_fee||0);
+  var termM = snap.term_months!=null?snap.term_months:6;
+  document.getElementById('s-biz').textContent=a.business_name||'—';
+  document.getElementById('s-contact').textContent=(a.contact_name||snap.contact||'')+(a.client_email?(' · '+a.client_email):'')||'—';
+  document.getElementById('s-setup').textContent=money(setupV);
+  document.getElementById('s-monthly').textContent=monthlyV?(money(monthlyV)+'/mo'):'—';
+  document.getElementById('s-term').textContent=termM===0?'Month-to-month':(termM+' months');
+  document.getElementById('s-items').innerHTML=(snap.lines&&snap.lines.length)?snap.lines.map(function(l){ return '<div class="sumrow"><span class="k">'+escTxt(l.label)+(l.kind==='mo'?' (monthly)':' (one-time)')+'</span><span class="v">'+money(l.net)+(l.kind==='mo'?'/mo':'')+'</span></div>'; }).join(''):'';
+  document.getElementById('s-warranty').innerHTML='';
+  (function(){ function fill(id,val){ var e=document.getElementById(id); if(e&&val){ e.textContent=val; e.style.textDecoration='none'; } } fill('cl-biz', a.business_name); fill('cl-contact', a.contact_name||snap.contact); fill('cl-printed', a.contact_name||snap.contact); })();
+  renderExhibitAT(snap, setupV, monthlyV, termM);
+  var ackEl=document.querySelector('.ack'); if(ackEl) ackEl.style.display='none';
+  var signEl=document.querySelector('.sign'); if(signEl) signEl.style.display='none';
+  var f=document.getElementById('form'); if(f){ f.style.visibility=''; f.style.display=''; }
+  var panel=document.getElementById('cs-panel'); if(!panel) return;
+  var sig='<div class="sumbox" style="margin-top:18px"><div class="sumrow"><span class="k">Client signature</span><span class="v">'+escTxt(a.signer_name||'—')+'</span></div><div class="sumrow"><span class="k">Signed</span><span class="v">'+(a.signed_at?new Date(a.signed_at).toLocaleString():'—')+'</span></div>';
+  if(a.status==='executed'){
+    sig+='<div class="sumrow"><span class="k">Rank Rebels signature</span><span class="v">'+escTxt(a.countersigned_by||'—')+'</span></div><div class="sumrow"><span class="k">Countersigned</span><span class="v">'+(a.countersigned_at?new Date(a.countersigned_at).toLocaleString():'—')+'</span></div></div>';
+    panel.innerHTML='<div style="text-align:center;margin:20px 0 8px"><div style="font-size:34px">✅</div><h2 style="color:var(--brand);margin:6px 0">Fully executed</h2><p style="color:#50635a;font-size:13px;margin:0 0 12px">Signed by both parties. Use your browser to Print / Save as PDF for your records.</p><button class="btn" style="max-width:280px" onclick="window.print()">Print / Save PDF</button></div>'+sig;
+  } else {
+    sig+='</div>';
+    if(MODE==='countersign'){
+      var sess=null; try{ sess=(await sb.auth.getSession()).data.session; }catch(e){}
+      if(!sess){
+        panel.innerHTML=sig+'<div class="sign" style="margin-top:16px"><p style="margin:0 0 10px;color:#50635a;font-size:14px">Sign in to your Rank Rebels dashboard first, then reopen this link to countersign.</p><a class="btn" style="max-width:300px;text-decoration:none;text-align:center;display:block" href="/dashboard.html">Go to dashboard →</a></div>';
+      } else {
+        panel.innerHTML=sig+'<div class="sign" style="margin-top:16px"><label>Countersign for RankRebels.AI LLC — type your full legal name</label><input type="text" id="cs-name" placeholder="Your full name" autocomplete="name"><label style="display:flex;gap:10px;align-items:flex-start;font-size:13.5px;margin:10px 0;cursor:pointer"><input type="checkbox" id="cs-ack" style="margin-top:3px;width:16px;height:16px;accent-color:var(--brand)"> I countersign this Agreement on behalf of RankRebels.AI LLC and agree to be bound by its terms.</label><button class="btn" id="cs-btn" disabled>Countersign &amp; Execute</button><div class="msg" id="cs-msg"></div></div>';
+        var csName=document.getElementById('cs-name'), csAck=document.getElementById('cs-ack'), csBtn=document.getElementById('cs-btn');
+        var csCheck=function(){ csBtn.disabled=!(csAck.checked&&csName.value.trim().length>1); };
+        csName.addEventListener('input',csCheck); csAck.addEventListener('change',csCheck);
+        csBtn.onclick=async function(){ csBtn.disabled=true; var m=document.getElementById('cs-msg'); m.style.display='none';
+          try{ var resp=await fetch('/api/agreement/countersign',{method:'POST',headers:{'content-type':'application/json','authorization':'Bearer '+sess.access_token},body:JSON.stringify({token:TOKEN,name:csName.value.trim()})}); var jd=await resp.json();
+            if(!resp.ok||!jd.ok){ m.textContent=(jd&&jd.error)||'Could not countersign.'; m.style.display='block'; csBtn.disabled=false; return; }
+            location.href='/agreement.html?token='+encodeURIComponent(TOKEN)+'&mode=view';
+          }catch(e){ m.textContent='Network error — please try again.'; m.style.display='block'; csBtn.disabled=false; }
+        };
+      }
+    } else {
+      panel.innerHTML=sig+'<div style="text-align:center;color:#50635a;margin-top:14px;font-size:14px">Awaiting Rank Rebels countersignature.</div>';
+    }
+  }
+  try{ window.scrollTo(0,0); }catch(e){}
+})(); }
 </script></body></html>
