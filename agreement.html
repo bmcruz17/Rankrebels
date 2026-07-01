@@ -297,13 +297,31 @@ if(Q&&Q.warranty){
   var warrantyClause = Q&&Q.warranty
     ? '<p style="margin-top:12px"><b>Bumper-to-Bumper Warranty ('+termLabel+' term).</b> For the duration of the initial term, Client receives unlimited support and adjustments to the delivered website and services at no additional charge'+(termMonths>=24?', plus preferred discounts on custom add-on features that RankRebels can vertically integrate into the existing build.':'.')+' This warranty applies to maintenance, content updates, and reasonable adjustments; net-new scope outside the items below may be quoted separately.</p>'
     : '<p style="margin-top:12px"><b>Month-to-month service.</b> No long-term commitment; either party may cancel with notice as described above. Standard support applies; the extended warranty benefits apply only to 1- or 2-year terms.</p>';
+  // When explicit Service Terms are supplied, they replace the generic warranty boilerplate.
+  var warrantyOut = (Q&&Q.terms&&Q.terms.length) ? '' : warrantyClause;
+  // Optional Payment Schedule (deposit + installments) — states the actual, financed terms.
+  var scheduleBlock='';
+  if(Q&&Q.schedule&&Q.schedule.length){
+    scheduleBlock='<p style="margin-top:16px;font-weight:700">Payment Schedule</p>'+
+      '<table style="width:100%;border-collapse:collapse;margin:6px 0;font-size:14px"><thead><tr><th style="text-align:left;border-bottom:1px solid #ccc;padding:6px">Due</th><th style="text-align:left;border-bottom:1px solid #ccc;padding:6px">Item</th><th style="text-align:right;border-bottom:1px solid #ccc;padding:6px">Amount</th></tr></thead><tbody>'+
+      Q.schedule.map(function(s){ return '<tr><td style="padding:6px">'+escTxt(s.when)+'</td><td style="padding:6px">'+escTxt(s.label)+'</td><td style="padding:6px;text-align:right">'+money(s.amount)+'</td></tr>'; }).join('')+
+      '<tr><td colspan="2" style="padding:6px;text-align:right;font-weight:700;border-top:1px solid #ccc">Total</td><td style="padding:6px;text-align:right;font-weight:700;border-top:1px solid #ccc">'+money(Q.schedule.reduce(function(a,s){return a+Number(s.amount||0);},0))+'</td></tr>'+
+      '</tbody></table>';
+  }
+  // Optional Service Terms (SLAs, hourly rates) — the actual service levels from the proposal.
+  var termsBlock='';
+  if(Q&&Q.terms&&Q.terms.length){
+    termsBlock='<p style="margin-top:16px;font-weight:700">Service Terms</p><ul style="margin:6px 0 0;padding-left:20px">'+Q.terms.map(function(t){ return '<li style="margin-bottom:6px">'+escTxt(t)+'</li>'; }).join('')+'</ul>';
+  }
+  // Optional precedence clause so Exhibit A controls over the generic body (e.g. Sections 2.1/2.2).
+  var overrideBlock = (Q&&Q.override) ? '<p style="margin-top:16px"><b>Payment &amp; precedence.</b> '+escTxt(Q.override)+'</p>' : '';
   ex.innerHTML='<table style="width:100%;border-collapse:collapse;margin:10px 0;font-size:14px">'+
     '<thead><tr><th style="text-align:left;border-bottom:1px solid #ccc;padding:6px">Item</th><th style="text-align:left;border-bottom:1px solid #ccc;padding:6px">Type</th><th style="text-align:right;border-bottom:1px solid #ccc;padding:6px">Price</th></tr></thead><tbody>'+
     rows+
-    '<tr><td colspan="2" style="padding:6px;text-align:right;font-weight:700">One-time setup total</td><td style="padding:6px;text-align:right;font-weight:700">'+money(setupVal)+'</td></tr>'+
+    '<tr><td colspan="2" style="padding:6px;text-align:right;font-weight:700">One-time total</td><td style="padding:6px;text-align:right;font-weight:700">'+money(setupVal)+'</td></tr>'+
     '<tr><td colspan="2" style="padding:6px;text-align:right;font-weight:700">Monthly subscription total</td><td style="padding:6px;text-align:right;font-weight:700">'+money(monthlyVal)+'/mo</td></tr>'+
     '<tr><td colspan="2" style="padding:6px;text-align:right">Initial term</td><td style="padding:6px;text-align:right">'+(termMonths===0?'Month-to-month':termMonths+' months')+'</td></tr>'+
-    '</tbody></table>'+warrantyClause;
+    '</tbody></table>'+warrantyOut+scheduleBlock+termsBlock+overrideBlock;
 })();
 
 // dynamic acknowledgement text
