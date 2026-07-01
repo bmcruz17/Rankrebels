@@ -10,7 +10,7 @@
 
 const SUPABASE_URL = 'https://eejmocneacfleltspedl.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVlam1vY25lYWNmbGVsdHNwZWRsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyNDQ3MTMsImV4cCI6MjA5NzgyMDcxM30.dXJTMFp_d9JRlXkesVPCUj6tBi3qphxxOu3v-Cuw7_Y';
-const TEAM = ['brandonmcruz@mac.com', 'eric.paul.ellsworth@gmail.com', 'brandon@rankrebels.ai', 'eric@rankrebels.ai'];
+const TEAM = ['brandon@rankrebels.ai', 'brandonmcruz@mac.com'];
 
 function json(obj, status) {
   return new Response(JSON.stringify(obj), { status: status || 200, headers: { 'content-type': 'application/json' } });
@@ -23,7 +23,7 @@ async function verifyTeam(token) {
     const u = await r.json();
     const email = (u && u.email || '').toLowerCase();
     if (!email) return null;
-    return (TEAM.indexOf(email) >= 0 || email.endsWith('@rankrebels.ai')) ? email : null;
+    return (TEAM.indexOf(email) >= 0) ? email : null;
   } catch (e) { return null; }
 }
 

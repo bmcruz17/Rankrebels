@@ -8,7 +8,7 @@
 //   (returns {ok:true, demo:true}) so the form still shows success and never errors.
 // Optional env: RESEND_FROM (default 'Rank Rebels <sales@rankrebels.ai>'),
 //               LEAD_NOTIFY (comma-separated owner addresses that always get a copy /
-//                            the intake answers; default 'brandon@rankrebels.ai,eric@rankrebels.ai'),
+//                            the intake answers; default 'brandon@rankrebels.ai'),
 //               DEMO_BCC (an extra address to copy on every submission).
 //
 // Two paths:
@@ -33,7 +33,7 @@ export async function onRequestPost({ request, env }) {
   const kind = b.source === 'booking' ? 'booking request' : 'quote request';
   const cta = /^https:\/\//.test(b.cta || '') ? b.cta : 'https://rankrebels.ai';
   const brand = String(b.brand || 'your site').trim().slice(0, 120);
-  const owners = String(env.LEAD_NOTIFY || 'brandon@rankrebels.ai,eric@rankrebels.ai')
+  const owners = String(env.LEAD_NOTIFY || 'brandon@rankrebels.ai')
     .split(',').map((s) => s.trim()).filter(Boolean);
   const from = env.RESEND_FROM || 'Rank Rebels <sales@rankrebels.ai>';
 
