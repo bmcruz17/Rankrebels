@@ -1,0 +1,905 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script>/* Shared links always open at the top, even if the copied URL has a #section hash. */
+if(location.hash){try{history.replaceState(null,'',location.pathname+location.search);}catch(e){}}
+if('scrollRestoration' in history)history.scrollRestoration='manual';</script>
+<title>Realty by the Sea × Rank Rebels — Website + Owner Command Center Proposal</title>
+<meta name="description" content="A private proposal for Gloria Almendares of Realty by the Sea: a beautiful coastal website that lists your properties, plus one calm command center that tracks rent, expenses, vendor due dates, and reads your inbox — built for how you run windward Oʻahu.">
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="/og/gloria-icon.png">
+<link rel="apple-touch-icon" href="/og/gloria-icon.png">
+<!-- Link preview -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Realty by the Sea × Rank Rebels — Website + Owner Command Center">
+<meta property="og:description" content="A coastal website that lists your homes, plus one calm dashboard for rent, expenses, vendor due dates, and your inbox. Built for Gloria.">
+<meta property="og:url" content="https://rankrebels.ai/realtybythesea.html">
+<meta property="og:site_name" content="Rank Rebels">
+<meta property="og:image" content="https://rankrebels.ai/og/gloria-v1.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Realty by the Sea × Rank Rebels — Website + Owner Command Center">
+<meta name="twitter:description" content="A coastal website that lists your homes, plus one calm dashboard for rent, expenses, vendor dates, and your inbox.">
+<meta name="twitter:image" content="https://rankrebels.ai/og/gloria-v1.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#062b33;--bg-2:#083640;--bg-3:#0b4551;--panel:#0a3d48;
+  --teal:#2aa5bd;--teal-d:#1c7f92;--teal-l:#5fcadd;--teal-2:#8adcea;
+  --coral:#f0956f;--coral-d:#d9714a;
+  --gold:#e6b552;--sand:#f3ead9;
+  --line:rgba(120,190,205,.16);--line-2:rgba(120,190,205,.3);
+  --text:#eaf6f7;--muted:#9fc4cc;--muted-2:#79a6b0;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;color:var(--text);line-height:1.6;background:var(--bg);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+h1,h2,h3,h4,.disp{font-family:'Fraunces','Inter',serif;letter-spacing:-.01em}
+.wrap{max-width:1140px;margin:0 auto;padding:0 24px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;background:var(--teal);color:#04222a;font-weight:700;font-size:15.5px;padding:14px 26px;border-radius:12px;box-shadow:0 14px 30px -12px rgba(42,165,189,.6);transition:transform .15s,background .15s;border:0;cursor:pointer;font-family:inherit}
+.btn:hover{transform:translateY(-2px)}
+.btn.coral{background:var(--coral);color:#3a1608;box-shadow:0 14px 30px -12px rgba(240,149,111,.6)}
+.btn.coral:hover{background:var(--coral-d)}
+.btn.gold{background:var(--gold);color:#3a2a06;box-shadow:0 14px 30px -12px rgba(230,181,82,.55)}
+.btn.o{background:rgba(255,255,255,.06);border:1px solid var(--line-2);box-shadow:none;color:#fff}
+.btn.o:hover{background:rgba(255,255,255,.12)}
+.glow{position:absolute;border-radius:50%;filter:blur(80px);opacity:.5;pointer-events:none}
+/* ribbon */
+.ribbon{background:#04212a;color:#cfe9ee;text-align:center;font-size:12.5px;font-weight:500;padding:8px 16px;border-bottom:1px solid var(--line)}
+.ribbon b{color:var(--teal-l)}
+/* nav */
+.nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:rgba(6,43,51,.82);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:11px;font-family:'Fraunces',serif;font-weight:700;font-size:17px;color:#fff}
+.brand .logo{width:42px;height:42px;border-radius:12px;background:linear-gradient(140deg,#0a3d48,#2aa5bd);display:grid;place-items:center;border:1px solid var(--line-2)}
+.brand small{display:block;font-size:10px;font-weight:500;color:var(--muted);letter-spacing:.05em;font-family:'Inter',sans-serif}
+.nav .links{display:flex;gap:22px;font-size:14px;font-weight:600;color:var(--muted)}
+.nav .links a:hover{color:var(--teal-l)}
+@media(max-width:940px){.nav .links{display:none}}
+.logo svg{width:24px;height:24px}
+/* hero */
+.hero{position:relative;overflow:hidden;padding:88px 0 84px;background:radial-gradient(120% 120% at 78% -10%,#1f8497 0%,#0b4551 44%,#062b33 80%)}
+.hero .g1{width:520px;height:520px;background:#2aa5bd;left:-120px;top:-160px}
+.hero .g2{width:420px;height:420px;background:var(--coral);right:-120px;bottom:-180px;opacity:.28}
+.hero-in{position:relative;max-width:790px}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--teal-l);background:rgba(95,202,221,.1);border:1px solid rgba(95,202,221,.3);padding:7px 14px;border-radius:999px;margin-bottom:22px}
+.hero h1{font-size:clamp(34px,5.6vw,60px);font-weight:600;line-height:1.05;color:#fff}
+.hero h1 em{font-style:normal;color:var(--teal-l)}
+.hero .sub{font-size:clamp(16px,2.1vw,20px);margin-top:20px;max-width:62ch;color:#d6ecef}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;margin-top:32px}
+.hero-note{margin-top:22px;font-size:13px;color:var(--muted)}
+.wave{position:absolute;left:0;right:0;bottom:-1px;width:100%;height:54px;display:block}
+/* sections */
+section{padding:78px 0;position:relative}
+.kick{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--teal-l);font-weight:700;margin-bottom:13px}
+h2{font-size:clamp(26px,3.6vw,40px);font-weight:600;line-height:1.14;color:#fff}
+.lead{font-size:17px;color:var(--muted);max-width:66ch;margin-top:14px}
+.center{text-align:center;margin:0 auto}.center .lead{margin-left:auto;margin-right:auto}
+/* understand / stats */
+.understand{background:var(--bg-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.see-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:34px}
+@media(max-width:760px){.see-grid{grid-template-columns:1fr}}
+.see{background:var(--bg-3);border:1px solid var(--line);border-radius:16px;padding:24px}
+.see h3{font-size:18px;color:#fff;margin-bottom:8px;display:flex;gap:9px;align-items:center;font-weight:600}
+.see p{font-size:14px;color:var(--muted)}
+.see.problem h3 .d{color:var(--coral)}.see.fix h3 .d{color:var(--teal-l)}
+.see ul{margin:10px 0 0;padding-left:2px;list-style:none}
+.see li{font-size:13.5px;color:var(--muted);padding-left:22px;position:relative;margin-bottom:7px;line-height:1.5}
+.see.problem li:before{content:"—";position:absolute;left:0;color:var(--coral)}
+.see.fix li:before{content:"✓";position:absolute;left:0;color:var(--teal-l);font-weight:700}
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:38px}
+@media(max-width:760px){.stat-row{grid-template-columns:1fr 1fr}}
+.stat{background:linear-gradient(160deg,var(--bg-3),var(--bg-2));border:1px solid var(--line);border-radius:16px;padding:22px}
+.stat .n{font-family:'Fraunces',serif;font-size:clamp(24px,3vw,34px);font-weight:700;color:var(--teal-l)}
+.stat .l{font-size:12.5px;color:var(--muted);margin-top:5px;line-height:1.4}
+/* interactive showcase frame */
+.frontdoor{background:var(--bg)}
+.ba-wrap{text-align:center;margin-bottom:22px}
+.ba-toggle{display:inline-flex;gap:4px;background:var(--bg-3);border:1px solid var(--line);border-radius:12px;padding:5px}
+.ba-toggle button{font:inherit;font-size:13px;font-weight:700;color:var(--muted);background:transparent;border:0;padding:9px 18px;border-radius:9px;cursor:pointer;transition:all .15s}
+.ba-toggle button.on{background:var(--teal);color:#04222a}
+.bw-screen{display:none}
+.bw-screen.on{display:block;animation:fade .35s ease}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.bw{max-width:960px;margin:0 auto;border-radius:16px;overflow:hidden;border:1px solid var(--line-2);box-shadow:0 50px 110px -42px rgba(0,0,0,.85);background:#052129;position:relative}
+.bw-bar{display:flex;align-items:center;gap:8px;padding:11px 14px;background:#083440;border-bottom:1px solid var(--line)}
+.bw-bar i{width:11px;height:11px;border-radius:50%;background:rgba(255,255,255,.18)}
+.bw-bar .url{margin-left:10px;flex:1;font-size:11.5px;color:var(--muted);background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:7px;padding:5px 12px;display:flex;align-items:center;gap:7px}
+.bw-bar .url b{color:var(--teal-2);font-weight:600}
+/* live site nav */
+.bwn{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-bottom:1px solid rgba(255,255,255,.06)}
+.bwn .lg{font-family:'Fraunces',serif;font-weight:700;color:#fff;font-size:15px;display:flex;align-items:center;gap:8px}
+.bwn .lg svg{width:20px;height:20px}
+.bwn .lk{display:flex;gap:18px}
+.bwn .lk span{font-size:12.5px;color:#c7dee2;cursor:pointer;transition:color .12s}
+.bwn .lk span:hover{color:var(--teal-l)}
+.bwn .cta{font-size:12px;font-weight:700;background:var(--coral);color:#3a1608;padding:8px 14px;border-radius:8px;cursor:pointer}
+@media(max-width:680px){.bwn .lk{display:none}}
+/* in-frame tabs */
+.bwtabs{display:flex;gap:6px;overflow-x:auto;padding:11px 14px;border-bottom:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02)}
+.bwtabs button{font:inherit;font-size:11.5px;font-weight:700;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:999px;padding:7px 13px;cursor:pointer;white-space:nowrap;flex:0 0 auto;transition:all .12s}
+.bwtabs button:hover{border-color:var(--teal);color:#fff}
+.bwtabs button.on{background:var(--teal);color:#04222a;border-color:var(--teal)}
+.pane{display:none}.pane.on{display:block;animation:fade .3s ease}
+/* home hero inside frame */
+.bwh{padding:44px 26px 38px;text-align:center;background:radial-gradient(120% 120% at 72% 0%,#166173 0%,#0a4250 55%,#052129 100%);position:relative}
+.bwh .tag{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--teal-l);font-weight:700}
+.bwh h3{font-family:'Fraunces',serif;font-size:clamp(22px,4.4vw,34px);color:#fff;line-height:1.14;margin:12px auto 10px;max-width:18ch;font-weight:600}
+.bwh h3 em{font-style:normal;color:var(--teal-l)}
+.bwh p{font-size:13px;color:#cfe4e8;max-width:50ch;margin:0 auto 18px;line-height:1.55}
+.bwsearch{display:flex;gap:8px;max-width:420px;margin:0 auto;background:rgba(255,255,255,.06);border:1px solid var(--line-2);border-radius:12px;padding:6px}
+.bwsearch input{flex:1;background:transparent;border:0;color:#fff;font:inherit;font-size:13px;padding:8px 12px;outline:none}
+.bwsearch input::placeholder{color:var(--muted-2)}
+.bwsearch button{background:var(--coral);color:#3a1608;font-weight:700;font-size:12.5px;border:0;border-radius:9px;padding:9px 16px;cursor:pointer}
+.bws{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.02)}
+.bws>div{padding:16px 10px;text-align:center;border-right:1px solid rgba(255,255,255,.06)}
+.bws>div:last-child{border-right:0}
+.bws .n{font-family:'Fraunces',serif;font-size:19px;font-weight:700;color:var(--teal-l)}
+.bws .l{font-size:10px;color:var(--muted);margin-top:3px;line-height:1.3}
+@media(max-width:680px){.bws{grid-template-columns:1fr 1fr}.bws>div:nth-child(2){border-right:0}}
+/* listing grid */
+.lgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:22px}
+@media(max-width:760px){.lgrid{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.lgrid{grid-template-columns:1fr}}
+.lcard{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:13px;overflow:hidden;cursor:pointer;transition:transform .14s,border-color .14s}
+.lcard:hover{transform:translateY(-3px);border-color:var(--teal)}
+.lcard .lim{height:104px;position:relative;display:flex;align-items:flex-start;justify-content:space-between;padding:10px}
+.lcard .lim.a{background:linear-gradient(135deg,#1f8497,#0e4d5c)}
+.lcard .lim.b{background:linear-gradient(135deg,#d9714a,#8a3d28)}
+.lcard .lim.c{background:linear-gradient(135deg,#2aa5bd,#146073)}
+.lcard .lim.d{background:linear-gradient(135deg,#e6b552,#a97d1e)}
+.lcard .lim.e{background:linear-gradient(135deg,#5fcadd,#1c7f92)}
+.lcard .lim.f{background:linear-gradient(135deg,#7a9c6b,#3f5a34)}
+.lcard .badge{font-size:9.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:4px 9px;border-radius:999px;background:rgba(5,33,41,.72);color:#fff}
+.lcard .badge.rent{background:rgba(240,149,111,.9);color:#3a1608}
+.lcard .badge.land{background:rgba(230,181,82,.92);color:#3a2a06}
+.lcard .fav{width:26px;height:26px;border-radius:50%;background:rgba(5,33,41,.6);display:grid;place-items:center;font-size:13px}
+.lcard .lb{padding:12px 14px}
+.lcard .lp{font-family:'Fraunces',serif;font-size:17px;font-weight:700;color:#fff}
+.lcard .la{font-size:12px;color:var(--muted);margin-top:2px}
+.lcard .lm{display:flex;gap:12px;margin-top:9px;font-size:11px;color:var(--teal-2);font-weight:600}
+/* generic demo forms */
+.demo{padding:22px 24px 30px}
+.demo .dh{font-family:'Fraunces',serif;font-size:19px;color:#fff;font-weight:600}
+.demo .ds{font-size:12.5px;color:var(--muted);margin:4px 0 18px;line-height:1.5}
+.dform{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:560px){.dform{grid-template-columns:1fr}}
+.dform label{display:block;font-size:11px;color:var(--muted);font-weight:600;margin-bottom:5px}
+.dform input,.dform select,.dform textarea{width:100%;padding:10px 12px;border:1px solid var(--line-2);border-radius:9px;background:rgba(255,255,255,.03);color:var(--text);font:inherit;font-size:13px}
+.dform input:focus,.dform textarea:focus,.dform select:focus{outline:none;border-color:var(--teal)}
+.dform .full{grid-column:1/-1}
+.dbtn{background:var(--teal);color:#04222a;font-weight:700;font-size:13px;padding:11px 18px;border-radius:9px;border:0;cursor:pointer;font-family:inherit}
+.dbtn:hover{background:var(--teal-l)}
+.dbtn.coral{background:var(--coral);color:#3a1608}
+.dbtn.coral:hover{background:var(--coral-d)}
+.dok{display:none;background:rgba(95,202,157,.1);border:1px solid rgba(95,202,157,.35);color:#9fe6c2;border-radius:10px;padding:13px 14px;font-size:12.5px;margin-top:14px;line-height:1.5}
+.dok.on{display:block;animation:fade .3s}
+.dtiny{font-size:11px;color:var(--muted-2);margin-top:12px;text-align:center}
+/* published card preview */
+.pubprev{display:none;margin-top:16px;background:rgba(255,255,255,.03);border:1px solid var(--teal);border-radius:13px;overflow:hidden;max-width:280px}
+.pubprev.on{display:block;animation:fade .35s}
+.pubprev .lim{height:96px;background:linear-gradient(135deg,#1f8497,#0e4d5c);display:flex;align-items:flex-start;justify-content:space-between;padding:10px}
+/* owner portal login */
+.roletog{display:flex;gap:6px;background:var(--bg-3);border:1px solid var(--line);border-radius:11px;padding:4px;max-width:360px;margin:0 auto 16px}
+.roletog button{flex:1;font:inherit;font-size:12.5px;font-weight:700;color:var(--muted);background:transparent;border:0;padding:9px 10px;border-radius:8px;cursor:pointer}
+.roletog button.on{background:var(--teal);color:#04222a}
+.loginbox{max-width:340px;margin:0 auto;text-align:center}
+.loginbox .lk2{width:48px;height:48px;border-radius:14px;background:rgba(95,202,221,.12);border:1px solid rgba(95,202,221,.3);display:grid;place-items:center;font-size:22px;margin:0 auto 14px}
+.loginbox input{width:100%;padding:11px 13px;border:1px solid var(--line-2);border-radius:9px;background:rgba(255,255,255,.03);color:var(--text);font:inherit;font-size:13px;margin-bottom:10px}
+.loginbox .dbtn{width:100%}
+.loginhint{font-size:11px;color:var(--muted);text-align:center;margin-top:12px}
+/* owner dashboard */
+.dash{padding:20px 22px 28px}
+.dash-hi{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.dash-hi .who{font-family:'Fraunces',serif;font-size:18px;color:#fff;font-weight:600}
+.dash-hi .sub{font-size:12px;color:var(--muted);margin-top:2px}
+.dash-hi .badge{font-size:10.5px;font-weight:700;color:#9fe6c2;background:rgba(95,202,157,.12);border:1px solid rgba(95,202,157,.3);padding:6px 11px;border-radius:999px}
+.money{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+@media(max-width:640px){.money{grid-template-columns:1fr 1fr}}
+.money .m{border-radius:13px;padding:15px;border:1px solid var(--line);background:rgba(255,255,255,.03)}
+.money .m .ml{font-size:11px;color:var(--muted);font-weight:600}
+.money .m .mn{font-family:'Fraunces',serif;font-size:23px;font-weight:700;margin-top:4px}
+.money .m.in .mn{color:#7fe0b0}.money .m.out .mn{color:var(--coral)}.money .m.net .mn{color:var(--teal-l)}.money .m.due .mn{color:var(--gold)}
+.money .m .md{font-size:10.5px;color:var(--muted-2);margin-top:3px}
+.dcols{display:grid;grid-template-columns:1.25fr .95fr;gap:14px}
+@media(max-width:720px){.dcols{grid-template-columns:1fr}}
+.dpanel{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:13px;padding:15px}
+.dpanel h4{font-size:12px;color:#fff;font-weight:700;margin-bottom:11px;display:flex;justify-content:space-between;align-items:center}
+.dpanel h4 .lnk{font-size:10.5px;color:var(--teal-l);font-weight:700;cursor:pointer}
+.prow{display:flex;align-items:center;gap:11px;padding:9px 0;border-top:1px solid rgba(255,255,255,.05)}
+.prow:first-of-type{border-top:0}
+.prow .pth{width:34px;height:34px;border-radius:9px;flex:0 0 auto}
+.prow .pth.a{background:linear-gradient(135deg,#1f8497,#0e4d5c)}.prow .pth.b{background:linear-gradient(135deg,#d9714a,#8a3d28)}.prow .pth.c{background:linear-gradient(135deg,#e6b552,#a97d1e)}
+.prow .pi{flex:1;min-width:0}
+.prow .pn{font-size:12.5px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prow .px{font-size:11px;color:var(--muted);margin-top:1px}
+.prow .pv{font-size:12.5px;font-weight:700;text-align:right;white-space:nowrap}
+.prow .pv.g{color:#7fe0b0}.prow .pv.r{color:var(--coral)}
+.tag2{font-size:9.5px;font-weight:800;padding:3px 8px;border-radius:999px;white-space:nowrap}
+.tag2.paid{background:rgba(95,202,157,.16);color:#7fe0b0}.tag2.due{background:rgba(230,181,82,.16);color:var(--gold)}.tag2.late{background:rgba(240,149,111,.16);color:var(--coral)}
+.tlist .trow{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-top:1px solid rgba(255,255,255,.05)}
+.tlist .trow:first-child{border-top:0}
+.tlist .td{font-size:9.5px;color:var(--teal-l);font-weight:800;text-transform:uppercase;width:52px;flex:0 0 auto;padding-top:2px}
+.tlist .tt{font-size:12px;color:#fff;font-weight:600}.tlist .tx{font-size:11px;color:var(--muted);margin-top:1px}
+/* ask claude chat */
+.chatwrap{max-width:520px;margin:0 auto}
+.chat{display:flex;flex-direction:column;gap:9px;max-height:280px;overflow:auto;padding:4px 2px 8px}
+.bub{max-width:84%;font-size:12.5px;line-height:1.5;padding:10px 13px;border-radius:13px}
+.bub.u{align-self:flex-end;background:var(--teal);color:#04222a;border-bottom-right-radius:4px;font-weight:500}
+.bub.a{align-self:flex-start;background:rgba(255,255,255,.05);border:1px solid var(--line);color:#dbeef2;border-bottom-left-radius:4px}
+.bub.a b{color:#fff}
+.chatin{display:flex;gap:8px;margin-top:10px}
+.chatin input{flex:1;padding:11px 13px;border:1px solid var(--line-2);border-radius:10px;background:rgba(255,255,255,.03);color:var(--text);font:inherit;font-size:13px}
+.chatin input:focus{outline:none;border-color:var(--teal)}
+.chatin button{background:var(--teal);color:#04222a;font-weight:700;border:0;border-radius:10px;padding:0 16px;cursor:pointer}
+.chips-row{display:flex;flex-wrap:wrap;gap:6px;margin:0 auto 12px;max-width:520px;justify-content:center}
+.chips-row button{font:inherit;font-size:11px;color:var(--teal-l);background:rgba(95,202,221,.1);border:1px solid rgba(95,202,221,.3);border-radius:999px;padding:6px 11px;cursor:pointer}
+.chips-row button:hover{background:rgba(95,202,221,.2)}
+/* old / today site */
+.old{background:#eef1ef;min-height:520px}
+.old-top{background:#3a4a52;color:#cdd6da;padding:14px 22px;display:flex;justify-content:space-between;align-items:center;font-family:Arial,sans-serif}
+.old-top .ol{font-weight:700;font-size:16px;color:#fff;font-family:Georgia,serif}
+.old-top .om{font-size:11px;color:#9fb0b6}
+.old-nav{background:#4a5c64;padding:9px 22px;display:flex;gap:16px;font-size:12px;color:#b6c4ca;font-family:Arial,sans-serif}
+.old-hero{padding:34px 22px 24px;text-align:center}
+.old-hero .imgph{width:100%;max-width:420px;height:120px;background:repeating-linear-gradient(45deg,#dfe3e2,#dfe3e2 10px,#e9edeb 10px,#e9edeb 20px);border:1px solid #ccc;margin:0 auto 18px;display:flex;align-items:center;justify-content:center;color:#9aa4a2;font-size:12px;font-family:Arial,sans-serif}
+.old-hero h3{font-size:23px;color:#3a4a52;margin-bottom:8px;font-family:Georgia,serif}
+.old-hero p{font-size:13px;color:#6b7579;max-width:52ch;margin:0 auto 14px;line-height:1.55;font-family:Georgia,serif}
+.old-hero .phone{font-size:15px;color:#1c6f8b;font-weight:700;font-family:Arial,sans-serif}
+.old-cols{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;padding:8px 22px 22px;font-family:Arial,sans-serif}
+@media(max-width:680px){.old-cols{grid-template-columns:1fr}}
+.old-cols .oc{font-size:12px;color:#5a6468;line-height:1.5}.old-cols .oc b{display:block;color:#3a4a52;font-size:13px;margin-bottom:5px}
+.old-flags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:4px 22px 26px}
+.old-flag{font-size:11px;color:#a23b2e;background:#fbe9e6;border:1px solid #f1cdc7;border-radius:6px;padding:5px 10px;font-family:Arial,sans-serif}
+.old-foot{background:#3a4a52;color:#8b989e;font-size:10.5px;padding:13px 22px;text-align:center;font-family:Arial,sans-serif}
+/* dream / features */
+.dream{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:34px}
+@media(max-width:880px){.dream{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.dream{grid-template-columns:1fr}}
+.dream .c{background:linear-gradient(165deg,var(--bg-3),var(--bg-2));border:1px solid var(--line);border-radius:14px;padding:19px;transition:transform .15s,border-color .15s}
+.dream .c:hover{transform:translateY(-3px);border-color:var(--teal)}
+.dream .c .ic{width:40px;height:40px;border-radius:11px;background:rgba(95,202,221,.12);border:1px solid rgba(95,202,221,.28);display:grid;place-items:center;margin-bottom:12px}
+.dream .c .ic svg{width:21px;height:21px;fill:none;stroke:var(--teal-l);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.dream .c b{display:block;font-size:15px;color:#fff;font-family:'Fraunces',serif;font-weight:600}
+.dream .c p{font-size:12.5px;color:var(--muted);margin-top:6px;line-height:1.55}
+/* build phases */
+.phases{background:var(--bg-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.plist{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:34px}
+@media(max-width:860px){.plist{grid-template-columns:1fr}}
+.pcard{background:var(--bg-3);border:1px solid var(--line);border-radius:16px;padding:22px;position:relative}
+.pcard .pnum{font-family:'Fraunces',serif;font-size:13px;font-weight:700;color:#04222a;background:var(--teal-l);width:30px;height:30px;border-radius:9px;display:grid;place-items:center;margin-bottom:13px}
+.pcard h3{font-size:17px;color:#fff;font-weight:600;margin-bottom:4px}
+.pcard .pw{font-size:11px;color:var(--teal-l);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:11px}
+.pcard ul{list-style:none;margin:0;padding:0}
+.pcard li{font-size:13px;color:var(--muted);padding-left:20px;position:relative;margin-bottom:7px;line-height:1.5}
+.pcard li:before{content:"✓";position:absolute;left:0;color:var(--teal);font-weight:700}
+/* investment */
+.invest{position:relative;overflow:hidden}
+.inv-card{max-width:720px;margin:34px auto 0;background:linear-gradient(165deg,var(--bg-3),var(--bg-2));border:1px solid var(--line-2);border-radius:20px;overflow:hidden;box-shadow:0 40px 90px -46px rgba(0,0,0,.8)}
+.inv-top{padding:26px 28px;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+.inv-top .t{font-family:'Fraunces',serif;font-size:20px;color:#fff;font-weight:600}
+.inv-top .s{font-size:13px;color:var(--muted);margin-top:4px;max-width:42ch}
+.inv-price{text-align:right}
+.inv-price .big{font-family:'Fraunces',serif;font-size:38px;font-weight:700;color:var(--teal-l);line-height:1}
+.inv-price .u{font-size:12px;color:var(--muted);margin-top:4px}
+.inv-body{padding:24px 28px}
+.inv-rows{display:grid;gap:11px}
+.inv-rows .r{display:flex;justify-content:space-between;gap:14px;font-size:13.5px;color:var(--muted);padding-bottom:11px;border-bottom:1px solid rgba(255,255,255,.05)}
+.inv-rows .r b{color:#fff;font-weight:600}
+.inv-rows .r .v{color:var(--teal-l);font-weight:700;white-space:nowrap}
+.inv-split{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}
+@media(max-width:560px){.inv-split{grid-template-columns:1fr}}
+.inv-split .box{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:13px;padding:16px}
+.inv-split .box .bl{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.inv-split .box .bn{font-family:'Fraunces',serif;font-size:24px;color:#fff;font-weight:700;margin-top:6px}
+.inv-split .box .bx{font-size:11.5px;color:var(--muted);margin-top:5px;line-height:1.5}
+.inv-foot{padding:20px 28px;background:rgba(255,255,255,.02);border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+.inv-foot .note{font-size:12px;color:var(--muted);max-width:40ch}
+/* final CTA */
+.final{background:radial-gradient(120% 130% at 50% 0%,#1f8497 0%,#0b4551 48%,#062b33 82%);text-align:center;position:relative;overflow:hidden}
+.final h2{max-width:20ch;margin:0 auto}
+.final .lead{margin:16px auto 0}
+.final-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:30px}
+.sig{margin-top:30px;font-size:13px;color:#d6ecef}
+.sig b{color:#fff}
+/* footer */
+.foot{background:#04212a;border-top:1px solid var(--line);padding:34px 0;color:var(--muted-2);font-size:12.5px}
+.foot .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.foot .fb{display:flex;align-items:center;gap:9px;color:#fff;font-family:'Fraunces',serif;font-weight:700}
+.foot a{color:var(--muted)}.foot a:hover{color:var(--teal-l)}
+/* typing caret */
+.caret:after{content:"";display:inline-block;width:1px;height:1em;background:var(--teal-l);margin-left:1px;vertical-align:-2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.pulse-note{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;color:var(--teal-l);font-weight:600;margin-bottom:14px}
+.pulse-note:before{content:"";width:8px;height:8px;border-radius:50%;background:var(--teal-l);box-shadow:0 0 0 0 rgba(95,202,221,.5);animation:pn 1.8s ease-out infinite}
+@keyframes pn{0%{box-shadow:0 0 0 0 rgba(95,202,221,.5)}100%{box-shadow:0 0 0 8px rgba(95,202,221,0)}}
+</style>
+</head>
+<body>
+
+<div class="ribbon">Private proposal prepared for <b>Gloria Almendares</b> · Realty by the Sea · Hauʻula, Oʻahu</div>
+
+<nav class="nav">
+  <a class="brand" href="#top">
+    <span class="logo"><svg viewBox="0 0 24 24" fill="none"><path d="M3 15c1.6 0 1.6 1.3 3.2 1.3S7.8 15 9.4 15s1.6 1.3 3.2 1.3S14.2 15 15.8 15s1.6 1.3 3.2 1.3S20.6 15 22 15" stroke="#5fcadd" stroke-width="1.6" stroke-linecap="round"/><path d="M5 12.5V9.2L12 4l7 5.2v3.3" stroke="#fff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 12.5v-2.2h4v2.2" stroke="#f0956f" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    <span>Realty by the Sea<small>Website + Owner Command Center</small></span>
+  </a>
+  <div class="links">
+    <a href="#understand">The gap</a>
+    <a href="#frontdoor">Live preview</a>
+    <a href="#dream">The vision</a>
+    <a href="#phases">What we build</a>
+    <a href="#invest">Investment</a>
+  </div>
+  <a class="btn coral" href="#invest" style="padding:10px 18px;font-size:13.5px">See the plan</a>
+</nav>
+
+<header class="hero" id="top">
+  <div class="glow g1"></div><div class="glow g2"></div>
+  <div class="wrap hero-in">
+    <span class="eyebrow">Realty by the Sea × Rank Rebels</span>
+    <h1>Your listings, your owners, and your income —<br><em>all handled in one calm place.</em></h1>
+    <p class="sub">A beautiful coastal website that shows off your homes and brings you buyers and renters — connected to one private command center that tracks rent, expenses, vendor due dates, and even reads your inbox for you. Everything you juggle across texts, spreadsheets, and sticky notes, finally in one screen.</p>
+    <div class="hero-btns">
+      <a class="btn coral" href="#frontdoor">Explore your live preview →</a>
+      <a class="btn o" href="#dream">See the full vision</a>
+    </div>
+    <p class="hero-note">Built for Gloria · Everything below is clickable — type in it, poke around, see how it feels.</p>
+  </div>
+  <svg class="wave" viewBox="0 0 1440 54" preserveAspectRatio="none"><path d="M0 30c180 24 360 24 540 6s360-30 540-6 240 30 360 24v54H0z" fill="#062b33"/></svg>
+</header>
+
+<!-- UNDERSTAND -->
+<section id="understand" class="understand">
+  <div class="wrap">
+    <div class="kick">Where the days go</div>
+    <h2>You run two businesses at once — and hold both in your head.</h2>
+    <p class="lead">You're the agent <em>and</em> the property manager. Listings, showings, and offers on one side; rent, repairs, owners, and vendors on the other. It works because you never drop a ball. That's exhausting — and it doesn't have to be manual.</p>
+    <div class="see-grid">
+      <div class="see problem">
+        <h3><span class="d">◆</span> Today, without a system</h3>
+        <ul>
+          <li>Listings live on a portal you don't control — no site that's <em>yours</em>.</li>
+          <li>Rent due dates and who paid live in your memory and your texts.</li>
+          <li>Vendor invoices and "when is that inspection?" scattered across email.</li>
+          <li>Owners call to ask "how's my property doing?" — you rebuild the answer each time.</li>
+          <li>Income and expenses aren't totaled until tax season panic.</li>
+        </ul>
+      </div>
+      <div class="see fix">
+        <h3><span class="d">◆</span> With Realty by the Sea, the platform</h3>
+        <ul>
+          <li>A coastal website that <em>is</em> your brand — list a home in two minutes.</li>
+          <li>Every rent due date and payment tracked, color-coded, never missed.</li>
+          <li>Vendor due dates and invoices in one calendar with reminders.</li>
+          <li>An owner a tap away from a live, beautiful report on their property.</li>
+          <li>Income vs. expenses totaled live — you always know where you stand.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="stat-row">
+      <div class="stat"><div class="n">1</div><div class="l">Screen for the whole business — website + money + inbox</div></div>
+      <div class="stat"><div class="n">2 min</div><div class="l">To list a new property from your phone</div></div>
+      <div class="stat"><div class="n">0</div><div class="l">Rent or vendor dates that slip through the cracks</div></div>
+      <div class="stat"><div class="n">24/7</div><div class="l">Owners can self-check their property, anytime</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FRONTDOOR SHOWCASE -->
+<section id="frontdoor" class="frontdoor">
+  <div class="wrap center" style="max-width:760px">
+    <div class="kick">Your live preview</div>
+    <h2>This is your platform. Go ahead — touch it.</h2>
+    <p class="lead">Below is a working preview of what we'd build. Switch between your <b>new site</b> and what buyers see <b>today</b>, open the tabs, and watch the forms fill themselves in so you can see the flow. Nothing here is a screenshot — it all works.</p>
+  </div>
+
+  <div class="wrap">
+    <div class="ba-wrap">
+      <div class="ba-toggle" role="tablist">
+        <button class="on" id="baNew" onclick="baShow('new')">✨ Your new platform</button>
+        <button id="baOld" onclick="baShow('old')">Today</button>
+      </div>
+    </div>
+
+    <!-- NEW SITE -->
+    <div class="bw-screen on" id="scrNew">
+      <div class="bw">
+        <div class="bw-bar"><i></i><i></i><i></i><div class="url">🔒 <b>realtybythesea.com</b><span id="urlPath">/</span></div></div>
+        <div class="bwn">
+          <div class="lg"><svg viewBox="0 0 24 24" fill="none"><path d="M3 15c1.6 0 1.6 1.3 3.2 1.3S7.8 15 9.4 15s1.6 1.3 3.2 1.3S14.2 15 15.8 15s1.6 1.3 3.2 1.3S20.6 15 22 15" stroke="#5fcadd" stroke-width="1.6" stroke-linecap="round"/><path d="M5 12.5V9.2L12 4l7 5.2v3.3" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/></svg> Realty by the Sea</div>
+          <div class="lk">
+            <span onclick="tabGo('home')">Home</span>
+            <span onclick="tabGo('listings')">Listings</span>
+            <span onclick="tabGo('list')">List a home</span>
+            <span onclick="tabGo('owner')">Owner portal</span>
+          </div>
+          <span class="cta" onclick="tabGo('list')">List with Gloria</span>
+        </div>
+        <div class="bwtabs">
+          <button class="on" data-tab="home" onclick="tabGo('home')">🏝️ Home</button>
+          <button data-tab="listings" onclick="tabGo('listings')">🏠 Listings</button>
+          <button data-tab="list" onclick="tabGo('list')">＋ List a property</button>
+          <button data-tab="owner" onclick="tabGo('owner')">📊 Owner portal</button>
+          <button data-tab="claude" onclick="tabGo('claude')">✨ Ask Claude</button>
+        </div>
+
+        <!-- HOME -->
+        <div class="pane on" data-pane="home">
+          <div class="bwh">
+            <div class="tag">Windward Oʻahu · Buy · Sell · Rent · Manage</div>
+            <h3>Coastal living, <em>handled with care.</em></h3>
+            <p>From Hauʻula to Kahuku — homes with your name on the sign and an agent who treats every owner like family.</p>
+            <div class="bwsearch">
+              <input placeholder="Try “3 bed near the beach in Hauʻula”" id="homeSearch">
+              <button onclick="tabGo('listings')">Search</button>
+            </div>
+          </div>
+          <div class="bws">
+            <div><div class="n">18</div><div class="l">Homes sold on the windward side</div></div>
+            <div><div class="n">$14M</div><div class="l">In closed volume</div></div>
+            <div><div class="n">31</div><div class="l">Doors under management</div></div>
+            <div><div class="n">4.9★</div><div class="l">Owner & client rating</div></div>
+          </div>
+          <div class="lgrid">
+            <div class="lcard" onclick="tabGo('listings')"><div class="lim a"><span class="badge">For sale</span><span class="fav">♡</span></div><div class="lb"><div class="lp">$1,150,000</div><div class="la">54-321 Kamehameha Hwy · Hauʻula</div><div class="lm"><span>3 bd</span><span>2 ba</span><span>1,480 sqft</span></div></div></div>
+            <div class="lcard" onclick="tabGo('listings')"><div class="lim b"><span class="badge rent">For rent</span><span class="fav">♡</span></div><div class="lb"><div class="lp">$3,200 / mo</div><div class="la">Ocean-view cottage · Punaluʻu</div><div class="lm"><span>2 bd</span><span>1 ba</span><span>Furnished</span></div></div></div>
+            <div class="lcard" onclick="tabGo('listings')"><div class="lim d"><span class="badge land">Land</span><span class="fav">♡</span></div><div class="lb"><div class="lp">$540,000</div><div class="la">Half-acre ridge lot · Kaʻaʻawa</div><div class="lm"><span>0.5 ac</span><span>Ocean view</span></div></div></div>
+          </div>
+        </div>
+
+        <!-- LISTINGS -->
+        <div class="pane" data-pane="listings">
+          <div class="demo" style="padding-bottom:6px">
+            <div class="dh">Your listings — live on your site</div>
+            <div class="ds">Every home you add appears here instantly, searchable by buyers and renters. Click a card to see the full detail page.</div>
+          </div>
+          <div class="lgrid" style="padding-top:6px" id="listingGrid">
+            <div class="lcard"><div class="lim a"><span class="badge">For sale</span><span class="fav">♡</span></div><div class="lb"><div class="lp">$1,150,000</div><div class="la">54-321 Kamehameha Hwy · Hauʻula</div><div class="lm"><span>3 bd</span><span>2 ba</span><span>1,480 sqft</span></div></div></div>
+            <div class="lcard"><div class="lim b"><span class="badge rent">For rent</span><span class="fav">♡</span></div><div class="lb"><div class="lp">$3,200 / mo</div><div class="la">Ocean-view cottage · Punaluʻu</div><div class="lm"><span>2 bd</span><span>1 ba</span><span>Furnished</span></div></div></div>
+            <div class="lcard"><div class="lim c"><span class="badge">For sale</span><span class="fav">♡</span></div><div class="lb"><div class="lp">$895,000</div><div class="la">Plantation home · Lāʻie</div><div class="lm"><span>4 bd</span><span>2 ba</span><span>2,010 sqft</span></div></div></div>
+            <div class="lcard"><div class="lim d"><span class="badge land">Land</span><span class="fav">♡</span></div><div class="lb"><div class="lp">$540,000</div><div class="la">Half-acre ridge lot · Kaʻaʻawa</div><div class="lm"><span>0.5 ac</span><span>Ocean view</span></div></div></div>
+            <div class="lcard"><div class="lim e"><span class="badge rent">For rent</span><span class="fav">♡</span></div><div class="lb"><div class="lp">$4,500 / mo</div><div class="la">Beachfront 3BR · Kahuku</div><div class="lm"><span>3 bd</span><span>2 ba</span><span>Long-term</span></div></div></div>
+            <div class="lcard"><div class="lim f"><span class="badge">For sale</span><span class="fav">♡</span></div><div class="lb"><div class="lp">$1,395,000</div><div class="la">Hillside retreat · Kaʻaʻawa</div><div class="lm"><span>4 bd</span><span>3 ba</span><span>2,640 sqft</span></div></div></div>
+          </div>
+        </div>
+
+        <!-- LIST A PROPERTY (autofill demo) -->
+        <div class="pane" data-pane="list">
+          <div class="demo">
+            <div class="pulse-note">Watch it fill itself in</div>
+            <div class="dh">List a property in two minutes</div>
+            <div class="ds">This is how you'd add a new home — from your phone, at the kitchen table. Hit the button and watch the form fill in, then publish straight to your site.</div>
+            <div class="dform">
+              <div><label>Address</label><input id="lpAddr" readonly placeholder="Street address"></div>
+              <div><label>Neighborhood</label><input id="lpHood" readonly placeholder="Town"></div>
+              <div><label>Listing type</label><select id="lpType"><option>For sale</option><option>For rent</option><option>Land</option></select></div>
+              <div><label>Price</label><input id="lpPrice" readonly placeholder="$"></div>
+              <div><label>Beds</label><input id="lpBeds" readonly placeholder="0"></div>
+              <div><label>Baths</label><input id="lpBaths" readonly placeholder="0"></div>
+              <div class="full"><label>Description</label><textarea id="lpDesc" rows="2" readonly placeholder="Tell buyers what makes it special…"></textarea></div>
+              <div class="full" style="display:flex;gap:10px;flex-wrap:wrap">
+                <button class="dbtn" id="lpFill" onclick="fillListing()">✨ Auto-fill a sample listing</button>
+                <button class="dbtn coral" id="lpPublish" onclick="publishListing()">Publish to my site →</button>
+              </div>
+            </div>
+            <div class="dok" id="lpOk">✓ Published! It's live on <b>realtybythesea.com/listings</b> and already searchable by buyers. In the real platform this also posts to your social and notifies your buyer list.</div>
+            <div class="pubprev" id="lpPrev">
+              <div class="lim"><span class="badge" id="lpPrevBadge">For sale</span><span class="fav">♡</span></div>
+              <div class="lb" style="padding:12px 14px"><div class="lp" id="lpPrevPrice">$—</div><div class="la" id="lpPrevAddr">—</div><div class="lm"><span id="lpPrevBeds">— bd</span><span id="lpPrevBaths">— ba</span><span>Just listed</span></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- OWNER PORTAL -->
+        <div class="pane" data-pane="owner">
+          <!-- login -->
+          <div id="ownLogin" class="demo">
+            <div class="dh" style="text-align:center">Sign in to your command center</div>
+            <div class="ds" style="text-align:center">Two doors, one platform. <b>You</b> get the full business. <b>Property owners</b> get a calm, read-only view of just their home.</div>
+            <div class="roletog" id="ownRole">
+              <button class="on" data-role="gloria" onclick="ownSetRole('gloria')">👩‍💼 Gloria</button>
+              <button data-role="owner" onclick="ownSetRole('owner')">🏠 Property owner</button>
+            </div>
+            <div class="loginbox">
+              <div class="lk2">🔐</div>
+              <input id="ownEmail" readonly placeholder="Email">
+              <input id="ownPass" type="password" readonly placeholder="Password">
+              <button class="dbtn" id="ownBtn" onclick="ownLogin()">Sign in</button>
+              <div class="loginhint">Demo only — tap sign in and it fills itself.</div>
+            </div>
+          </div>
+          <!-- gloria dashboard -->
+          <div id="ownGloria" class="dash" style="display:none">
+            <div class="dash-hi">
+              <div><div class="who">Aloha, Gloria 🌺</div><div class="sub">Tuesday, July 1 · Here's your whole business at a glance.</div></div>
+              <div class="badge">● Everything current</div>
+            </div>
+            <div class="money">
+              <div class="m in"><div class="ml">Rent collected · July</div><div class="mn">$24,850</div><div class="md">of $27,200 expected</div></div>
+              <div class="m out"><div class="ml">Expenses · July</div><div class="mn">$6,410</div><div class="md">repairs, vendors, fees</div></div>
+              <div class="m net"><div class="ml">Net so far</div><div class="mn">$18,440</div><div class="md">+12% vs. June</div></div>
+              <div class="m due"><div class="ml">Needs attention</div><div class="mn">3</div><div class="md">2 rents due · 1 vendor</div></div>
+            </div>
+            <div class="dcols">
+              <div class="dpanel">
+                <h4>Rent roll <span class="lnk">View all 31 →</span></h4>
+                <div class="prow"><div class="pth a"></div><div class="pi"><div class="pn">54-210 Kamehameha Hwy</div><div class="px">Tenant: Keoni M. · due 1st</div></div><div class="pv"><span class="tag2 paid">Paid</span></div></div>
+                <div class="prow"><div class="pth b"></div><div class="pi"><div class="pn">Ocean-view cottage · Punaluʻu</div><div class="px">Tenant: Aria L. · due 1st</div></div><div class="pv"><span class="tag2 due">Due today</span></div></div>
+                <div class="prow"><div class="pth c"></div><div class="pi"><div class="pn">Beachfront 3BR · Kahuku</div><div class="px">Tenant: Dela Cruz ʻohana · due 1st</div></div><div class="pv"><span class="tag2 late">3 days late</span></div></div>
+                <div class="prow"><div class="pth a"></div><div class="pi"><div class="pn">Plantation home · Lāʻie</div><div class="px">Tenant: R. Tu'ua · due 5th</div></div><div class="pv"><span class="tag2 paid">Paid</span></div></div>
+              </div>
+              <div class="dpanel">
+                <h4>What's coming up <span class="lnk">Calendar →</span></h4>
+                <div class="tlist">
+                  <div class="trow"><div class="td">Jul 1</div><div><div class="tt">2 rents due today</div><div class="tx">Auto-reminders already sent to tenants</div></div></div>
+                  <div class="trow"><div class="td">Jul 3</div><div><div class="tt">Termite inspection — Kahuku</div><div class="tx">Vendor: Aloha Pest · $185</div></div></div>
+                  <div class="trow"><div class="td">Jul 8</div><div><div class="tt">Plumber invoice due</div><div class="tx">Windward Plumbing · $640</div></div></div>
+                  <div class="trow"><div class="td">Jul 12</div><div><div class="tt">Listing photos — Kaʻaʻawa lot</div><div class="tx">10:00 AM · on your calendar</div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- owner dashboard -->
+          <div id="ownOwner" class="dash" style="display:none">
+            <div class="dash-hi">
+              <div><div class="who">Aloha, Mr. Nakamura</div><div class="sub">Your property · 54-210 Kamehameha Hwy, Hauʻula</div></div>
+              <div class="badge">Managed by Gloria</div>
+            </div>
+            <div class="money">
+              <div class="m in"><div class="ml">Rent this month</div><div class="mn">$3,400</div><div class="md">received Jul 1 ✓</div></div>
+              <div class="m out"><div class="ml">Expenses</div><div class="mn">$210</div><div class="md">landscaping</div></div>
+              <div class="m net"><div class="ml">Your payout</div><div class="mn">$2,850</div><div class="md">sent Jul 3</div></div>
+              <div class="m due"><div class="ml">Occupancy</div><div class="mn">100%</div><div class="md">lease through May '27</div></div>
+            </div>
+            <div class="dpanel">
+              <h4>Recent activity</h4>
+              <div class="tlist">
+                <div class="trow"><div class="td">Jul 3</div><div><div class="tt">Owner payout sent — $2,850</div><div class="tx">Direct deposit · statement attached</div></div></div>
+                <div class="trow"><div class="td">Jul 1</div><div><div class="tt">Rent received — $3,400</div><div class="tx">On time, in full</div></div></div>
+                <div class="trow"><div class="td">Jun 22</div><div><div class="tt">Landscaping completed — $210</div><div class="tx">Photos in your document vault</div></div></div>
+              </div>
+            </div>
+            <p class="dtiny">This is all your owners ever see — clean, current, only their property. No more "how's it going?" phone calls.</p>
+          </div>
+        </div>
+
+        <!-- ASK CLAUDE -->
+        <div class="pane" data-pane="claude">
+          <div class="demo">
+            <div class="pulse-note">Connected to your inbox & calendar</div>
+            <div class="dh">Ask Claude — your back-office assistant</div>
+            <div class="ds">Claude reads your email and calendar (with your permission) and turns the noise into answers. Tap a question or type your own.</div>
+            <div class="chips-row" id="claudeChips">
+              <button onclick="askClaude('What needs my attention today?')">What needs my attention today?</button>
+              <button onclick="askClaude('Did everyone pay rent this month?')">Did everyone pay rent?</button>
+              <button onclick="askClaude('Any vendor invoices due this week?')">Vendor invoices due?</button>
+              <button onclick="askClaude('Summarize my inbox')">Summarize my inbox</button>
+            </div>
+            <div class="chatwrap">
+              <div class="chat" id="claudeChat">
+                <div class="bub a">Aloha Gloria 🌺 I've read this morning's email and your calendar. Ask me anything — or tap a question above.</div>
+              </div>
+              <div class="chatin">
+                <input id="claudeInput" placeholder="Ask about rent, expenses, a tenant, your day…" onkeydown="if(event.key==='Enter')askClaude(this.value)">
+                <button onclick="askClaude(document.getElementById('claudeInput').value)">Send</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OLD / TODAY -->
+    <div class="bw-screen" id="scrOld">
+      <div class="bw">
+        <div class="bw-bar"><i></i><i></i><i></i><div class="url">realtor-portal.example.com/agents/g-almendares</div></div>
+        <div class="old">
+          <div class="old-top"><div class="ol">Gloria Almendares, R(S)</div><div class="om">a page inside someone else's portal</div></div>
+          <div class="old-nav"><span>Home</span><span>My Listings</span><span>Contact</span></div>
+          <div class="old-hero">
+            <div class="imgph">generic stock photo</div>
+            <h3>Realty by the Sea</h3>
+            <p>Real estate agent and property manager serving windward Oʻahu. Call or email for listings and property management inquiries.</p>
+            <div class="phone">☎ (808) 292-6019</div>
+          </div>
+          <div class="old-cols">
+            <div class="oc"><b>Listings</b>Shown on a third-party site with their branding, their leads, and their ads next to your homes.</div>
+            <div class="oc"><b>Property management</b>Tracked in spreadsheets, texts, and your memory. Owners call to ask for updates.</div>
+            <div class="oc"><b>Money</b>Income and expenses added up by hand at tax time. Vendor and rent dates live on paper.</div>
+          </div>
+          <div class="old-flags">
+            <span class="old-flag">No site you own</span>
+            <span class="old-flag">Leads go to the portal</span>
+            <span class="old-flag">Nothing connects</span>
+            <span class="old-flag">Owners kept in the dark</span>
+            <span class="old-flag">Manual at tax time</span>
+          </div>
+          <div class="old-foot">© Realty by the Sea — a single page you don't control</div>
+        </div>
+      </div>
+    </div>
+    <p class="center" style="font-size:12.5px;color:var(--muted-2);margin-top:16px">Same business. One of these makes it feel effortless.</p>
+  </div>
+</section>
+
+<!-- DREAM / VISION -->
+<section id="dream">
+  <div class="wrap center" style="max-width:760px">
+    <div class="kick">The full vision</div>
+    <h2>Everything you carry, in one place that works for you.</h2>
+    <p class="lead">The preview above is the front door. Behind it is a private backend built around how a real estate agent and property manager actually spends her day.</p>
+  </div>
+  <div class="wrap">
+    <div class="dream">
+      <div class="c"><div class="ic"><svg viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5"/><path d="M6 9.5V20h12V9.5"/><path d="M10 20v-5h4v5"/></svg></div><b>Your own website</b><p>A coastal, mobile-first site that's yours — listings, your story, and lead capture that sends buyers and renters to <em>you</em>, not a portal.</p></div>
+      <div class="c"><div class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v16"/></svg></div><b>List & manage properties</b><p>Add or edit a listing in two minutes. Sold, rented, off-market — one tap. It updates your site everywhere, instantly.</p></div>
+      <div class="c"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3v18M6 8h9a3 3 0 0 1 0 6H8a3 3 0 0 0 0 6h10"/></svg></div><b>Rent & income tracking</b><p>Every unit, every tenant, every due date — color-coded paid / due / late. You always know who owes what, and what's landed.</p></div>
+      <div class="c"><div class="ic"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></div><b>Expenses & vendors</b><p>Log a repair, tie it to a property, track vendor due dates. Income minus expenses, live — no shoebox of receipts in April.</p></div>
+      <div class="c"><div class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="m3 7 9 6 9-6"/></svg></div><b>Inbox, read for you</b><p>Connect your email and Claude sorts it — leads, tenant issues, vendor invoices, junk — and drafts replies you just approve.</p></div>
+      <div class="c"><div class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg></div><b>Calendar & due dates</b><p>Showings, inspections, rent dates, vendor deadlines — one calendar with reminders so nothing is ever a surprise.</p></div>
+      <div class="c"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9"/><path d="M12 7v5l3 2"/></svg></div><b>Owner portals</b><p>Each owner gets a private, read-only view of just their property — rent, expenses, payouts — so they stop calling to ask.</p></div>
+      <div class="c"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 2 4 6v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6z"/><path d="m9 12 2 2 4-4"/></svg></div><b>Private & secure</b><p>Your data is yours alone, locked to your login. Owners see only theirs. Bank-grade auth, daily backups.</p></div>
+      <div class="c"><div class="ic"><svg viewBox="0 0 24 24"><path d="M5 3h14v18l-7-4-7 4z"/></svg></div><b>Tax-ready, always</b><p>Every dollar in and out is categorized as it happens. When tax time comes, it's a one-click export — not a weekend.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PHASES -->
+<section id="phases" class="phases">
+  <div class="wrap center" style="max-width:760px">
+    <div class="kick">How we build it</div>
+    <h2>Live fast, then deepen — you're never waiting on the whole thing.</h2>
+    <p class="lead">We ship your website first so you're capturing leads in weeks, then layer in the command center. You see progress every step.</p>
+  </div>
+  <div class="wrap">
+    <div class="plist">
+      <div class="pcard">
+        <div class="pnum">1</div>
+        <div class="pw">Weeks 1–3</div>
+        <h3>Your website, live</h3>
+        <ul>
+          <li>Coastal, mobile-first site at your own domain</li>
+          <li>Listings you can add & edit yourself</li>
+          <li>Search, detail pages, photo galleries</li>
+          <li>Lead capture straight to your inbox</li>
+          <li>Your story, reviews, and contact</li>
+        </ul>
+      </div>
+      <div class="pcard">
+        <div class="pnum">2</div>
+        <div class="pw">Weeks 3–6</div>
+        <h3>Owner command center</h3>
+        <ul>
+          <li>Rent roll — tenants, due dates, paid/late</li>
+          <li>Expenses & vendors tied to each property</li>
+          <li>Live income vs. expenses & net</li>
+          <li>Calendar with due-date reminders</li>
+          <li>Private owner portals</li>
+        </ul>
+      </div>
+      <div class="pcard">
+        <div class="pnum">3</div>
+        <div class="pw">Weeks 6–8</div>
+        <h3>Your AI back office</h3>
+        <ul>
+          <li>Email + calendar connected to Claude</li>
+          <li>Inbox triage & draft replies</li>
+          <li>“Ask Claude” anything about your business</li>
+          <li>Automated rent & vendor reminders</li>
+          <li>One-click tax export</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INVESTMENT -->
+<section id="invest" class="invest">
+  <div class="glow g2" style="width:420px;height:420px;background:var(--teal);left:-140px;top:40px;opacity:.25"></div>
+  <div class="wrap center" style="max-width:760px;position:relative">
+    <div class="kick">Your investment</div>
+    <h2>One partner, one calm platform — priced to pay for itself.</h2>
+    <p class="lead">A single number that replaces the portal fees, the spreadsheets, the missed vendor deadlines, and the hours you lose to admin every week.</p>
+  </div>
+  <div class="wrap" style="position:relative">
+    <div class="inv-card">
+      <div class="inv-top">
+        <div>
+          <div class="t">Realty by the Sea — Website + Owner Command Center</div>
+          <div class="s">Built, launched, and supported end-to-end by Rank Rebels.</div>
+        </div>
+        <div class="inv-price"><div class="big">$7,500</div><div class="u">one-time build</div></div>
+      </div>
+      <div class="inv-body">
+        <div class="inv-rows">
+          <div class="r"><span><b>Phase 1 — Your website</b><br>Coastal site, self-serve listings, lead capture</span><span class="v">included</span></div>
+          <div class="r"><span><b>Phase 2 — Command center</b><br>Rent, expenses, vendors, calendar, owner portals</span><span class="v">included</span></div>
+          <div class="r"><span><b>Phase 3 — AI back office</b><br>Inbox + calendar + Claude, reminders, tax export</span><span class="v">included</span></div>
+          <div class="r"><span><b>Hosting, security & backups</b><br>Your own domain, SSL, daily backups</span><span class="v">included</span></div>
+        </div>
+        <div class="inv-split">
+          <div class="box">
+            <div class="bl">To begin</div>
+            <div class="bn">$2,500</div>
+            <div class="bx">Due to start — locks your spot and kicks off Phase 1.</div>
+          </div>
+          <div class="box">
+            <div class="bl">Then, financed</div>
+            <div class="bn">$1,000<span style="font-size:14px;color:var(--muted)"> /mo × 5</span></div>
+            <div class="bx">Due the 1st of each month while we build all three phases.</div>
+          </div>
+        </div>
+        <div class="inv-split" style="margin-top:14px">
+          <div class="box">
+            <div class="bl">Ongoing care</div>
+            <div class="bn">$200<span style="font-size:14px;color:var(--muted)"> /mo</span></div>
+            <div class="bx">After launch — hosting, backups, updates, and unlimited small changes. Cancel anytime.</div>
+          </div>
+          <div class="box">
+            <div class="bl">Turnaround</div>
+            <div class="bn">~8 weeks</div>
+            <div class="bx">Website live in ~3 weeks; full platform inside ~8.</div>
+          </div>
+        </div>
+      </div>
+      <div class="inv-foot">
+        <div class="note">Numbers are a starting point — we'll tailor scope and terms together on a quick call.</div>
+        <a class="btn coral" href="#final">Let's do this →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section id="final" class="final">
+  <div class="wrap">
+    <div class="kick" style="color:#bfe6ec">Ready when you are, Gloria</div>
+    <h2>Let's put your whole business on the shore, in one place.</h2>
+    <p class="lead" style="color:#d6ecef">You've built something real on the windward side. Let's give it a home online — and give you your evenings back. One call and we'll map your exact scope, pick your domain, and set a launch date.</p>
+    <div class="final-btns">
+      <a class="btn coral" href="tel:+18082926019">Call to start · (808) 292-6019</a>
+      <a class="btn o" href="mailto:sales@rankrebels.ai?subject=Realty%20by%20the%20Sea%20—%20let's%20build%20it&body=Hi%20Rank%20Rebels%2C%20I%20looked%20at%20the%20proposal%20and%20I'm%20in.%20Let's%20talk.">Email Rank Rebels</a>
+    </div>
+    <p class="sig">Prepared for <b>Gloria Almendares</b> · Realty by the Sea · <b>gloriainhawaii@gmail.com</b><br>By <b>Rank Rebels</b> — websites & back-office platforms for local businesses</p>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap">
+    <div class="fb"><span class="logo" style="width:30px;height:30px;border-radius:8px;background:linear-gradient(140deg,#0a3d48,#2aa5bd);display:grid;place-items:center"><svg viewBox="0 0 24 24" width="18" height="18" fill="none"><path d="M3 15c1.6 0 1.6 1.3 3.2 1.3S7.8 15 9.4 15s1.6 1.3 3.2 1.3S14.2 15 15.8 15s1.6 1.3 3.2 1.3S20.6 15 22 15" stroke="#5fcadd" stroke-width="1.6" stroke-linecap="round"/></svg></span> Rank Rebels</div>
+    <div>Private proposal · <a href="mailto:sales@rankrebels.ai">sales@rankrebels.ai</a> · <a href="https://rankrebels.ai">rankrebels.ai</a></div>
+  </div>
+</footer>
+
+<script>
+/* ---------- New vs. Today toggle ---------- */
+function baShow(which){
+  document.getElementById('scrNew').classList.toggle('on',which==='new');
+  document.getElementById('scrOld').classList.toggle('on',which==='old');
+  document.getElementById('baNew').classList.toggle('on',which==='new');
+  document.getElementById('baOld').classList.toggle('on',which==='old');
+}
+
+/* ---------- In-frame tabs ---------- */
+var PATHS={home:'/',listings:'/listings',list:'/list-a-property',owner:'/owner',claude:'/assistant'};
+function tabGo(name){
+  document.querySelectorAll('.pane').forEach(function(p){ p.classList.toggle('on', p.getAttribute('data-pane')===name); });
+  document.querySelectorAll('.bwtabs button').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-tab')===name); });
+  var u=document.getElementById('urlPath'); if(u) u.textContent=PATHS[name]||'/';
+  var bw=document.querySelector('#scrNew .bw'); if(bw){ var top=bw.getBoundingClientRect().top; if(top<0||top>200){ bw.scrollIntoView({behavior:'smooth',block:'start'}); } }
+}
+
+/* ---------- Typing engine (auto-fill) ---------- */
+var _timers=[];
+function clearTimers(a){ a.forEach(clearTimeout); a.length=0; }
+function typeInto(el,text,speed,timers,cb){
+  el.value=''; el.classList.add('caret'); var i=0;
+  (function tick(){
+    if(i<=text.length){ el.value=text.slice(0,i); i++; timers.push(setTimeout(tick,speed)); }
+    else { el.classList.remove('caret'); if(cb) timers.push(setTimeout(cb,1)); }
+  })();
+}
+
+/* ---------- List a property demo ---------- */
+function fillListing(){
+  clearTimers(_timers);
+  document.getElementById('lpOk').classList.remove('on');
+  document.getElementById('lpPrev').classList.remove('on');
+  var addr=document.getElementById('lpAddr'),hood=document.getElementById('lpHood'),
+      price=document.getElementById('lpPrice'),beds=document.getElementById('lpBeds'),
+      baths=document.getElementById('lpBaths'),desc=document.getElementById('lpDesc'),
+      type=document.getElementById('lpType');
+  type.selectedIndex=0;
+  typeInto(addr,'55-140 Naupaka St',50,_timers,function(){
+    typeInto(hood,'Lāʻie',60,_timers,function(){
+      typeInto(price,'$985,000',55,_timers,function(){
+        typeInto(beds,'4',80,_timers,function(){
+          typeInto(baths,'2.5',80,_timers,function(){
+            typeInto(desc,'Bright plantation-style home two blocks from the beach — updated kitchen, wraparound lānai, mature mango tree. Move-in ready.',22,_timers);
+          });
+        });
+      });
+    });
+  });
+}
+function publishListing(){
+  var addr=document.getElementById('lpAddr').value||'55-140 Naupaka St',
+      hood=document.getElementById('lpHood').value||'Lāʻie',
+      price=document.getElementById('lpPrice').value||'$985,000',
+      beds=document.getElementById('lpBeds').value||'4',
+      baths=document.getElementById('lpBaths').value||'2.5',
+      type=document.getElementById('lpType').value;
+  var btn=document.getElementById('lpPublish'); btn.textContent='Publishing…';
+  document.getElementById('lpPrevBadge').textContent=type;
+  document.getElementById('lpPrevBadge').className='badge'+(type==='For rent'?' rent':type==='Land'?' land':'');
+  document.getElementById('lpPrevPrice').textContent=price;
+  document.getElementById('lpPrevAddr').textContent=addr+' · '+hood;
+  document.getElementById('lpPrevBeds').textContent=beds+' bd';
+  document.getElementById('lpPrevBaths').textContent=baths+' ba';
+  setTimeout(function(){
+    btn.textContent='Publish to my site →';
+    document.getElementById('lpOk').classList.add('on');
+    document.getElementById('lpPrev').classList.add('on');
+  },700);
+}
+
+/* ---------- Owner portal ---------- */
+var ownRole='gloria';
+var OWN={gloria:{email:'gloria@realtybythesea.com',pass:'aloha2026'},owner:{email:'nakamura@email.com',pass:'owner2026'}};
+function ownSetRole(r){
+  ownRole=r;
+  document.querySelectorAll('#ownRole button').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-role')===r); });
+  document.getElementById('ownEmail').value=''; document.getElementById('ownPass').value='';
+}
+function ownLogin(){
+  clearTimers(_timers);
+  var em=document.getElementById('ownEmail'),pw=document.getElementById('ownPass'),
+      btn=document.getElementById('ownBtn'),c=OWN[ownRole];
+  typeInto(em,c.email,42,_timers,function(){
+    var p=pw; p.classList.add('caret'); var i=0,t=c.pass;
+    (function tick(){ if(i<=t.length){ p.value=t.slice(0,i); i++; _timers.push(setTimeout(tick,70)); } else { p.classList.remove('caret');
+      btn.textContent='Signing in…';
+      _timers.push(setTimeout(function(){
+        document.getElementById('ownLogin').style.display='none';
+        document.getElementById('ownGloria').style.display = ownRole==='gloria'?'block':'none';
+        document.getElementById('ownOwner').style.display = ownRole==='owner'?'block':'none';
+        btn.textContent='Sign in';
+      },650));
+    } })();
+  });
+}
+
+/* ---------- Ask Claude ---------- */
+var CLAUDE={
+  'what needs my attention today?':"Three things, Gloria:<br><br>1. <b>2 rents are due today</b> — Punaluʻu cottage and one more. I've already texted both tenants a friendly reminder.<br>2. The <b>Kahuku rent is 3 days late</b> — want me to draft a follow-up?<br>3. <b>Termite inspection Jul 3</b> at Kahuku ($185, Aloha Pest) — it's on your calendar.<br><br>Everything else is current. 🌺",
+  'did everyone pay rent this month?':"Almost — <b>28 of 31 doors</b> have paid ($24,850 of $27,200). Outstanding:<br><br>• Kahuku beachfront — <b>3 days late</b><br>• Punaluʻu cottage — due today<br>• Lāʻie plantation — due the 5th (not late yet)<br><br>Want me to send reminders to the two that are due?",
+  'any vendor invoices due this week?':"Two:<br><br>• <b>Windward Plumbing — $640</b>, due Jul 8 (repair at the Hauʻula duplex)<br>• <b>Aloha Pest — $185</b>, due after the Jul 3 inspection<br><br>Both are logged against the right property, so they'll show in your expenses automatically. Approve and I'll schedule the payments.",
+  'summarize my inbox':"You have <b>14 new emails</b>. Here's what matters:<br><br>• <b>2 buyer leads</b> from your site — one asking about the Hauʻula listing (hot 🔥)<br>• <b>1 tenant</b> reporting a leaky faucet in Lāʻie — I can dispatch Windward Plumbing<br>• <b>1 owner</b> (Mr. Nakamura) asking for his June statement — already in his portal<br>• The other 10 are newsletters and receipts — filed.<br><br>Want me to draft replies to the two buyer leads?"
+};
+function addBub(text,who){
+  var chat=document.getElementById('claudeChat');
+  var b=document.createElement('div'); b.className='bub '+who; b.innerHTML=text;
+  chat.appendChild(b); chat.scrollTop=chat.scrollHeight;
+  return b;
+}
+function askClaude(q){
+  q=(q||'').trim(); if(!q) return;
+  document.getElementById('claudeInput').value='';
+  addBub(q,'u');
+  var key=q.toLowerCase().replace(/\s+/g,' ').trim();
+  var ans=CLAUDE[key];
+  if(!ans){
+    for(var k in CLAUDE){ if(key.indexOf(k.split(' ')[0])>=0 && (key.indexOf('rent')>=0||key.indexOf('vendor')>=0||key.indexOf('inbox')>=0||key.indexOf('attention')>=0||key.indexOf('today')>=0)){ ans=CLAUDE[k]; break; } }
+  }
+  if(!ans) ans="Great question. In your live platform I'd pull that straight from your properties, rent roll, expenses, and inbox and answer in plain English — with the exact numbers, and an action you can approve in one tap. 🌺";
+  var typing=addBub('<span style="color:var(--muted)">Claude is thinking…</span>','a');
+  setTimeout(function(){ typing.innerHTML=ans; document.getElementById('claudeChat').scrollTop=9e9; },620);
+}
+</script>
+</body>
+</html>
