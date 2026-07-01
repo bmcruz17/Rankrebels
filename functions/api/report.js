@@ -15,7 +15,7 @@
 const SUPABASE_URL = 'https://eejmocneacfleltspedl.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVlam1vY25lYWNmbGVsdHNwZWRsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIyNDQ3MTMsImV4cCI6MjA5NzgyMDcxM30.dXJTMFp_d9JRlXkesVPCUj6tBi3qphxxOu3v-Cuw7_Y';
 const GOOGLE_CLIENT_ID = '80870826640-nr849c98cvnjie2s6fupi4levtdi3v4m.apps.googleusercontent.com';
-const TEAM = ['brandon@rankrebels.ai', 'eric@rankrebels.ai', 'brandonmcruz@mac.com', 'eric.paul.ellsworth@gmail.com'];
+const TEAM = ['brandon@rankrebels.ai', 'brandonmcruz@mac.com'];
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 function json(obj, status) {
@@ -29,7 +29,7 @@ async function verifyTeam(token) {
     if (!r.ok) return null;
     const u = await r.json();
     const email = (u && u.email || '').toLowerCase();
-    return (email && (TEAM.indexOf(email) >= 0 || email.endsWith('@rankrebels.ai'))) ? email : null;
+    return (email && (TEAM.indexOf(email) >= 0)) ? email : null;
   } catch (e) { return null; }
 }
 
