@@ -251,7 +251,7 @@ var SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI
 var sb=window.supabase.createClient(SB_URL,SB_KEY);
 function qp(n){ return new URLSearchParams(location.search).get(n)||''; }
 function money(n){ n=Number(n||0); return n?('$'+n.toLocaleString(undefined,{maximumFractionDigits:2})):'—'; }
-var P={ cid:qp('cid'), biz:qp('b'), contact:qp('c'), email:qp('e'), setup:qp('setup'), monthly:qp('monthly'), plan:qp('plan') };
+var P={ cid:qp('cid'), biz:qp('b'), contact:qp('c'), email:qp('e'), setup:qp('setup'), monthly:qp('monthly'), plan:qp('plan'), pay:qp('pay') };
 // Stripe deposit Payment Link — paste the SAME buy.stripe.com/... link you use elsewhere.
 // When set, signing reveals a "Pay your deposit" button (checkout happens after signing).
 // Left empty = we invoice the client manually instead.
@@ -316,10 +316,13 @@ document.getElementById('signer').addEventListener('input',check);
 // After signing, reveal the deposit checkout (or a "we'll invoice you" note if no link is set yet).
 function buildPayNext(){
   var box=document.getElementById('pay-next'); if(!box) return;
-  if(RR_DEPOSIT){
+  // Per-client deposit link (?pay=) wins over the global RR_DEPOSIT constant, so each
+  // client's agreement sends them to their own checkout. Only https://buy.stripe.com links allowed.
+  var payLink = (P.pay && /^https:\/\/buy\.stripe\.com\//.test(P.pay)) ? P.pay : RR_DEPOSIT;
+  if(payLink){
     var ref = P.cid || P.biz || P.plan || 'website';
-    var sep = RR_DEPOSIT.indexOf('?')>=0?'&':'?';
-    var url = RR_DEPOSIT + sep + 'client_reference_id=' + encodeURIComponent(ref) + (P.email?('&prefilled_email='+encodeURIComponent(P.email)):'');
+    var sep = payLink.indexOf('?')>=0?'&':'?';
+    var url = payLink + sep + 'client_reference_id=' + encodeURIComponent(ref) + (P.email?('&prefilled_email='+encodeURIComponent(P.email)):'');
     box.innerHTML = '<a class="btn" href="'+url+'">Pay your deposit &amp; get started →</a>'
       + '<div class="fine" style="margin-top:8px">Secure checkout by Stripe. Prefer to spread it out? Klarna, Affirm &amp; Afterpay are available at checkout.</div>';
   } else {
