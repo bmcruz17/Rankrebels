@@ -242,7 +242,7 @@
       <div class="fine">By typing your name and clicking above, you agree this constitutes a legally binding electronic signature under the E-SIGN Act.</div>
     </div>
   </div>
-  <div class="done" id="done"><div class="big">✅</div><h2>Agreement signed!</h2><p>Thank you — a copy has been recorded and the Rank Rebels team has been notified. We'll be in touch with next steps.</p></div>
+  <div class="done" id="done"><div class="big">✅</div><h2>Agreement signed!</h2><p>Thank you — a copy has been recorded and the Rank Rebels team has been notified. The last step is your onboarding deposit, applied straight to your project.</p><div id="pay-next" style="margin-top:14px"></div></div>
 </div></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -251,7 +251,11 @@ var SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI
 var sb=window.supabase.createClient(SB_URL,SB_KEY);
 function qp(n){ return new URLSearchParams(location.search).get(n)||''; }
 function money(n){ n=Number(n||0); return n?('$'+n.toLocaleString(undefined,{maximumFractionDigits:2})):'—'; }
-var P={ cid:qp('cid'), biz:qp('b'), contact:qp('c'), email:qp('e'), setup:qp('setup'), monthly:qp('monthly') };
+var P={ cid:qp('cid'), biz:qp('b'), contact:qp('c'), email:qp('e'), setup:qp('setup'), monthly:qp('monthly'), plan:qp('plan') };
+// Stripe deposit Payment Link — paste the SAME buy.stripe.com/... link you use elsewhere.
+// When set, signing reveals a "Pay your deposit" button (checkout happens after signing).
+// Left empty = we invoice the client manually instead.
+var RR_DEPOSIT='';
 // Decode the itemized quote (Exhibit A) if present
 var Q=null;
 try{ var raw=qp('q'); if(raw) Q=JSON.parse(decodeURIComponent(escape(atob(raw)))); }catch(e){ Q=null; }
@@ -309,6 +313,19 @@ function escTxt(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){re
 function check(){ var ok=document.getElementById('ack1').checked&&document.getElementById('ack2').checked&&document.getElementById('signer').value.trim().length>1; document.getElementById('signbtn').disabled=!ok; }
 ['ack1','ack2'].forEach(function(id){document.getElementById(id).addEventListener('change',check);});
 document.getElementById('signer').addEventListener('input',check);
+// After signing, reveal the deposit checkout (or a "we'll invoice you" note if no link is set yet).
+function buildPayNext(){
+  var box=document.getElementById('pay-next'); if(!box) return;
+  if(RR_DEPOSIT){
+    var ref = P.cid || P.biz || P.plan || 'website';
+    var sep = RR_DEPOSIT.indexOf('?')>=0?'&':'?';
+    var url = RR_DEPOSIT + sep + 'client_reference_id=' + encodeURIComponent(ref) + (P.email?('&prefilled_email='+encodeURIComponent(P.email)):'');
+    box.innerHTML = '<a class="btn" href="'+url+'">Pay your deposit &amp; get started →</a>'
+      + '<div class="fine" style="margin-top:8px">Secure checkout by Stripe. Prefer to spread it out? Klarna, Affirm &amp; Afterpay are available at checkout.</div>';
+  } else {
+    box.innerHTML = '<p style="color:var(--muted);margin:0">We’ll email your onboarding invoice and next steps shortly.</p>';
+  }
+}
 async function signAgreement(){
   var btn=document.getElementById('signbtn'); btn.disabled=true; var m=document.getElementById('msg'); m.style.display='none';
   var rec={ client_id:P.cid||null, client_email:P.email||null, business_name:P.biz||null,
@@ -317,5 +334,7 @@ async function signAgreement(){
   var r=await sb.from('rr_agreements').insert(rec);
   if(r.error){ m.textContent='Could not record signature: '+r.error.message+' — please contact sales@rankrebels.ai.'; m.style.display='block'; btn.disabled=false; return; }
   document.getElementById('form').style.display='none'; document.getElementById('done').style.display='block';
+  try{ window.scrollTo({top:0,behavior:'smooth'}); }catch(e){ window.scrollTo(0,0); }
+  buildPayNext();
 }
 </script></body></html>
