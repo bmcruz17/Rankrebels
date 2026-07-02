@@ -20,10 +20,11 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';</script>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --green:#3f7d3a;--green2:#4f9a49;--green-d:#2f5f2c;--gold:#c99a2e;--gold-d:#a67f18;
+    /* matched to Ka'ala's logo/price sheet — blue sky, green mountains, yellow sun */
+    --green:#3f7d3a;--green2:#4f9a49;--green-d:#2f5f2c;--gold:#e0a51e;--gold-d:#a67f18;
     --ink:#241d13;--muted:#6b6152;--faint:#928873;
-    --cream:#faf6ec;--line:#ece3d1;--card:#ffffff;--bg:#ffffff;--sky:#6fa8cf;
-    --green-tint:rgba(79,154,73,.09);--gold-tint:rgba(201,154,46,.12);
+    --cream:#faf6ec;--line:#ece3d1;--card:#ffffff;--bg:#ffffff;--sky:#4ea6df;--sky-d:#2f7fbf;
+    --green-tint:rgba(79,154,73,.09);--gold-tint:rgba(224,165,30,.14);--sky-tint:rgba(78,166,223,.10);
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
@@ -42,7 +43,7 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';</script>
   .btn-ghost{background:#fff;color:var(--green-d);border:1.5px solid var(--line)}
   .btn-gold{background:var(--gold);color:#3a2c07;box-shadow:0 12px 26px -12px rgba(201,154,46,.6)}
   /* cover */
-  .cover{padding:52px 0 32px;border-bottom:1px solid var(--line);background:radial-gradient(120% 80% at 85% 0%,var(--green-tint),transparent 60%)}
+  .cover{padding:52px 0 32px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,var(--sky-tint),transparent 42%),radial-gradient(120% 80% at 88% 0%,var(--green-tint),transparent 60%)}
   .eyebrow{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-d)}
   .cover h1{font-size:2.7rem;font-weight:800;margin:12px 0 12px;color:var(--ink)}
   .cover h1 em{font-style:normal;color:var(--green)}
