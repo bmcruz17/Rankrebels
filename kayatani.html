@@ -102,6 +102,10 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';</script>
   .accept .xfer-row:last-of-type{border-bottom:0}
   .accept .xfer-row b{font-family:'Baloo 2',sans-serif;font-size:17px;letter-spacing:.05em}
   .accept .xfer-note{font-size:11.5px;color:rgba(255,255,255,.82);margin-top:9px;text-align:center}
+  .accept .xfer input{width:100%;border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.14);color:#fff;border-radius:10px;padding:11px 12px;font:inherit;font-size:14px;margin-bottom:8px}
+  .accept .xfer input::placeholder{color:rgba(255,255,255,.7)}
+  .accept .xfer button{width:100%;background:#fff;color:var(--green-d);font-family:'Baloo 2',sans-serif;font-weight:700;font-size:14px;border:0;border-radius:10px;padding:11px;cursor:pointer}
+  .accept .xfer .xfer-err{min-height:16px;font-size:12px;color:#ffd7d1;margin-top:6px;text-align:center}
 
   .fine{font-size:.85rem;color:var(--faint);line-height:1.6}
   .fine li{padding-left:22px;margin-bottom:7px}
@@ -253,11 +257,15 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';</script>
       <a class="btn btn-green" href="/agreement.html?cid=a3fcd40c-c30b-46c5-a694-ba5a05ff714d&b=Kayatani+Solutions&c=Diego+Kayatani&e=diegokayatani%40gmail.com&setup=6000&monthly=300&q=eyJzZXR1cF90b3RhbCI6NjAwMCwibW9udGhseV90b3RhbCI6MzAwLCJ0ZXJtX21vbnRocyI6Niwid2FycmFudHkiOmZhbHNlLCJsaW5lcyI6W3sibGFiZWwiOiJQbGF0Zm9ybSBidWlsZC1vdXQgKyBSeXplbiBSZWNydWl0IGFwcCBzZXR1cCAmIG1hbmFnZW1lbnQiLCJraW5kIjoib25lIiwicHJpY2UiOjYwMDAsIm5ldCI6NjAwMH0seyJsYWJlbCI6Ik9uZ29pbmcgc3VwcG9ydCAmIG1hbmFnZW1lbnQgKGZyb20gbW9udGggNykiLCJraW5kIjoibW8iLCJwcmljZSI6MzAwLCJuZXQiOjMwMH1dLCJzY2hlZHVsZSI6W3sid2hlbiI6Ikp1bCAxLCAyMDI2IiwibGFiZWwiOiJEZXBvc2l0IiwiYW1vdW50IjoyMDAwfSx7IndoZW4iOiJBdWcgMSwgMjAyNiIsImxhYmVsIjoiSW5zdGFsbG1lbnQgMSBvZiA1IiwiYW1vdW50Ijo4MDB9LHsid2hlbiI6IlNlcCAxLCAyMDI2IiwibGFiZWwiOiJJbnN0YWxsbWVudCAyIG9mIDUiLCJhbW91bnQiOjgwMH0seyJ3aGVuIjoiT2N0IDEsIDIwMjYiLCJsYWJlbCI6Ikluc3RhbGxtZW50IDMgb2YgNSIsImFtb3VudCI6ODAwfSx7IndoZW4iOiJOb3YgMSwgMjAyNiIsImxhYmVsIjoiSW5zdGFsbG1lbnQgNCBvZiA1IiwiYW1vdW50Ijo4MDB9LHsid2hlbiI6IkRlYyAxLCAyMDI2IiwibGFiZWwiOiJJbnN0YWxsbWVudCA1IG9mIDUiLCJhbW91bnQiOjgwMH1dLCJ0ZXJtcyI6WyJJbml0aWFsIHRlcm0gKGZpcnN0IDYgbW9udGhzKTogdXAgdG8gMyBzdGFuZGFyZCB1cGRhdGUgc3VibWlzc2lvbnMgcGVyIGJ1c2luZXNzIGRheSAoTW9uZGF54oCTRnJpZGF5KSwgZWFjaCBjb21wbGV0ZWQgd2l0aGluIDI0IGhvdXJzIG9mIGEgd3JpdHRlbiByZXF1ZXN0OyBwbHVzIDMgdXJnZW50IHJlcXVlc3RzIHBlciBtb250aCBmb3IgdXBkYXRlcyBzdWJtaXR0ZWQgb24gYSBTYXR1cmRheSBvciBTdW5kYXksIHB1Ymxpc2hlZCB3aXRoaW4gNiBob3Vycy4iLCJBZnRlciBtb250aCA2OiAkMzAwLjAwL21vbnRoIGZvciBzdXBwb3J0IGFuZCBtYW5hZ2VtZW50IG9mIHRoZSBwbGF0Zm9ybSBhbmQgcmVjcnVpdGluZyB0b29scywgaW5jbHVkaW5nIDMgdXBkYXRlcyBwZXIgbW9udGggYXQgbm8gY2hhcmdlLiIsIkFkZGl0aW9uYWwgdXBkYXRlcyBiZXlvbmQgdGhvc2UgaW5jbHVkZWQgYXJlIGJpbGxlZCBhdCAkMTUwLjAwL2hvdXI7IHVyZ2VudC9ydXNoIHVwZGF0ZXMgKHB1Ymxpc2hlZCB3aXRoaW4gNiBob3VycykgYXQgJDUwMC4wMC9ob3VyLiIsIk9uZ29pbmcgc3VwcG9ydCBpcyBtb250aC10by1tb250aDsgZWl0aGVyIHBhcnR5IG1heSBjYW5jZWwgd2l0aCB3cml0dGVuIG5vdGljZS4iLCJNYW5hZ2VkIHNlcnZpY2U6IFJhbmsgUmViZWxzIHJldGFpbnMgb3duZXJzaGlwIG9mIHRoZSBwbGF0Zm9ybTsgQ2xpZW50IHJlY2VpdmVzIGZ1bGwgdXNlIG9mIHRoZSBkZWxpdmVyZWQgYXBwcyBhbmQgcmVjcnVpdGluZyB0b29scy4iXSwib3ZlcnJpZGUiOiJGZWVzIGFyZSBkdWUgcGVyIHRoZSBQYXltZW50IFNjaGVkdWxlIGFib3ZlLCB3aGljaCBjb250cm9scyBvdmVyIFNlY3Rpb25zIDIuMSBhbmQgMi4yIG9mIHRoaXMgQWdyZWVtZW50LiBUaGUgJDIsMDAwLjAwIGRlcG9zaXQgaXMgbm9uLXJlZnVuZGFibGUuIn0%3D">Approve &amp; e-sign your agreement →</a>
       <a class="btn btn-ghost" href="tel:+18082655339">Questions? Call / text 808-265-5339</a>
     </div>
-    <div class="xfer">
+    <div class="xfer" id="xfer">
       <div class="xfer-t">💸 $2,000 deposit · Navy Federal transfer — instant &amp; free, member to member</div>
-      <div class="xfer-row"><span>Account number</span><b>7155691376</b></div>
-      <div class="xfer-row"><span>Routing number</span><b>256074974</b></div>
-      <div class="xfer-note">Send $2,000 to Rank Rebels at Navy Federal, memo "Kayatani deposit." Prefer a different method? Just text us.</div>
+      <div id="xfer-lock">
+        <input id="xfer-code" placeholder="Enter your payment access code" autocomplete="off" autocapitalize="characters" spellcheck="false" onkeydown="if(event.key==='Enter')showPay()">
+        <button type="button" onclick="showPay()">Show transfer details</button>
+        <div id="xfer-err" class="xfer-err"></div>
+      </div>
+      <div id="xfer-out" hidden></div>
+      <div class="xfer-note">Account &amp; routing are released only with your access code — text 808-265-5339 for it. Prefer a different method? Just ask.</div>
     </div>
   </div>
 
@@ -278,5 +286,23 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';</script>
   </footer>
 
 </div>
+<script>
+function showPay(){
+  var code=(document.getElementById('xfer-code').value||'').trim();
+  var err=document.getElementById('xfer-err'); err.textContent='';
+  if(!code){ err.textContent='Enter your access code.'; return; }
+  fetch('/api/pay-details?client=kayatani&code='+encodeURIComponent(code))
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(!d||!d.ok){ err.textContent='That code isn’t right — text 808-265-5339 for it.'; return; }
+      document.getElementById('xfer-out').innerHTML =
+        '<div class="xfer-row"><span>Account number</span><b>'+d.account+'</b></div>'+
+        '<div class="xfer-row"><span>Routing number</span><b>'+d.routing+'</b></div>';
+      document.getElementById('xfer-out').hidden=false;
+      document.getElementById('xfer-lock').style.display='none';
+    })
+    .catch(function(){ err.textContent='Something went wrong — please try again.'; });
+}
+</script>
 </body>
 </html>
