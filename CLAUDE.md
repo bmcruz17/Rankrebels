@@ -62,6 +62,16 @@ Claude-Session: https://claude.ai/code/session_01NwwCRgZhNAYVXpmHPCTe6s
   colored tags, brand badge top-right, footer = `email · 808-265-5339 · generated <date>`.
   Render to a Letter PDF with Playwright (`page.pdf`).
 
+## Response format (Brandon's preference)
+End every substantive reply with an **Outstanding** recap so nothing is forgotten,
+grouped into colored bubbles:
+- 🔴 **On you — do soon** (revenue / live-data blockers)
+- 🟡 **On you — config / quick** (secrets, cron, DNS, etc.)
+- 🟢 **Awaiting your input** (needs an answer before Claude builds)
+- 🔵 **Offered — say yes** ← Brandon treats this as the priority section; when he says
+  "yes," act on these first, then report back covering the other bubbles too.
+Keep items terse; each is a one-liner. Detailed step-by-steps only when asked.
+
 ## Gotchas
 - Supabase MCP here has been permission-restricted (execute_sql/list_tables may be
   denied) — diagnose via code + `GO-LIVE.md` rather than live queries.
