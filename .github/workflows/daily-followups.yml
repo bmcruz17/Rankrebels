@@ -1,0 +1,31 @@
+name: Daily proposal follow-ups
+
+# Chases un-closed proposals for you. Once a day it hits /api/followups/run, which finds
+# every customer still in an OPEN stage (lead / contacted) that has BOTH an email and a
+# hook page, and sends the next hand-written reminder on a cadence (day 2, 5, 10, 21).
+# It stops the moment they accept, get archived, or you pause them. Cold scraped leads with
+# no hook page are never emailed. Same secret as the other scheduled jobs (SCHED_SECRET).
+
+on:
+  schedule:
+    - cron: "0 17 * * *"   # ~17:00 UTC daily = 10am Pacific / 7am Hawaii. cron is UTC.
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-followups
+  cancel-in-progress: false
+
+jobs:
+  followups:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run follow-up processor
+        run: |
+          code=$(curl -sS -o /tmp/out.json -w "%{http_code}" -X POST \
+            "https://rankrebels.ai/api/followups/run" \
+            -H "X-Sched-Secret: ${{ secrets.SCHED_SECRET }}")
+          echo "HTTP $code"; cat /tmp/out.json || true
+          test "$code" = "200"
