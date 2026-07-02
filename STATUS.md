@@ -2,7 +2,7 @@
 
 **The single place to see where the project stands.** A daily routine refreshes this; whenever a new session starts, read this file first to pick up where we left off.
 
-**Last updated:** 2026-07-01
+**Last updated:** 2026-07-02
 
 ---
 
@@ -60,6 +60,7 @@ Ordered roughly by priority.
 - Point Supabase Auth SMTP at Resend (kills magic-link rate limits)
 
 ## 📓 Daily log
+- **2026-07-02** — Auto-log — 16 change(s): Realty: correct owner surname to Almendarez; Ka'ala: recreate flyer emblem as SVG on the preview; Ka'ala: match palette to their logo/price sheet; CLAUDE.md: make the Outstanding recap format standard; Kayatani: keep bank details off the page (code-gated backend); Kayatani: pay deposit via Navy Federal transfer, drop card link; Ka'ala: add exclusive access gate (teaser + private unlock); Ka'ala: set offer — $2,500 up front (incl. 6 months) + $125/mo; Ka'ala: order-online / express-pickup flow + real pricing; Add Ka'ala Creamery proposal page (herd share, Oahu); Add guided new-customer wizard + agreement extras (schedule/SLA); Kayatani: update first-6-months support SLA; Homepage: add an obvious Client login in the header; TARO: add search-demand / SEO section (reusable hook pattern); Add admin password-reset for reps (dashboard); Add Realty by the Sea interactive proposal (Gloria Almendares).
 - **2026-07-01** — Auto-log — 19 change(s): Remove Eric (pass 1): client-facing copy, ownership docs, signature; Security: revoke Eric's access — Brandon-only allowlists, drop domain wildcard; Agreement: fix print — expand scrollable terms box so the full contract prints; Kayatani: enlarge cover eyebrow header; Agreement OG tags + dashboard countersign indicator + Kayatani preview image; Agreement countersign + delivery flow (functions + 3 modes); Kayatani: promote section labels to headers, remove 14-day validity; Agreement: Exhibit A shows real payment schedule, service terms, precedence clause; Agreement: auto-fill client business name + contact name in the body; Kayatani: contact full name Diego Kayatani; Kayatani: sign agreement -> per-client deposit checkout; Kayatani proposal: always open at top on load (strip #hash, manual scroll restore); Route "get started" through agreement → sign → checkout; Kayatani proposal: wire Approve button to $2,000 Stripe deposit checkout; Kayatani proposal: fix meta + approve-email copy (access wording, spelling); Kayatani proposal: reframe as managed platform access (remove ownership transfer); Kayatani proposal: deposit due Jul 1, installments Aug-Dec 2026; Add Kayatani Solutions proposal (platform handover + support); Add CLAUDE.md — operational guide auto-loaded each session.
 - **2026-06-30** — Auto-log — 6 change(s): Revert "Live proposal pricing — pages read their saved quote"; Live proposal pricing — pages read their saved quote; Replicate à la carte add-on picker to Island Claw & TARO pages; Add Pricing link to dashboard header → /menu; Add internal service menu + job quote calculator (/menu); Add customer-selectable à la carte add-ons to proposal page.
 - **2026-06-29** — Auto-log — 4 change(s): Auto follow-up drip: hand-written reminder sequence for un-closed proposals; Dashboard: per-customer proposal 'hook' link with View hook button on the tile; Offer Klarna / Affirm / Afterpay financing at checkout; TARO: regenerate stale link-preview (OG) image.
