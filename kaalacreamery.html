@@ -125,6 +125,9 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';</script>
   .gate-hero{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;padding:60px 22px 40px;color:#fff;
     background:radial-gradient(120% 90% at 50% -10%,#7fc0e6 0%,#4f9a49 42%,#2f5f2c 100%)}
   .gate-hero .gwrap{max-width:640px}
+  .kseal{width:118px;height:118px;display:block;margin:0 auto 16px;filter:drop-shadow(0 10px 24px rgba(0,0,0,.32))}
+  .kseal .ks-t{font-family:'Baloo 2',sans-serif;font-weight:800;font-size:16px;fill:#12331b;letter-spacing:1px}
+  .kseal .ks-b{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:11px;fill:#12331b;letter-spacing:2px}
   .geyebrow{font-family:'Baloo 2',sans-serif;font-weight:700;font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;color:#fbe7a6;background:rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:6px 14px;display:inline-block}
   .gate-hero h1{font-size:clamp(2rem,5vw,3rem);font-weight:800;margin:16px 0 12px;color:#fff}
   .gate-hero h1 em{font-style:normal;color:#fbe7a6}
@@ -151,6 +154,24 @@ if('scrollRestoration' in history)history.scrollRestoration='manual';</script>
 <!-- EXCLUSIVE ACCESS GATE (teaser, no login) -->
 <div id="gate">
   <div class="gate-hero"><div class="gwrap">
+    <svg class="kseal" viewBox="0 0 200 200" role="img" aria-label="Ka'ala Creamery — Waianae, Hawai'i">
+      <defs>
+        <clipPath id="ksClip"><circle cx="100" cy="100" r="72"/></clipPath>
+        <path id="ksTop" d="M20,100 A80,80 0 0 1 180,100" fill="none"/>
+        <path id="ksBot" d="M22,100 A78,78 0 0 0 178,100" fill="none"/>
+      </defs>
+      <circle cx="100" cy="100" r="96" fill="#12331b"/>
+      <circle cx="100" cy="100" r="90" fill="#fbf7ec"/>
+      <g clip-path="url(#ksClip)">
+        <rect x="28" y="28" width="144" height="144" fill="#8fd3f0"/>
+        <circle cx="138" cy="66" r="15" fill="#f6c81f"/>
+        <path d="M28,150 L62,98 L92,134 L122,86 L156,138 L172,118 L172,172 L28,172 Z" fill="#4f9a49"/>
+        <path d="M28,163 L58,124 L90,156 L120,120 L150,158 L172,134 L172,172 L28,172 Z" fill="#2f5f2c"/>
+      </g>
+      <circle cx="100" cy="100" r="72" fill="none" stroke="#12331b" stroke-width="2.5"/>
+      <text class="ks-t"><textPath href="#ksTop" startOffset="50%" text-anchor="middle">KA'ALA CREAMERY</textPath></text>
+      <text class="ks-b"><textPath href="#ksBot" startOffset="50%" text-anchor="middle">WAIANAE · HAWAI'I</textPath></text>
+    </svg>
     <div class="geyebrow">Private preview · by invitation</div>
     <h1>Ka'ala Creamery, <em>reimagined online</em></h1>
     <p>A first look at what your website and prepaid pickup could feel like — designed just for you. Take the tour, then unlock your full interactive preview.</p>
